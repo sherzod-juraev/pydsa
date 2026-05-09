@@ -1,4 +1,5 @@
 from .linear import *
+from .trees import *
 
 
 __all__ = [
@@ -6,4 +7,5 @@ __all__ = [
     'DoublyList',
     'Queue',
     'Stack',
+    'BinaryTree',
 ]
