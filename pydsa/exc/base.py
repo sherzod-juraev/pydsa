@@ -1,0 +1,2 @@
+class PydsaException(Exception):
+    pass
