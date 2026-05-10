@@ -6,5 +6,5 @@ class Node:
     def __init__(self, value: Any) -> None:
 
         self.value = value
-        self.left = None
-        self.right = None
+        self.left: Node | None = None
+        self.right: Node | None = None

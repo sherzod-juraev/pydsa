@@ -8,4 +8,5 @@ __all__ = [
     'Queue',
     'Stack',
     'BinaryTree',
+    'BSTree',
 ]
