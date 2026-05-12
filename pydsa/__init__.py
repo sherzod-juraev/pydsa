@@ -1,5 +1,6 @@
 from .linear import *
 from .trees import *
+from .hash import *
 
 
 __all__ = [
@@ -13,4 +14,5 @@ __all__ = [
     'MinHeap',
     'MaxHeap',
     'Trie',
+    'HashTable',
 ]
