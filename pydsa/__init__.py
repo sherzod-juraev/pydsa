@@ -10,4 +10,6 @@ __all__ = [
     'BinaryTree',
     'BSTree',
     'AVLTree',
+    'MinHeap',
+    'MaxHeap',
 ]
