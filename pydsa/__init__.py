@@ -12,4 +12,5 @@ __all__ = [
     'AVLTree',
     'MinHeap',
     'MaxHeap',
+    'Trie',
 ]

@@ -2,6 +2,7 @@ from .binary_tree import *
 from .bst import *
 from .avl import *
 from .heap import *
+from .trie import *
 
 
 __all__ = [
@@ -10,4 +11,5 @@ __all__ = [
     'AVLTree',
     'MinHeap',
     'MaxHeap',
+    'Trie',
 ]
