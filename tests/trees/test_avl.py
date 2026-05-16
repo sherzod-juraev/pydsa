@@ -1,5 +1,5 @@
 import pytest
-from pydsa.trees.avl.avl_tree import AVLTree
+from pydsa import AVLTree
 from pydsa.exc import Empty
 
 

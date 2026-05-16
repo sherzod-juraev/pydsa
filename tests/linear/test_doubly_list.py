@@ -1,5 +1,5 @@
 import pytest
-from pydsa.linear.doubly.doubly_list import DoublyList
+from pydsa import DoublyList
 from pydsa.exc import Empty
 
 

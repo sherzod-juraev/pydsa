@@ -1,5 +1,5 @@
 import pytest
-from pydsa.trees.binary_tree.binary_tree import BinaryTree
+from pydsa import BinaryTree
 from pydsa.exc import Empty
 
 
