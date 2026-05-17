@@ -60,7 +60,7 @@ class TestBSTreeInsert:
 
 
 class TestBSTreeSearch:
-    """search"""
+    """searching"""
 
     def test_search_existing(self):
         bst = BSTree()

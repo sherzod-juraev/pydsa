@@ -6,12 +6,12 @@ from ...linear import Stack, Queue
 
 class AVLTree:
     """
-    A self-balancing binary search tree (AVL) where the height
+    A self-balancing binary searching tree (AVL) where the height
     difference between left and right subtrees of any node is at most 1.
 
     After every insertion and deletion, balance factors are checked
     and rotations (LL, RR, LR, RL) are applied to restore the invariant.
-    This guarantees O(log n) height and O(log n) search, insert, and
+    This guarantees O(log n) height and O(log n) searching, insert, and
     remove operations in both average and worst cases.
 
     Time Complexity
@@ -21,7 +21,7 @@ class AVLTree:
 
        "insert", "O(log n)", "O(log n)"
        "remove", "O(log n)", "O(log n)"
-       "search", "O(log n)", "O(1)"
+       "searching", "O(log n)", "O(1)"
        "min_value", "O(log n)", "O(1)"
        "max_value", "O(log n)", "O(1)"
        "preorder", "O(n)", "O(h)"

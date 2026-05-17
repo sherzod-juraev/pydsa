@@ -36,7 +36,7 @@ class BinaryTree:
     Notes
     -----
     This is a general binary tree without ordering constraints.
-    For a binary search tree (BST) with the ``left < root < right``
+    For a binary searching tree (BST) with the ``left < root < right``
     invariant, see the ``BST`` class.
     """
 

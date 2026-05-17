@@ -6,12 +6,12 @@ from ...exc import Empty
 
 class BSTree:
     """
-    A binary search tree (BST) where each node satisfies the invariant
+    A binary searching tree (BST) where each node satisfies the invariant
     ``left < root < right``.
 
     Values are inserted automatically based on comparison with existing
     nodes. Duplicate values are silently ignored. The tree supports
-    insertion, deletion, search, and four traversal strategies, all
+    insertion, deletion, searching, and four traversal strategies, all
     implemented iteratively using custom Stack and Queue ADTs.
 
     Time Complexity
@@ -20,7 +20,7 @@ class BSTree:
        :widths: 20, 12, 12, 10
 
        "insert", "O(log n)", "O(n)", "O(1)"
-       "search", "O(log n)", "O(n)", "O(1)"
+       "searching", "O(log n)", "O(n)", "O(1)"
        "min_value", "O(log n)", "O(n)", "O(1)"
        "max_value", "O(log n)", "O(n)", "O(1)"
        "remove", "O(log n)", "O(n)", "O(1)"
@@ -58,7 +58,7 @@ class BSTree:
     def __contains__(self, item) -> bool:
         """Return True if the value exists in the tree. O(h).
 
-        Uses iterative binary search from the root.
+        Uses iterative binary searching from the root.
         """
         current = self.__root
         while current:
@@ -135,7 +135,7 @@ class BSTree:
         Parameters
         ----------
         value : Any
-            The value to search for.
+            The value to searching for.
 
         Returns
         -------
@@ -144,9 +144,9 @@ class BSTree:
 
         Examples
         --------
-        >>> bst.search(5)
+        >>> bst.searching(5)
         True
-        >>> bst.search(99)
+        >>> bst.searching(99)
         False
         """
         return value in self

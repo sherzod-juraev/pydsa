@@ -58,7 +58,7 @@ class TestAVLTreeInsert:
 
 
 class TestAVLTreeSearch:
-    """search"""
+    """searching"""
 
     def test_search_existing(self):
         avl = AVLTree()

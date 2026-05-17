@@ -3,6 +3,7 @@ from .trees import *
 from .hash import *
 from .graph import *
 from .sorting import *
+from .searching import *
 
 
 __all__ = [
@@ -26,4 +27,8 @@ __all__ = [
     'counting_sort',
     'radix_sort',
     'bucket_sort',
+    'linear_search',
+    'binary_search',
+    'jump_search',
+    'exponential_search',
 ]

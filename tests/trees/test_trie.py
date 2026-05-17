@@ -43,7 +43,7 @@ class TestTrieInsert:
 
 
 class TestTrieSearch:
-    """search"""
+    """searching"""
 
     def test_search_existing(self):
         trie = Trie()

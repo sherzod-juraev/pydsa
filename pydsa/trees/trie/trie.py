@@ -17,7 +17,7 @@ class Trie:
        :widths: 25, 15, 15
 
        "insert", "O(L)", "O(L)"
-       "search", "O(L)", "O(1)"
+       "searching", "O(L)", "O(1)"
        "starts_with", "O(L)", "O(1)"
        "remove", "O(L)", "O(L)"
        "words_with_prefix", "O(P + L·K)", "O(P + L)"
@@ -148,7 +148,7 @@ class Trie:
         Parameters
         ----------
         prefix : str
-            The prefix to search for.
+            The prefix to searching for.
 
         Yields
         ------
