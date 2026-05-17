@@ -6,6 +6,12 @@ from .dp import (
     coin_change,
     edit_distance,
 )
+from .greedy import (
+    activity_selection,
+    job_sequencing,
+    fractional_knapsack,
+    huffman_coding,
+)
 
 
 __all__ = [
@@ -15,4 +21,8 @@ __all__ = [
     'lcs_tab',
     'coin_change',
     'edit_distance',
+    'activity_selection',
+    'job_sequencing',
+    'fractional_knapsack',
+    'huffman_coding',
 ]

@@ -38,4 +38,8 @@ __all__ = [
     'lcs_tab',
     'coin_change',
     'edit_distance',
+    'activity_selection',
+    'job_sequencing',
+    'fractional_knapsack',
+    'huffman_coding',
 ]
