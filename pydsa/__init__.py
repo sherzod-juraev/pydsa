@@ -4,6 +4,7 @@ from .hash import *
 from .graph import *
 from .sorting import *
 from .searching import *
+from .algorithms import *
 
 
 __all__ = [
@@ -31,4 +32,10 @@ __all__ = [
     'binary_search',
     'jump_search',
     'exponential_search',
+    'fib_memo',
+    'fib_tab',
+    'knapsack_tab',
+    'lcs_tab',
+    'coin_change',
+    'edit_distance',
 ]
