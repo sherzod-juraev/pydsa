@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pydsa"
+version = "1.0.0"
+description = "Pure Python Data Structures & Algorithms — built from scratch"
+requires-python = ">=3.10"
+authors = [{name = "Sherzod Juraev", email = "juraevsherzod9943@gmail.com"}]
+readme = "README.md"
+license = {text = "MIT"}
+keywords = ["data-structures", "algorithms", "education", "python", "dsa"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Education",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+    "numpy>=1.24.0",
+    "numba>=0.58.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-sugar>=1.0"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pydsa"]
+exclude = ["tests"]
+
+[tool.pytest.ini_options]
+minversion = "9.0"
+testpaths = ["tests"]
+norecursedirs = ["pydsa", "Pipfile", "Pipfile.lock"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short --strict-markers --strict-config -p no:warnings"
+filterwarnings = [
+    "ignore::UserWarning",
+]
