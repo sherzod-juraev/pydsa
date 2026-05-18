@@ -31,8 +31,8 @@ dev = ["pytest>=8.0", "pytest-sugar>=1.0"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["pydsa"]
-exclude = ["tests"]
+include = ["pydsa", "pydsa.*"]
+exclude = ["tests", "tests.*"]
 
 [tool.pytest.ini_options]
 minversion = "9.0"
