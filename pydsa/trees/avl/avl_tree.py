@@ -1,13 +1,16 @@
+from collections.abc import Iterator
+from typing import cast
+
+from ..._types import Comparable
+from ...exc import EmptyError
+from ...linear import Queue, Stack
 from .node import Node
-from typing import Any, Iterator
-from ...exc import Empty
-from ...linear import Stack, Queue
 
 
-class AVLTree:
+class AVLTree[T: Comparable]:
     """
     A self-balancing binary searching tree (AVL) where the height
-    difference between left and right subtrees of any node is at most 1.
+    difference between left and right subtrees of T node is at most 1.
 
     After every insertion and deletion, balance factors are checked
     and rotations (LL, RR, LR, RL) are applied to restore the invariant.
@@ -43,7 +46,7 @@ class AVLTree:
     """
     def __init__(self) -> None:
 
-        self.__root: Node | None = None
+        self.__root: Node[T] | None = None
         self.__nodes: int = 0
 
     def __len__(self) -> int:
@@ -54,9 +57,9 @@ class AVLTree:
         """Return True if the tree is not empty. O(1)."""
         return self.__nodes > 0
 
-    def __contains__(self, item) -> bool:
+    def __contains__(self, item: T) -> bool:
         """Return True if the value exists in the tree. O(log n)."""
-        current: Node = self.__root
+        current = self.__root
         while current:
             if current.value == item:
                 return True
@@ -70,19 +73,20 @@ class AVLTree:
         """Return True if the tree has no nodes. O(1)."""
         return self.__nodes == 0
 
-    def root(self) -> Any:
+    def root(self) -> T:
         """Return the value of the root node. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the tree is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        return self.__root.value
+            raise EmptyError(self)
+        root = cast(Node[T], self.__root)
+        return root.value
 
-    def insert(self, value: Any, /) -> None:
+    def insert(self, value: T, /) -> None:
         """Insert a value and rebalance the tree. O(log n).
 
         Duplicate values are silently ignored. The AVL invariant
@@ -90,24 +94,21 @@ class AVLTree:
 
         Parameters
         ----------
-        value : Any
+        value : T
             The value to insert.
         """
         if self.is_empty():
             self.__root = Node(value)
             self.__nodes += 1
             return
-        stack = Stack()
-        current: Node = self.__root
-        while current:
+        stack: Stack[Node[T]] = Stack()
+        current = self.__root
+        while current is not None:
             if current.value == value:
                 return
             stack.push(current)
-            if current.value < value:
-                current = current.right
-            else:
-                current = current.left
-        parent: Node = stack.peek()
+            current = current.right if current.value < value else current.left
+        parent: Node[T] = stack.peek()
         new_node = Node(value)
         if parent.value < value:
             parent.right = new_node
@@ -115,18 +116,18 @@ class AVLTree:
             parent.left = new_node
         self.__nodes += 1
         while stack:
-            node: Node = stack.pop()
+            node: Node[T] = stack.pop()
             node_balanced = self.__get_balance(node)
             if stack.is_empty():
                 self.__root = node_balanced
             else:
-                parent: Node = stack.peek()
+                parent = stack.peek()
                 if parent.value < node_balanced.value:
                     parent.right = node_balanced
                 else:
                     parent.left = node_balanced
 
-    def remove(self, value: Any, /) -> None:
+    def remove(self, value: T, /) -> None:
         """Remove a value and rebalance the tree. O(log n).
 
         Handles the three standard BST removal cases (leaf, one child,
@@ -137,17 +138,18 @@ class AVLTree:
 
         Parameters
         ----------
-        value : Any
+        value : T
             The value to remove.
         """
         if self.is_empty():
             return
-        stack = Stack()
+        stack: Stack[Node[T]] = Stack()
         current = self.__root
-        while current and current.value != value:
+        while current is not None and current.value != value:
             stack.push(current)
             current = current.left if value < current.value else current.right
-        if not current: return
+        if not current:
+            return
         if current.left and current.right:
             stack.push(current)
             successor = current.right
@@ -178,17 +180,17 @@ class AVLTree:
                     parent.right = balanced_node
         self.__nodes -= 1
 
-    def __get_height(self, node: Node | None, /) -> int:
+    def __get_height(self, node: Node[T] | None, /) -> int:
         """Return the height of a node, treating None as 0."""
-        return node.height if node else 0
+        return node.height if node is not None else 0
 
-    def __update_height(self, node: Node, /) -> None:
+    def __update_height(self, node: Node[T], /) -> None:
         """Update the height of a node based on its children."""
         node.height = 1 + max(
             self.__get_height(node.left), self.__get_height(node.right)
         )
 
-    def __get_balance(self, node: Node, /) -> Node:
+    def __get_balance(self, node: Node[T], /) -> Node[T]:
         """Update height and apply rotation if the node is unbalanced.
 
         Returns
@@ -199,16 +201,18 @@ class AVLTree:
         self.__update_height(node)
         bf = self.__get_height(node.left) - self.__get_height(node.right)
         if bf > 1:
-            if self.__get_height(node.left.right) > self.__get_height(node.left.left):
-                node.left = self.__left_rotate(node.left)
+            left = cast(Node[T], node.left)
+            if self.__get_height(left.right) > self.__get_height(left.left):
+                node.left = self.__left_rotate(left)
             return self.__right_rotate(node)
         elif bf < -1:
-            if self.__get_height(node.right.left) > self.__get_height(node.right.right):
-                node.right = self.__right_rotate(node.right)
+            right = cast(Node[T], node.right)
+            if self.__get_height(right.left) > self.__get_height(right.right):
+                node.right = self.__right_rotate(right)
             return self.__left_rotate(node)
         return node
 
-    def __right_rotate(self, node: Node, /) -> Node:
+    def __right_rotate(self, node: Node[T], /) -> Node[T]:
         """Perform a right rotation (LL case).
 
         Returns
@@ -216,15 +220,15 @@ class AVLTree:
         Node
             The new root after rotation.
         """
-        left_tree = node.left
-        T2 = left_tree.right
+        left_tree = cast(Node[T], node.left)
+        t2 = left_tree.right
         left_tree.right = node
-        node.left = T2
+        node.left = t2
         self.__update_height(node)
         self.__update_height(left_tree)
         return left_tree
 
-    def __left_rotate(self, node: Node, /) -> Node:
+    def __left_rotate(self, node: Node[T], /) -> Node[T]:
         """Perform a left rotation (RR case).
 
         Returns
@@ -232,111 +236,111 @@ class AVLTree:
         Node
             The new root after rotation.
         """
-        right_tree = node.right
-        T2 = right_tree.left
+        right_tree = cast(Node[T], node.right)
+        t2 = right_tree.left
         right_tree.left = node
-        node.right = T2
+        node.right = t2
         self.__update_height(node)
         self.__update_height(right_tree)
         return right_tree
 
-    def search(self, value: Any, /) -> bool:
+    def search(self, value: T, /) -> bool:
         """Return True if the value exists in the tree. O(log n)."""
         return value in self
 
-    def min_value(self) -> Any:
+    def min_value(self) -> T:
         """Return the minimum value in the tree (leftmost node). O(log n).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the tree is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        current = self.__root
-        while current.left:
+            raise EmptyError(self)
+        current = cast(Node[T], self.__root)
+        while current.left is not None:
             current = current.left
         return current.value
 
-    def max_value(self) -> Any:
+    def max_value(self) -> T:
         """Return the maximum value in the tree (rightmost node). O(log n).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the tree is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        current = self.__root
-        while current.right:
+            raise EmptyError(self)
+        current = cast(Node[T], self.__root)
+        while current.right is not None:
             current = current.right
         return current.value
 
-    def preorder(self) -> Iterator:
+    def preorder(self) -> Iterator[T]:
         """Yield values in preorder traversal (root → left → right). O(n)."""
         if self.is_empty():
             return
-        stack = Stack()
-        stack.push(self.__root)
+        stack: Stack[Node[T]] = Stack()
+        stack.push(cast(Node[T], self.__root))
         while stack:
-            current: Node = stack.pop()
+            current: Node[T] = stack.pop()
             yield current.value
-            if current.right:
+            if current.right is not None:
                 stack.push(current.right)
-            if current.left:
+            if current.left is not None:
                 stack.push(current.left)
 
-    def inorder(self) -> Iterator:
+    def inorder(self) -> Iterator[T]:
         """Yield values in inorder traversal (left → root → right). O(n).
 
         Because this is a BST, values are yielded in sorted ascending order.
         """
         if self.is_empty():
             return
-        stack = Stack()
-        current = self.__root
-        while stack or current:
-            while current:
+        stack: Stack[Node[T]] = Stack()
+        current: Node[T] | None = cast(Node[T], self.__root)
+        while stack or current is not None:
+            while current is not None:
                 stack.push(current)
                 current = current.left
             current = stack.pop()
             yield current.value
             current = current.right
 
-    def postorder(self) -> Iterator:
+    def postorder(self) -> Iterator[T]:
         """Yield values in postorder traversal (left → right → root). O(n)."""
         if self.is_empty():
             return
-        stack = Stack()
-        current: Node | None = self.__root
-        last_visited: Node | None = None
+        stack: Stack[Node[T]] = Stack()
+        current: Node[T] | None = self.__root
+        last_visited: Node[T] | None = None
         while stack or current:
-            if current:
+            if current is not None:
                 stack.push(current)
                 current = current.left
             else:
-                peek_node: Node = stack.peek()
+                peek_node: Node[T] = stack.peek()
                 if peek_node.right and peek_node.right != last_visited:
                     current = peek_node.right
                 else:
-                    last_visited = stack.pop()
+                    last_visited= stack.pop()
                     yield last_visited.value
                     current = None
 
-    def levelorder(self) -> Iterator:
+    def levelorder(self) -> Iterator[T]:
         """Yield values in level-order (BFS) traversal. O(n)."""
         if self.is_empty():
             return
-        queue = Queue()
-        queue.enqueue(self.__root)
+        queue: Queue[Node[T]] = Queue()
+        queue.enqueue(cast(Node[T], self.__root))
         while queue:
-            current: Node = queue.dequeue()
+            current: Node[T] = queue.dequeue()
             yield current.value
-            if current.left:
+            if current.left is not None:
                 queue.enqueue(current.left)
-            if current.right:
+            if current.right is not None:
                 queue.enqueue(current.right)
 
     def height(self) -> int:
@@ -346,7 +350,8 @@ class AVLTree:
         """
         if self.is_empty():
             return 0
-        return self.__root.height
+        root = cast(Node[T], self.__root)
+        return root.height
 
     def clear(self) -> None:
         """Remove all nodes from the tree. O(1)."""

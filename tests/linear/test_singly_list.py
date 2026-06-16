@@ -1,20 +1,20 @@
 import pytest
 from pydsa import SinglyList
-from pydsa.exc import Empty
+from pydsa.exc import EmptyError
 
 
 class TestSinglyListInit:
     """__init__"""
 
-    def test_empty_list_has_zero_length(self):
+    def test_EmptyError_list_has_zero_length(self):
         lst = SinglyList()
         assert len(lst) == 0
 
-    def test_empty_list_is_falsy(self):
+    def test_EmptyError_list_is_falsy(self):
         lst = SinglyList()
         assert not lst
 
-    def test_empty_list_is_empty(self):
+    def test_EmptyError_list_is_EmptyError(self):
         lst = SinglyList()
         assert lst.is_empty()
 
@@ -22,7 +22,7 @@ class TestSinglyListInit:
 class TestSinglyListInsertFirst:
     """insert_first"""
 
-    def test_insert_into_empty_list(self):
+    def test_insert_into_EmptyError_list(self):
         lst = SinglyList()
         lst.insert_first(10)
         assert len(lst) == 1
@@ -52,7 +52,7 @@ class TestSinglyListInsertFirst:
 class TestSinglyListInsertLast:
     """insert_last"""
 
-    def test_insert_into_empty_list(self):
+    def test_insert_into_EmptyError_list(self):
         lst = SinglyList()
         lst.insert_last(10)
         assert len(lst) == 1
@@ -104,7 +104,7 @@ class TestSinglyListInsertAt:
         lst.insert_at(1, 20)
         assert list(lst) == [10, 20, 30]
 
-    def test_insert_into_empty_list_at_zero(self):
+    def test_insert_into_EmptyError_list_at_zero(self):
         lst = SinglyList()
         lst.insert_at(0, 42)
         assert len(lst) == 1
@@ -143,9 +143,9 @@ class TestSinglyListGetFirst:
         lst.insert_first(10)
         assert lst.get_first() == 10
 
-    def test_raises_on_empty(self):
+    def test_raises_on_EmptyError(self):
         lst = SinglyList()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             lst.get_first()
 
 
@@ -163,9 +163,9 @@ class TestSinglyListGetLast:
         lst.insert_first(5)
         assert lst.get_last() == 5
 
-    def test_raises_on_empty(self):
+    def test_raises_on_EmptyError(self):
         lst = SinglyList()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             lst.get_last()
 
 
@@ -190,7 +190,7 @@ class TestSinglyListGetAt:
         with pytest.raises(IndexError):
             lst.get_at(5)
 
-    def test_raises_on_empty_list(self):
+    def test_raises_on_EmptyError_list(self):
         lst = SinglyList()
         with pytest.raises(IndexError):
             lst.get_at(0)
@@ -215,9 +215,9 @@ class TestSinglyListRemoveFirst:
         assert lst.get_last() == 20
         assert len(lst) == 1
 
-    def test_raises_on_empty(self):
+    def test_raises_on_EmptyError(self):
         lst = SinglyList()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             lst.remove_first()
 
 
@@ -246,9 +246,9 @@ class TestSinglyListRemoveLast:
         lst.remove_last()
         assert lst.is_empty()
 
-    def test_raises_on_empty(self):
+    def test_raises_on_EmptyError(self):
         lst = SinglyList()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             lst.remove_last()
 
 
@@ -292,12 +292,12 @@ class TestSinglyListRemoveAt:
         assert val == 42
         assert lst.is_empty()
 
-    def test_raises_on_invalid_index_empty(self):
+    def test_raises_on_invalid_index_EmptyError(self):
         lst = SinglyList()
         with pytest.raises(IndexError):
             lst.remove_at(0)
 
-    def test_raises_on_invalid_index_nonempty(self):
+    def test_raises_on_invalid_index_nonEmptyError(self):
         lst = SinglyList()
         lst.insert_last(10)
         with pytest.raises(IndexError):
@@ -340,15 +340,15 @@ class TestSinglyListRemove:
         lst.insert_last(10)
         assert lst.remove(99) is False
 
-    def test_single_element_becomes_empty(self):
+    def test_single_element_becomes_EmptyError(self):
         lst = SinglyList()
         lst.insert_first(1)
         lst.remove(1)
         assert lst.is_empty()
 
-    def test_raises_on_empty(self):
+    def test_raises_on_EmptyError(self):
         lst = SinglyList()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             lst.remove(10)
 
 
@@ -372,7 +372,7 @@ class TestSinglyListIndex:
         lst.insert_last(10)
         assert lst.index_of(99) == -1
 
-    def test_empty_list_returns_negative_one(self):
+    def test_EmptyError_list_returns_negative_one(self):
         lst = SinglyList()
         assert lst.index_of(10) == -1
 
@@ -391,7 +391,7 @@ class TestSinglyListCount:
         lst.insert_last(10)
         assert lst.count(99) == 0
 
-    def test_empty_list_returns_zero(self):
+    def test_EmptyError_list_returns_zero(self):
         lst = SinglyList()
         assert lst.count(10) == 0
 
@@ -409,7 +409,7 @@ class TestSinglyListContains:
         lst.insert_last(10)
         assert 20 not in lst
 
-    def test_empty_list_returns_false(self):
+    def test_EmptyError_list_returns_false(self):
         lst = SinglyList()
         assert 10 not in lst
 
@@ -450,7 +450,7 @@ class TestSinglyListIter:
             lst.insert_last(v)
         assert list(lst) == [10, 20, 30]
 
-    def test_empty_list_yields_nothing(self):
+    def test_EmptyError_list_yields_nothing(self):
         lst = SinglyList()
         assert list(lst) == []
 
@@ -494,7 +494,7 @@ class TestSinglyListReverse:
         lst.reverse()
         assert list(lst) == [1, 2, 3]
 
-    def test_empty_list_no_error(self):
+    def test_EmptyError_list_no_error(self):
         lst = SinglyList()
         lst.reverse()
         assert lst.is_empty()
@@ -518,7 +518,7 @@ class TestSinglyListCopy:
         assert len(cpy) == 1
         assert cpy.get_last() == 10
 
-    def test_copy_empty_list(self):
+    def test_copy_EmptyError_list(self):
         lst = SinglyList()
         cpy = lst.copy()
         assert cpy.is_empty()
@@ -536,7 +536,7 @@ class TestSinglyListClear:
         assert lst.is_empty()
         assert len(lst) == 0
 
-    def test_clear_empty_list_no_error(self):
+    def test_clear_EmptyError_list_no_error(self):
         lst = SinglyList()
         lst.clear()
         assert lst.is_empty()
@@ -552,7 +552,7 @@ class TestSinglyListHasCycle:
             lst.insert_last(v)
         assert lst.has_cycle() is False
 
-    def test_no_cycle_in_empty_list(self):
+    def test_no_cycle_in_EmptyError_list(self):
         lst = SinglyList()
         assert lst.has_cycle() is False
 
@@ -588,21 +588,21 @@ class TestSinglyListMiddle:
         lst.insert_last(20)
         assert lst.middle() == (10, 20)
 
-    def test_raises_on_empty(self):
+    def test_raises_on_EmptyError(self):
         lst = SinglyList()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             lst.middle()
 
 
 class TestSinglyListBool:
     """__bool__"""
 
-    def test_non_empty_is_truthy(self):
+    def test_non_EmptyError_is_truthy(self):
         lst = SinglyList()
         lst.insert_first(1)
         assert bool(lst)
 
-    def test_empty_is_falsy(self):
+    def test_EmptyError_is_falsy(self):
         lst = SinglyList()
         assert not lst
 

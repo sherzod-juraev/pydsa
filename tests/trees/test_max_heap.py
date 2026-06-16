@@ -1,20 +1,20 @@
 import pytest
 from pydsa import MaxHeap
-from pydsa.exc import Empty
+from pydsa.exc import EmptyError
 
 
 class TestMaxHeapInit:
     """__init__"""
 
-    def test_empty_heap_has_zero_length(self):
+    def test_EmptyError_heap_has_zero_length(self):
         heap = MaxHeap()
         assert len(heap) == 0
 
-    def test_empty_heap_is_falsy(self):
+    def test_EmptyError_heap_is_falsy(self):
         heap = MaxHeap()
         assert not heap
 
-    def test_empty_heap_is_empty(self):
+    def test_EmptyError_heap_is_empty(self):
         heap = MaxHeap()
         assert heap.is_empty()
 
@@ -73,7 +73,7 @@ class TestMaxHeapExtract:
         heap.extract_max()
         assert len(heap) == 1
 
-    def test_extract_until_empty(self):
+    def test_extract_until_EmptyError(self):
         heap = MaxHeap()
         heap.insert(10)
         heap.insert(20)
@@ -81,9 +81,9 @@ class TestMaxHeapExtract:
         heap.extract_max()
         assert heap.is_empty()
 
-    def test_extract_on_empty_raises(self):
+    def test_extract_on_EmptyError_raises(self):
         heap = MaxHeap()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             heap.extract_max()
 
 
@@ -96,9 +96,9 @@ class TestMaxHeapPeek:
         assert heap.peek() == 10
         assert len(heap) == 1
 
-    def test_peek_on_empty_raises(self):
+    def test_peek_on_EmptyError_raises(self):
         heap = MaxHeap()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             heap.peek()
 
 
@@ -111,7 +111,7 @@ class TestMaxHeapHeapify:
         assert len(heap) == 9
         assert heap.peek() == 9
 
-    def test_heapify_empty_list(self):
+    def test_heapify_EmptyError_list(self):
         heap = MaxHeap()
         heap.heapify([])
         assert heap.is_empty()
@@ -153,7 +153,7 @@ class TestMaxHeapExtractAll:
         heap.extract_all()
         assert heap.is_empty()
 
-    def test_extract_all_empty_heap(self):
+    def test_extract_all_EmptyError_heap(self):
         heap = MaxHeap()
         assert heap.extract_all() == []
 
@@ -171,7 +171,7 @@ class TestMaxHeapContains:
         heap.insert(10)
         assert 20 not in heap
 
-    def test_contains_empty(self):
+    def test_contains_EmptyError(self):
         heap = MaxHeap()
         assert 10 not in heap
 
@@ -187,7 +187,7 @@ class TestMaxHeapClear:
         assert heap.is_empty()
         assert len(heap) == 0
 
-    def test_clear_empty_heap(self):
+    def test_clear_EmptyError_heap(self):
         heap = MaxHeap()
         heap.clear()
         assert heap.is_empty()

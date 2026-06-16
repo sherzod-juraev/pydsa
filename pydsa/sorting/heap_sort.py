@@ -1,7 +1,8 @@
+from .._types import Comparable
 from ..trees import MinHeap
 
 
-def heap_sort(arr: list, /) -> list:
+def heap_sort[T: Comparable](arr: list[T], /) -> list[T]:
     """
     Sort a list using heap sort. O(n log n) time, O(n) space.
 
@@ -28,6 +29,6 @@ def heap_sort(arr: list, /) -> list:
     - Performs consistently in O(n log n) regardless of input
       distribution, making it a reliable worst-case performer.
     """
-    min_heap = MinHeap()
+    min_heap: MinHeap[T] = MinHeap()
     min_heap.heapify(arr)
     return min_heap.extract_all()

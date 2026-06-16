@@ -1,20 +1,20 @@
 import pytest
 from pydsa import BSTree
-from pydsa.exc import Empty
+from pydsa.exc import EmptyError
 
 
 class TestBSTreeInit:
     """__init__"""
 
-    def test_empty_tree_has_zero_nodes(self):
+    def test_EmptyError_tree_has_zero_nodes(self):
         bst = BSTree()
         assert len(bst) == 0
 
-    def test_empty_tree_is_falsy(self):
+    def test_EmptyError_tree_is_falsy(self):
         bst = BSTree()
         assert not bst
 
-    def test_empty_tree_is_empty(self):
+    def test_EmptyError_tree_is_empty(self):
         bst = BSTree()
         assert bst.is_empty()
 
@@ -75,7 +75,7 @@ class TestBSTreeSearch:
         bst.insert(5)
         assert bst.search(99) is False
 
-    def test_search_empty_tree(self):
+    def test_search_EmptyError_tree(self):
         bst = BSTree()
         assert bst.search(10) is False
 
@@ -93,7 +93,7 @@ class TestBSTreeContains:
         bst.insert(42)
         assert 99 not in bst
 
-    def test_contains_empty(self):
+    def test_contains_EmptyError(self):
         bst = BSTree()
         assert 10 not in bst
 
@@ -106,9 +106,9 @@ class TestBSTreeRoot:
         bst.insert(42)
         assert bst.root() == 42
 
-    def test_root_on_empty_raises(self):
+    def test_root_on_EmptyError_raises(self):
         bst = BSTree()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             bst.root()
 
 
@@ -133,14 +133,14 @@ class TestBSTreeMinMax:
         assert bst.min_value() == 42
         assert bst.max_value() == 42
 
-    def test_min_value_on_empty_raises(self):
+    def test_min_value_on_EmptyError_raises(self):
         bst = BSTree()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             bst.min_value()
 
-    def test_max_value_on_empty_raises(self):
+    def test_max_value_on_EmptyError_raises(self):
         bst = BSTree()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             bst.max_value()
 
     def test_min_value_skewed_right(self):
@@ -212,7 +212,7 @@ class TestBSTreeRemove:
         bst.remove(99)
         assert len(bst) == 3
 
-    def test_remove_from_empty(self):
+    def test_remove_from_EmptyError(self):
         bst = BSTree()
         bst.remove(10)
         assert bst.is_empty()
@@ -261,7 +261,7 @@ class TestBSTreeInorder:
             bst.insert(v)
         assert list(bst.inorder()) == [1, 2, 3, 4, 5]
 
-    def test_inorder_empty(self):
+    def test_inorder_EmptyError(self):
         bst = BSTree()
         assert list(bst.inorder()) == []
 
@@ -287,7 +287,7 @@ class TestBSTreeTraversals:
             bst.insert(v)
         assert list(bst.levelorder()) == [5, 3, 8, 1, 4, 7, 9]
 
-    def test_all_traversals_empty(self):
+    def test_all_traversals_EmptyError(self):
         bst = BSTree()
         assert list(bst.preorder()) == []
         assert list(bst.inorder()) == []
@@ -298,7 +298,7 @@ class TestBSTreeTraversals:
 class TestBSTreeHeight:
     """height"""
 
-    def test_height_empty(self):
+    def test_height_EmptyError(self):
         bst = BSTree()
         assert bst.height() == 0
 
@@ -329,7 +329,7 @@ class TestBSTreeHeight:
 class TestBSTreeClear:
     """clear"""
 
-    def test_clear_non_empty(self):
+    def test_clear_non_EmptyError(self):
         bst = BSTree()
         for v in [5, 3, 8]:
             bst.insert(v)
@@ -337,7 +337,7 @@ class TestBSTreeClear:
         assert bst.is_empty()
         assert len(bst) == 0
 
-    def test_clear_empty(self):
+    def test_clear_EmptyError(self):
         bst = BSTree()
         bst.clear()
         assert bst.is_empty()
@@ -384,12 +384,12 @@ class TestBSTreeLen:
 class TestBSTreeBool:
     """__bool__"""
 
-    def test_non_empty_is_truthy(self):
+    def test_non_EmptyError_is_truthy(self):
         bst = BSTree()
         bst.insert(1)
         assert bool(bst)
 
-    def test_empty_is_falsy(self):
+    def test_EmptyError_is_falsy(self):
         bst = BSTree()
         assert not bst
 

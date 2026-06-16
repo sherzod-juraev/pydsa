@@ -1,10 +1,14 @@
+from collections.abc import Iterator
+from typing import TypeVar, cast
+
+from ...exc import EmptyError
+from ...linear import Queue, Stack
 from .node import Node
-from typing import Any, Iterator
-from ...exc import Empty
-from ...linear import Stack, Queue
+
+T = TypeVar("T")
 
 
-class BinaryTree:
+class BinaryTree[T]:
     """
     A general binary tree with path-based insertion and four traversal
     strategies.
@@ -43,7 +47,7 @@ class BinaryTree:
 
     def __init__(self) -> None:
 
-        self.__root: Node | None = None
+        self.__root: Node[T] | None = None
         self.__nodes: int = 0
 
     def __len__(self) -> int:
@@ -58,19 +62,20 @@ class BinaryTree:
         """Return True if the tree has no nodes. O(1)."""
         return self.__nodes == 0
 
-    def root(self) -> Any:
+    def root(self) -> T:
         """Return the value of the root node. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the tree is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        return self.__root.value
+            raise EmptyError(self)
+        root = cast(Node[T], self.__root)
+        return root.value
 
-    def insert(self, value: Any, path: str, /) -> None:
+    def insert(self, value: T, path: str, /) -> None:
         """Insert a value at the node specified by a path string. O(h).
 
         The path is a sequence of ``'L'`` and ``'R'`` characters
@@ -104,7 +109,7 @@ class BinaryTree:
             self.__root = new_node
             self.__nodes += 1
             return
-        current = self.__root
+        current = cast(Node[T], self.__root)
         for i in range(len(path) - 1):
             if path[i] == 'L':
                 if current.left is None:
@@ -122,7 +127,7 @@ class BinaryTree:
             current.right = new_node
         self.__nodes += 1
 
-    def preorder(self) -> Iterator:
+    def preorder(self) -> Iterator[T]:
         """Yield values in preorder traversal (root → left → right). O(n).
 
         Uses an explicit stack to simulate recursion.
@@ -139,17 +144,17 @@ class BinaryTree:
         """
         if self.is_empty():
             return
-        stack = Stack()
-        stack.push(self.__root)
+        stack: Stack[Node[T]] = Stack()
+        stack.push(cast(Node[T], self.__root))
         while stack:
-            node: Node = stack.pop()
+            node: Node[T] = stack.pop()
             yield node.value
             if node.right:
                 stack.push(node.right)
             if node.left:
                 stack.push(node.left)
 
-    def inorder(self) -> Iterator:
+    def inorder(self) -> Iterator[T]:
         """Yield values in inorder traversal (left → root → right). O(n).
 
         Uses an explicit stack to simulate recursion.
@@ -166,17 +171,17 @@ class BinaryTree:
         """
         if self.is_empty():
             return
-        stack = Stack()
-        current = self.__root
+        stack: Stack[Node[T]] = Stack()
+        current: Node[T] | None = self.__root
         while stack or current:
             while current:
                 stack.push(current)
                 current = current.left
-            current: Node = stack.pop()
+            current = stack.pop()
             yield current.value
             current = current.right
 
-    def postorder(self) -> Iterator:
+    def postorder(self) -> Iterator[T]:
         """Yield values in postorder traversal (left → right → root). O(n).
 
         Uses an explicit stack and a ``last_visited`` marker to
@@ -194,7 +199,7 @@ class BinaryTree:
         """
         if self.is_empty():
             return
-        stack = Stack()
+        stack: Stack[Node[T]] = Stack()
         current = self.__root
         last_visited = None
         while stack or current:
@@ -202,16 +207,16 @@ class BinaryTree:
                 stack.push(current)
                 current = current.left
             else:
-                peek_node: Node = stack.peek()
+                peek_node: Node[T] = stack.peek()
                 if peek_node.right and peek_node.right != last_visited:
                     current = peek_node.right
                 else:
-                    node: Node = stack.pop()
+                    node: Node[T] = stack.pop()
                     yield node.value
                     last_visited = node
                     current = None
 
-    def levelorder(self) -> Iterator:
+    def levelorder(self) -> Iterator[T]:
         """Yield values in level-order traversal (BFS, level by level). O(n).
 
         Uses an explicit queue to process nodes in breadth-first order.
@@ -228,14 +233,14 @@ class BinaryTree:
         """
         if self.is_empty():
             return
-        queue = Queue()
-        queue.enqueue(self.__root)
+        queue: Queue[Node[T]] = Queue()
+        queue.enqueue(cast(Node[T], self.__root))
         while queue:
-            node: Node = queue.dequeue()
+            node: Node[T] = queue.dequeue()
             yield node.value
-            if node.left:
+            if node.left is not None:
                 queue.enqueue(node.left)
-            if node.right:
+            if node.right is not None:
                 queue.enqueue(node.right)
 
     def height(self) -> int:
@@ -256,15 +261,15 @@ class BinaryTree:
         """
         if self.is_empty():
             return 0
-        queue = Queue()
-        queue.enqueue(self.__root)
+        queue: Queue[Node[T]] = Queue()
+        queue.enqueue(cast(Node[T], self.__root))
         height = 0
         while queue:
             for _ in range(len(queue)):
-                node: Node = queue.dequeue()
-                if node.left:
+                node: Node[T] = queue.dequeue()
+                if node.left is not None:
                     queue.enqueue(node.left)
-                if node.right:
+                if node.right is not None:
                     queue.enqueue(node.right)
             height += 1
         return height
@@ -285,13 +290,13 @@ class BinaryTree:
         if self.is_empty():
             return 0
         count = 0
-        queue = Queue()
-        queue.enqueue(self.__root)
+        queue: Queue[Node[T]] = Queue()
+        queue.enqueue(cast(Node[T], self.__root))
         while queue:
-            node: Node = queue.dequeue()
-            if node.left:
+            node: Node[T] = queue.dequeue()
+            if node.left is not None:
                 queue.enqueue(node.left)
-            if node.right:
+            if node.right is not None:
                 queue.enqueue(node.right)
             if node.left is None and node.right is None:
                 count += 1

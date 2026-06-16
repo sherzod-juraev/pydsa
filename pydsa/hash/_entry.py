@@ -1,6 +1,11 @@
-class Entry:
+from typing import TypeVar
 
-    def __init__(self, key, value):
+K = TypeVar("K")
+V = TypeVar("V")
 
-        self.key = key
-        self.value = value
+class Entry[K, V]:
+
+    def __init__(self, key: K, value: V) -> None:
+
+        self.key: K = key
+        self.value: V = value

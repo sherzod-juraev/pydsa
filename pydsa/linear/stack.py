@@ -1,9 +1,11 @@
+from typing import TypeVar, cast
+
+from ..exc import EmptyError
 from .singly.node import Node
-from typing import Any
-from ..exc import Empty
 
+T = TypeVar("T")
 
-class Stack:
+class Stack[T]:
     """
     A last-in, first-out (LIFO) stack implemented with a singly linked list.
 
@@ -31,7 +33,7 @@ class Stack:
 
     def __init__(self) -> None:
 
-        self.__head: Node | None = None
+        self.__head: Node[T] | None = None
         self.__length: int = 0
 
     def __len__(self) -> int:
@@ -42,35 +44,40 @@ class Stack:
         """Return True if the stack is empty. O(1)."""
         return self.__length == 0
 
-    def peek(self) -> Any:
+    def __bool__(self) -> bool:
+        return not self.is_empty()
+
+    def peek(self) -> T:
         """Return the top element without removing it. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the stack is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        return self.__head.value
+            raise EmptyError(self)
+        head = cast(Node[T], self.__head)
+        return head.value
 
-    def pop(self) -> Any:
+    def pop(self) -> T:
         """Remove and return the top element. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the stack is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        current = self.__head
-        self.__head = self.__head.next
+            raise EmptyError(self)
+        head = cast(Node[T], self.__head)
+        current = head
+        self.__head = head.next
         current.next = None
         self.__length -= 1
         return current.value
 
-    def push(self, value: Any, /) -> None:
+    def push(self, value: T, /) -> None:
         """Push a value onto the top of the stack. O(1)."""
         new_node = Node(value)
         new_node.next = self.__head

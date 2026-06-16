@@ -1,8 +1,7 @@
-from .base import PydsaException
-from .empty import Empty
-
+from .base import PydsaError
+from .empty import EmptyError
 
 __all__ = [
-    'PydsaException',
-    'Empty',
+    'PydsaError',
+    'EmptyError',
 ]

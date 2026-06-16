@@ -1,16 +1,16 @@
 import pytest
 from pydsa import Queue
-from pydsa.exc import Empty
+from pydsa.exc import EmptyError
 
 
 class TestQueueInit:
     """__init__"""
 
-    def test_empty_queue_has_zero_length(self):
+    def test_EmptyError_queue_has_zero_length(self):
         q = Queue()
         assert len(q) == 0
 
-    def test_empty_queue_is_empty(self):
+    def test_EmptyError_queue_is_EmptyError(self):
         q = Queue()
         assert q.is_empty()
 
@@ -53,7 +53,7 @@ class TestQueueDequeue:
         assert len(q) == 1
         assert q.peek() == 20
 
-    def test_dequeue_until_empty(self):
+    def test_dequeue_until_EmptyError(self):
         q = Queue()
         q.enqueue(1)
         q.enqueue(2)
@@ -63,9 +63,9 @@ class TestQueueDequeue:
         q.dequeue()
         assert q.is_empty()
 
-    def test_dequeue_on_empty_raises(self):
+    def test_dequeue_on_EmptyError_raises(self):
         q = Queue()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             q.dequeue()
 
     def test_dequeue_updates_tail_when_single_element(self):
@@ -86,9 +86,9 @@ class TestQueuePeek:
         assert q.peek() == 10
         assert len(q) == 1
 
-    def test_peek_on_empty_raises(self):
+    def test_peek_on_EmptyError_raises(self):
         q = Queue()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             q.peek()
 
 

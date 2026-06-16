@@ -1,10 +1,11 @@
-from typing import Any
+from typing import TypeVar
 
+T = TypeVar("T")
 
-class Node:
+class Node[T]:
 
-    def __init__(self, value: Any) -> None:
+    def __init__(self, value: T) -> None:
 
-        self.value = value
-        self.next: Node | None = None
-        self.prev: Node | None = None
+        self.value: T = value
+        self.next: Node[T] | None = None
+        self.prev: Node[T] | None = None

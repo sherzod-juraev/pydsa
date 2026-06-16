@@ -1,20 +1,20 @@
 import pytest
 from pydsa import MinHeap
-from pydsa.exc import Empty
+from pydsa.exc import EmptyError
 
 
 class TestMinHeapInit:
     """__init__"""
 
-    def test_empty_heap_has_zero_length(self):
+    def test_EmptyError_heap_has_zero_length(self):
         heap = MinHeap()
         assert len(heap) == 0
 
-    def test_empty_heap_is_falsy(self):
+    def test_EmptyError_heap_is_falsy(self):
         heap = MinHeap()
         assert not heap
 
-    def test_empty_heap_is_empty(self):
+    def test_EmptyError_heap_is_empty(self):
         heap = MinHeap()
         assert heap.is_empty()
 
@@ -73,7 +73,7 @@ class TestMinHeapExtract:
         heap.extract_min()
         assert len(heap) == 1
 
-    def test_extract_until_empty(self):
+    def test_extract_until_EmptyError(self):
         heap = MinHeap()
         heap.insert(10)
         heap.insert(20)
@@ -81,9 +81,9 @@ class TestMinHeapExtract:
         heap.extract_min()
         assert heap.is_empty()
 
-    def test_extract_on_empty_raises(self):
+    def test_extract_on_EmptyError_raises(self):
         heap = MinHeap()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             heap.extract_min()
 
 
@@ -96,9 +96,9 @@ class TestMinHeapPeek:
         assert heap.peek() == 10
         assert len(heap) == 1
 
-    def test_peek_on_empty_raises(self):
+    def test_peek_on_EmptyError_raises(self):
         heap = MinHeap()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             heap.peek()
 
 
@@ -111,7 +111,7 @@ class TestMinHeapHeapify:
         assert len(heap) == 9
         assert heap.peek() == 1
 
-    def test_heapify_empty_list(self):
+    def test_heapify_EmptyError_list(self):
         heap = MinHeap()
         heap.heapify([])
         assert heap.is_empty()
@@ -153,7 +153,7 @@ class TestMinHeapExtractAll:
         heap.extract_all()
         assert heap.is_empty()
 
-    def test_extract_all_empty_heap(self):
+    def test_extract_all_EmptyError_heap(self):
         heap = MinHeap()
         assert heap.extract_all() == []
 
@@ -171,7 +171,7 @@ class TestMinHeapContains:
         heap.insert(10)
         assert 20 not in heap
 
-    def test_contains_empty(self):
+    def test_contains_EmptyError(self):
         heap = MinHeap()
         assert 10 not in heap
 
@@ -187,7 +187,7 @@ class TestMinHeapClear:
         assert heap.is_empty()
         assert len(heap) == 0
 
-    def test_clear_empty_heap(self):
+    def test_clear_EmptyError_heap(self):
         heap = MinHeap()
         heap.clear()
         assert heap.is_empty()

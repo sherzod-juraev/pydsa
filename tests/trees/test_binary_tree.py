@@ -1,20 +1,20 @@
 import pytest
 from pydsa import BinaryTree
-from pydsa.exc import Empty
+from pydsa.exc import EmptyError
 
 
 class TestBinaryTreeInit:
     """__init__"""
 
-    def test_empty_tree_has_zero_nodes(self):
+    def test_EmptyError_tree_has_zero_nodes(self):
         tree = BinaryTree()
         assert len(tree) == 0
 
-    def test_empty_tree_is_falsy(self):
+    def test_EmptyError_tree_is_falsy(self):
         tree = BinaryTree()
         assert not tree
 
-    def test_empty_tree_is_empty(self):
+    def test_EmptyError_tree_is_empty(self):
         tree = BinaryTree()
         assert tree.is_empty()
 
@@ -96,9 +96,9 @@ class TestBinaryTreeRoot:
         tree.insert(42, "")
         assert tree.root() == 42
 
-    def test_root_on_empty_raises(self):
+    def test_root_on_EmptyError_raises(self):
         tree = BinaryTree()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             tree.root()
 
 
@@ -135,7 +135,7 @@ class TestBinaryTreePreorder:
         tree.insert(3, "RR")
         assert list(tree.preorder()) == [1, 2, 3]
 
-    def test_preorder_empty_tree(self):
+    def test_preorder_EmptyError_tree(self):
         tree = BinaryTree()
         assert list(tree.preorder()) == []
 
@@ -173,7 +173,7 @@ class TestBinaryTreeInorder:
         tree.insert(3, "RR")
         assert list(tree.inorder()) == [1, 2, 3]
 
-    def test_inorder_empty_tree(self):
+    def test_inorder_EmptyError_tree(self):
         tree = BinaryTree()
         assert list(tree.inorder()) == []
 
@@ -211,7 +211,7 @@ class TestBinaryTreePostorder:
         tree.insert(3, "RR")
         assert list(tree.postorder()) == [3, 2, 1]
 
-    def test_postorder_empty_tree(self):
+    def test_postorder_EmptyError_tree(self):
         tree = BinaryTree()
         assert list(tree.postorder()) == []
 
@@ -242,7 +242,7 @@ class TestBinaryTreeLevelorder:
         tree.insert(3, "LL")
         assert list(tree.levelorder()) == [1, 2, 3]
 
-    def test_levelorder_empty_tree(self):
+    def test_levelorder_EmptyError_tree(self):
         tree = BinaryTree()
         assert list(tree.levelorder()) == []
 
@@ -250,7 +250,7 @@ class TestBinaryTreeLevelorder:
 class TestBinaryTreeHeight:
     """height"""
 
-    def test_height_empty_tree(self):
+    def test_height_EmptyError_tree(self):
         tree = BinaryTree()
         assert tree.height() == 0
 
@@ -290,7 +290,7 @@ class TestBinaryTreeHeight:
 class TestBinaryTreeLeaves:
     """leaves"""
 
-    def test_leaves_empty_tree(self):
+    def test_leaves_EmptyError_tree(self):
         tree = BinaryTree()
         assert tree.leaves() == 0
 
@@ -327,7 +327,7 @@ class TestBinaryTreeLeaves:
 class TestBinaryTreeClear:
     """clear"""
 
-    def test_clear_non_empty_tree(self):
+    def test_clear_non_EmptyError_tree(self):
         tree = BinaryTree()
         tree.insert(5, "")
         tree.insert(3, "L")
@@ -336,7 +336,7 @@ class TestBinaryTreeClear:
         assert tree.is_empty()
         assert len(tree) == 0
 
-    def test_clear_empty_tree(self):
+    def test_clear_EmptyError_tree(self):
         tree = BinaryTree()
         tree.clear()
         assert tree.is_empty()
@@ -345,12 +345,12 @@ class TestBinaryTreeClear:
 class TestBinaryTreeBool:
     """__bool__"""
 
-    def test_non_empty_is_truthy(self):
+    def test_non_EmptyError_is_truthy(self):
         tree = BinaryTree()
         tree.insert(1, "")
         assert bool(tree)
 
-    def test_empty_is_falsy(self):
+    def test_EmptyError_is_falsy(self):
         tree = BinaryTree()
         assert not tree
 

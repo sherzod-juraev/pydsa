@@ -1,6 +1,6 @@
-from .singly import SinglyList
 from .doubly import DoublyList
 from .queue import Queue
+from .singly import SinglyList
 from .stack import Stack
 
 __all__ = [

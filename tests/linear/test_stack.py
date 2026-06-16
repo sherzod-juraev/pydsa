@@ -1,16 +1,16 @@
 import pytest
 from pydsa import Stack
-from pydsa.exc import Empty
+from pydsa.exc import EmptyError
 
 
 class TestStackInit:
     """__init__"""
 
-    def test_empty_stack_has_zero_length(self):
+    def test_EmptyError_stack_has_zero_length(self):
         s = Stack()
         assert len(s) == 0
 
-    def test_empty_stack_is_empty(self):
+    def test_EmptyError_stack_is_empty(self):
         s = Stack()
         assert s.is_empty()
 
@@ -53,7 +53,7 @@ class TestStackPop:
         assert len(s) == 1
         assert s.peek() == 10
 
-    def test_pop_until_empty(self):
+    def test_pop_until_EmptyError(self):
         s = Stack()
         s.push(1)
         s.push(2)
@@ -63,9 +63,9 @@ class TestStackPop:
         s.pop()
         assert s.is_empty()
 
-    def test_pop_on_empty_raises(self):
+    def test_pop_on_EmptyError_raises(self):
         s = Stack()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             s.pop()
 
 
@@ -78,9 +78,9 @@ class TestStackPeek:
         assert s.peek() == 10
         assert len(s) == 1
 
-    def test_peek_on_empty_raises(self):
+    def test_peek_on_EmptyError_raises(self):
         s = Stack()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             s.peek()
 
 

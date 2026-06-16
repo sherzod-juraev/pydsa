@@ -1,10 +1,13 @@
+from collections.abc import Iterator
+from typing import cast
+
+from ..._types import Comparable
+from ...exc import EmptyError
+from ...linear import Queue, Stack
 from ..binary_tree.node import Node
-from typing import Any, Iterator
-from ...linear import Stack, Queue
-from ...exc import Empty
 
 
-class BSTree:
+class BSTree[T: Comparable]:
     """
     A binary searching tree (BST) where each node satisfies the invariant
     ``left < root < right``.
@@ -44,24 +47,24 @@ class BSTree:
 
     def __init__(self) -> None:
 
-        self.__root: Node | None = None
+        self.__root: Node[T] | None = None
         self.__nodes: int = 0
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Return the number of nodes. O(1)."""
         return self.__nodes
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """Return True if the tree is not empty. O(1)."""
         return self.__nodes > 0
 
-    def __contains__(self, item) -> bool:
+    def __contains__(self, item: T) -> bool:
         """Return True if the value exists in the tree. O(h).
 
         Uses iterative binary searching from the root.
         """
         current = self.__root
-        while current:
+        while current is not None:
             if current.value == item:
                 return True
             elif current.value < item:
@@ -74,19 +77,20 @@ class BSTree:
         """Return True if the tree has no nodes. O(1)."""
         return self.__nodes == 0
 
-    def root(self) -> Any:
+    def root(self) -> T:
         """Return the value of the root node. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the tree is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        return self.__root.value
+            raise EmptyError(self)
+        root = cast(Node[T], self.__root)
+        return root.value
 
-    def insert(self, value: Any, /) -> None:
+    def insert(self, value: T, /) -> None:
         """Insert a value into the tree. O(h).
 
         Duplicate values are silently ignored. The BST invariant
@@ -112,8 +116,8 @@ class BSTree:
             self.__root = Node(value)
             self.__nodes += 1
             return
-        current: Node = self.__root
-        while current:
+        current: Node[T] = cast(Node[T], self.__root)
+        while current is not None:
             if current.value == value:
                 return
             elif current.value < value:
@@ -129,7 +133,7 @@ class BSTree:
                     return
                 current = current.left
 
-    def search(self, value: Any, /) -> bool:
+    def search(self, value: T, /) -> bool:
         """Return True if the value exists in the tree. O(h).
 
         Parameters
@@ -151,7 +155,7 @@ class BSTree:
         """
         return value in self
 
-    def min_value(self) -> Any:
+    def min_value(self) -> T:
         """Return the minimum value in the tree (leftmost node). O(h).
 
         Returns
@@ -161,7 +165,7 @@ class BSTree:
 
         Raises
         ------
-        Empty
+        EmptyError
             If the tree is empty.
 
         Examples
@@ -170,13 +174,13 @@ class BSTree:
         1
         """
         if self.is_empty():
-            raise Empty(self)
-        current: Node = self.__root
+            raise EmptyError(self)
+        current: Node[T] = cast(Node[T], self.__root)
         while current.left:
             current = current.left
         return current.value
 
-    def max_value(self) -> Any:
+    def max_value(self) -> T:
         """Return the maximum value in the tree (rightmost node). O(h).
 
          Returns
@@ -186,7 +190,7 @@ class BSTree:
 
          Raises
          ------
-         Empty
+         EmptyError
              If the tree is empty.
 
          Examples
@@ -195,13 +199,13 @@ class BSTree:
          14
          """
         if self.is_empty():
-            raise Empty(self)
-        current: Node = self.__root
+            raise EmptyError(self)
+        current: Node[T] = cast(Node[T], self.__root)
         while current.right:
             current = current.right
         return current.value
 
-    def remove(self, value: Any, /) -> None:
+    def remove(self, value: T, /) -> None:
         """Remove a value from the tree if it exists. O(h).
 
          Handles three cases:
@@ -225,19 +229,16 @@ class BSTree:
          """
         if self.is_empty():
             return
-        parent: Node | None = None
-        current: Node | None = self.__root
+        parent: Node[T] | None = None
+        current: Node[T] | None = self.__root
         while current and current.value != value:
             parent = current
-            if value < current.value:
-                current = current.left
-            else:
-                current = current.right
+            current = current.left if value < current.value else current.right
         if current is None:
             return
-        if current.left and current.right:
-            successor_parent: Node | None = current
-            successor: Node | None = current.right
+        if current.left is not None and current.right is not None:
+            successor_parent: Node[T] = current
+            successor: Node[T] = current.right
             while successor.left:
                 successor_parent = successor
                 successor = successor.left
@@ -253,7 +254,7 @@ class BSTree:
             parent.right = child
         self.__nodes -= 1
 
-    def preorder(self) -> Iterator:
+    def preorder(self) -> Iterator[T]:
         """Yield values in preorder traversal (root → left → right). O(n).
 
         Returns
@@ -268,17 +269,17 @@ class BSTree:
         """
         if self.is_empty():
             return
-        stack = Stack()
-        stack.push(self.__root)
+        stack: Stack[Node[T]] = Stack()
+        stack.push(cast(Node[T], self.__root))
         while stack:
-            node: Node = stack.pop()
+            node: Node[T] = stack.pop()
             yield node.value
-            if node.right:
+            if node.right is not None:
                 stack.push(node.right)
-            if node.left:
+            if node.left is not None:
                 stack.push(node.left)
 
-    def inorder(self) -> Iterator:
+    def inorder(self) -> Iterator[T]:
         """Yield values in inorder traversal (left → root → right). O(n).
 
         Because this is a BST, the output is sorted in ascending order.
@@ -295,17 +296,17 @@ class BSTree:
         """
         if self.is_empty():
             return
-        stack = Stack()
-        current = self.__root
-        while stack or current:
-            while current:
+        stack: Stack[Node[T]] = Stack()
+        current: Node[T] | None = self.__root
+        while stack or current is not None:
+            while current is not None:
                 stack.push(current)
                 current = current.left
             current = stack.pop()
             yield current.value
             current = current.right
 
-    def postorder(self) -> Iterator:
+    def postorder(self) -> Iterator[T]:
         """Yield values in postorder traversal (left → right → root). O(n).
 
         Returns
@@ -320,15 +321,15 @@ class BSTree:
         """
         if self.is_empty():
             return
-        stack = Stack()
-        current: Node | None = self.__root
-        last_visited: Node | None = None
+        stack: Stack[Node[T]] = Stack()
+        current: Node[T] | None = self.__root
+        last_visited: Node[T] | None = None
         while stack or current:
-            if current:
+            if current is not None:
                 stack.push(current)
                 current = current.left
             else:
-                peek_node: Node = stack.peek()
+                peek_node: Node[T] = stack.peek()
                 if peek_node.right and peek_node.right != last_visited:
                     current = peek_node.right
                 else:
@@ -336,7 +337,7 @@ class BSTree:
                     yield last_visited.value
                     current = None
 
-    def levelorder(self) -> Iterator:
+    def levelorder(self) -> Iterator[T]:
         """Yield values in level-order (breadth-first) traversal. O(n).
 
         Returns
@@ -351,14 +352,14 @@ class BSTree:
         """
         if self.is_empty():
             return
-        queue = Queue()
-        queue.enqueue(self.__root)
+        queue: Queue[Node[T]] = Queue()
+        queue.enqueue(cast(Node[T], self.__root))
         while queue:
-            node: Node = queue.dequeue()
+            node: Node[T] = queue.dequeue()
             yield node.value
-            if node.left:
+            if node.left is not None:
                 queue.enqueue(node.left)
-            if node.right:
+            if node.right is not None:
                 queue.enqueue(node.right)
 
     def height(self) -> int:
@@ -378,15 +379,15 @@ class BSTree:
         """
         if self.is_empty():
             return 0
-        queue = Queue()
-        queue.enqueue(self.__root)
+        queue: Queue[Node[T]] = Queue()
+        queue.enqueue(cast(Node[T], self.__root))
         height = 0
         while queue:
             for _ in range(len(queue)):
-                node: Node = queue.dequeue()
-                if node.left:
+                node: Node[T] = queue.dequeue()
+                if node.left is not None:
                     queue.enqueue(node.left)
-                if node.right:
+                if node.right is not None:
                     queue.enqueue(node.right)
             height += 1
         return height

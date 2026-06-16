@@ -1,6 +1,6 @@
 class Node:
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         self.children: dict[str, Node] = {}
         self.is_end: bool = False

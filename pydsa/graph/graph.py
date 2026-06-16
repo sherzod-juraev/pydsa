@@ -1,5 +1,6 @@
-from typing import Iterator
-from ..linear import Stack, Queue
+from collections.abc import Iterator
+
+from ..linear import Queue, Stack
 
 
 class Graph:
@@ -59,7 +60,7 @@ class Graph:
         """Return True if the graph has at least one vertex. O(1)."""
         return self.__v_size > 0
 
-    def __contains__(self, item) -> bool:
+    def __contains__(self, item: str) -> bool:
         """Return True if the vertex exists. O(1)."""
         return item in self.__adj
 
@@ -146,8 +147,7 @@ class Graph:
 
     def vertices(self) -> Iterator[str]:
         """Yield all vertices. O(V)."""
-        for vertex in self.__adj.keys():
-            yield vertex
+        yield from self.__adj.keys()
 
     def edges(self) -> Iterator[tuple[str, str]]:
         """Yield all edges as ``(u, v)`` tuples. O(E)."""
@@ -161,8 +161,7 @@ class Graph:
         Silently returns nothing if the vertex does not exist.
         """
         if vertex in self.__adj:
-            for neighbor in self.__adj[vertex]:
-                yield neighbor
+            yield from self.__adj[vertex]
 
     def degree(self, vertex: str, /) -> int:
         """Return the out-degree (or degree in undirected) of a vertex. O(1).
@@ -177,7 +176,7 @@ class Graph:
 
         return len(self.__adj[vertex])
 
-    def bfs(self, start: str, /) -> Iterator:
+    def bfs(self, start: str, /) -> Iterator[str]:
         """Yield vertices in breadth-first order from ``start``. O(V + E).
 
          Uses a custom ``Queue`` (FIFO).
@@ -189,7 +188,7 @@ class Graph:
          """
         if start not in self.__adj:
             raise KeyError(f"Key {start} not found")
-        queue = Queue()
+        queue = Queue[str]()
         visited = set()
         queue.enqueue(start)
         visited.add(start)
@@ -201,7 +200,7 @@ class Graph:
                     queue.enqueue(neighbor)
                     visited.add(neighbor)
 
-    def dfs(self, start: str, /) -> Iterator:
+    def dfs(self, start: str, /) -> Iterator[str]:
         """Yield vertices in depth-first order from ``start``. O(V + E).
 
            Uses a custom ``Stack`` (LIFO).
@@ -213,7 +212,7 @@ class Graph:
            """
         if start not in self.__adj:
             raise KeyError(f"Key {start} not found")
-        stack = Stack()
+        stack = Stack[str]()
         visited = set()
         stack.push(start)
         visited.add(start)
@@ -233,10 +232,7 @@ class Graph:
         """
         if u not in self.__adj or v not in self.__adj:
             return False
-        for neighbor in self.bfs(u):
-            if neighbor == v:
-                return True
-        return False
+        return any(neighbor == v for neighbor in self.bfs(u))
 
     def is_connected(self) -> bool:
         """Return True if all vertices are reachable from the first vertex. O(V + E).

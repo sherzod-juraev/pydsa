@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def fib_memo(n: int, memo: dict | None = None, /) -> int:
+def fib_memo(n: int, memo: dict[int, int] | None = None, /) -> int:
     """
     Compute the n-th Fibonacci number using memoization (top-down DP).
 
@@ -56,7 +56,9 @@ def fib_tab(n: int, /) -> int:
     return prev1
 
 
-def knapsack_tab(weights: np.ndarray, prices: np.ndarray, capacity: int, /) -> np.ndarray:
+def knapsack_tab(
+        weights: np.ndarray, prices: np.ndarray, capacity: int, /
+) -> np.ndarray:
     """
     Solve the 0/1 Knapsack problem using tabulation (bottom-up DP).
 
@@ -146,7 +148,7 @@ def lcs_tab(s1: str, s2: str, /) -> str:
     return word
 
 
-def coin_change(coins: np.ndarray, amount, /) -> np.ndarray:
+def coin_change(coins: np.ndarray, amount: int, /) -> np.ndarray:
     """
     Solve the Coin Change problem (fewest coins) using bottom-up DP.
 
@@ -174,8 +176,7 @@ def coin_change(coins: np.ndarray, amount, /) -> np.ndarray:
     if dp[amount] == np.inf:
         return np.array([])
     selected_coins = []
-    i = coins.shape[0] - 1
-    while 0 < amount:
+    while amount > 0:
         for coin in coins:
             if coin <= amount and dp[amount] == dp[amount - coin] + 1:
                 selected_coins.append(coin)
@@ -216,4 +217,4 @@ def edit_distance(s1: str, s2: str, /) -> int:
                 delete = dp[i - 1][j] + 1
                 replace = dp[i - 1][j - 1] + 1
                 dp[i][j] = min(insert, delete, replace)
-    return dp[-1][-1]
+    return int(dp[-1][-1])

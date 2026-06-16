@@ -1,8 +1,10 @@
-import numpy as np
-from typing import Self
-from collections import Counter
-from ..linear import Stack
 import heapq
+from collections import Counter
+from typing import Self
+
+import numpy as np
+
+from ..linear import Stack
 
 
 def activity_selection(start: np.ndarray, finish: np.ndarray, ) -> np.ndarray:
@@ -82,11 +84,13 @@ def job_sequencing(deadlines: np.ndarray, profits: np.ndarray, /) -> np.ndarray:
             if slots[t] == -1:
                 slots[t] = idx
                 break
-    selected_jobs = slots[slots != -1]
+    selected_jobs: np.ndarray = slots[slots != -1]
     return selected_jobs
 
 
-def fractional_knapsack(weights: np.ndarray, prices: np.ndarray, capacity: int, /) -> tuple:
+def fractional_knapsack(
+        weights: np.ndarray, prices: np.ndarray, capacity: int, /
+) -> tuple[float, float]:
     """
     Solve the Fractional Knapsack problem greedily.
 
@@ -122,7 +126,6 @@ def fractional_knapsack(weights: np.ndarray, prices: np.ndarray, capacity: int, 
     total_weight = 0
     unit_prices = prices / weights
     sorted_idx = np.argsort(unit_prices)[::-1]
-    n = sorted_idx.shape[0]
     for idx in sorted_idx:
         if capacity <= 0:
             break
@@ -159,7 +162,7 @@ class Node:
     def __ge__(self, other: Self) -> bool:
         return self.freq >= other.freq
 
-    def __add__(self, other: Self) -> Self:
+    def __add__(self, other: Self) -> "Node":
         return Node(
             char=None,
             freq=self.freq + other.freq,
@@ -209,7 +212,7 @@ def huffman_coding(text: str, /) -> tuple[str, dict[str, str]]:
 
     root = heap[0]
     codes = {}
-    stack = Stack()
+    stack: Stack[tuple[Node, str]] = Stack()
     stack.push((root, ""))
 
     while not stack.is_empty():

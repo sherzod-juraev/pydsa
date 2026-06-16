@@ -1,7 +1,7 @@
-from .base import PydsaException
+from .base import PydsaError
 
 
-class Empty(PydsaException):
+class EmptyError(PydsaError):
 
     def __init__(self, estimator: object) -> None:
 

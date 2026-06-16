@@ -1,8 +1,8 @@
-from typing import Any
-from ...exc import Empty
+from ..._types import Comparable
+from ...exc import EmptyError
 
 
-class MinHeap:
+class MinHeap[T: Comparable]:
     """
     A binary min-heap implemented with a dynamic array.
 
@@ -39,7 +39,7 @@ class MinHeap:
 
     def __init__(self) -> None:
 
-        self.__data = []
+        self.__data: list[T]= []
 
     def __len__(self) -> int:
         """Return the number of elements. O(1)."""
@@ -49,7 +49,7 @@ class MinHeap:
         """Return True if the heap is not empty. O(1)."""
         return len(self) > 0
 
-    def __contains__(self, item) -> bool:
+    def __contains__(self, item: T) -> bool:
         """Return True if the value exists in the heap. O(n)."""
         return item in self.__data
 
@@ -57,19 +57,19 @@ class MinHeap:
         """Return True if the heap has no elements. O(1)."""
         return len(self) == 0
 
-    def peek(self) -> Any:
+    def peek(self) -> T:
         """Return the minimum value without removing it. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the heap is empty.
         """
         if self.is_empty():
-            raise Empty(self)
+            raise EmptyError(self)
         return self.__data[0]
 
-    def insert(self, value: Any, /) -> None:
+    def insert(self, value: T, /) -> None:
         """Insert a value into the heap. O(log n).
 
         The value is appended to the end of the array and bubbled up
@@ -78,7 +78,7 @@ class MinHeap:
         self.__data.append(value)
         self.__shift_up()
 
-    def extract_min(self) -> Any:
+    def extract_min(self) -> T:
         """Remove and return the minimum value. O(log n).
 
         The root is swapped with the last element, removed, and the
@@ -86,18 +86,18 @@ class MinHeap:
 
         Raises
         ------
-        Empty
+        EmptyError
             If the heap is empty.
         """
         if self.is_empty():
-            raise Empty(self)
+            raise EmptyError(self)
         root = self.__data[0]
         self.__swap(0, len(self) - 1)
         del self.__data[-1]
         self.__shift_down()
         return root
 
-    def extract_all(self) -> list:
+    def extract_all(self) -> list[T]:
         """Remove all elements and return them in sorted ascending order. O(n log n).
 
         This empties the heap. Equivalent to performing heap sort.
@@ -108,12 +108,12 @@ class MinHeap:
             Values sorted from smallest to largest.
         """
         n = len(self)
-        sorted_arr = [0 for _ in range(n)]
-        for i in range(n):
-            sorted_arr[i] = self.extract_min()
+        sorted_arr: list[T] = []
+        for _ in range(n):
+            sorted_arr.append(self.extract_min())
         return sorted_arr
 
-    def heapify(self, arr: list, /) -> None:
+    def heapify(self, arr: list[T], /) -> None:
         """Build a heap from an existing list in O(n) time.
 
         Uses Floyd's algorithm: starting from the last non-leaf node

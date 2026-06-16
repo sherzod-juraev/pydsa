@@ -1,9 +1,11 @@
+from typing import TypeVar, cast
+
+from ..exc import EmptyError
 from .singly.node import Node
-from typing import Any
-from ..exc import Empty
 
+T = TypeVar("T")
 
-class Queue:
+class Queue[T]:
     """
     A first-in, first-out (FIFO) queue implemented with a singly linked list.
 
@@ -31,8 +33,8 @@ class Queue:
 
     def __init__(self) -> None:
 
-        self.__head: Node | None = None
-        self.__tail: Node | None = None
+        self.__head: Node[T] | None = None
+        self.__tail: Node[T] | None = None
         self.__length = 0
 
     def __len__(self) -> int:
@@ -43,41 +45,47 @@ class Queue:
         """Return True if the queue is empty. O(1)."""
         return self.__length == 0
 
-    def peek(self) -> Any:
+    def __bool__(self) -> bool:
+        return not self.is_empty()
+
+    def peek(self) -> T:
         """Return the front element without removing it. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the queue is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        return self.__head.value
+            raise EmptyError(self)
+        head = cast(Node[T], self.__head)
+        return head.value
 
-    def enqueue(self, value: Any, /) -> None:
+    def enqueue(self, value: T, /) -> None:
         """Add a value to the rear of the queue. O(1)."""
         new_node = Node(value)
         if self.is_empty():
             self.__head = new_node
             self.__tail = new_node
         else:
-            self.__tail.next = new_node
+            tail = cast(Node[T], self.__tail)
+            tail.next = new_node
             self.__tail = new_node
         self.__length += 1
 
-    def dequeue(self) -> Any:
+    def dequeue(self) -> T:
         """Remove and return the front element. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the queue is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        current = self.__head
-        self.__head = self.__head.next
+            raise EmptyError(self)
+        head = cast(Node[T], self.__head)
+        current = head
+        self.__head = head.next
         if self.__head is None:
             self.__tail = None
         current.next = None

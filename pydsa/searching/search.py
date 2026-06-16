@@ -2,8 +2,8 @@ import numpy as np
 from numba import njit
 
 
-@njit
-def linear_search(arr: np.ndarray, target, /) -> int:
+@njit # type: ignore
+def linear_search(arr: np.ndarray, target: int, /) -> int:
     """
     Linear search — O(n) time, O(1) space.
 
@@ -28,8 +28,8 @@ def linear_search(arr: np.ndarray, target, /) -> int:
     return -1
 
 
-@njit
-def binary_search(arr: np.ndarray, target, /) -> int:
+@njit # type: ignore
+def binary_search(arr: np.ndarray, target: int, /) -> int:
     """
     Binary search — O(log n) time, O(1) space.
 
@@ -51,7 +51,7 @@ def binary_search(arr: np.ndarray, target, /) -> int:
     left = 0
     right = arr.shape[0] - 1
     while left <= right:
-        midd_idx = (left + right) // 2
+        midd_idx = int((left + right) // 2)
         if target == arr[midd_idx]:
             return midd_idx
         elif target < arr[midd_idx]:
@@ -61,8 +61,8 @@ def binary_search(arr: np.ndarray, target, /) -> int:
     return -1
 
 
-@njit
-def jump_search(arr: np.ndarray, target, /) -> int:
+@njit # type: ignore
+def jump_search(arr: np.ndarray, target: int, /) -> int:
     """
     Jump search — O(√n) time, O(1) space.
 
@@ -94,8 +94,8 @@ def jump_search(arr: np.ndarray, target, /) -> int:
     return -1
 
 
-@njit
-def exponential_search(arr: np.ndarray, target, /) -> int:
+@njit # type: ignore
+def exponential_search(arr: np.ndarray, target: int, /) -> int:
     """
     Exponential search — O(log n) time, O(1) space.
 
@@ -123,7 +123,7 @@ def exponential_search(arr: np.ndarray, target, /) -> int:
     left = high // 2
     right = min(high, n - 1)
     while left <= right:
-        midd_idx = (left + right) // 2
+        midd_idx = int((left + right) // 2)
         if target == arr[midd_idx]:
             return midd_idx
         elif target < arr[midd_idx]:

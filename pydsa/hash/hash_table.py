@@ -1,9 +1,14 @@
-from typing import Any, Iterator
-from ._entry import Entry
+from collections.abc import Iterator
+from typing import Any, TypeVar
+
 from ..linear import SinglyList
+from ._entry import Entry
+
+K = TypeVar("K")
+V = TypeVar("V")
 
 
-class HashTable:
+class HashTable[K, V]:
     """
     A hash table with separate chaining for collision resolution.
 
@@ -43,7 +48,7 @@ class HashTable:
     def __init__(self, capacity: int) -> None:
 
         self.__capacity: int = capacity
-        self.__data: list[SinglyList] = [SinglyList() for _ in range(capacity)]
+        self.__data: list[SinglyList[Entry[K, V]]] = [SinglyList() for _ in range(capacity)]
         self.__size: int = 0
 
     def __len__(self) -> int:
@@ -54,7 +59,7 @@ class HashTable:
         """Return True if the table is not empty. O(1)."""
         return self.__size > 0
 
-    def __getitem__(self, key) -> Any:
+    def __getitem__(self, key: K) -> V:
         """Return the value for the given key. O(1) average.
 
         Raises
@@ -75,7 +80,7 @@ class HashTable:
                 return entry.value
         raise KeyError(f"Key {key} not found")
 
-    def __setitem__(self, key, value) -> None:
+    def __setitem__(self, key: K, value: V) -> None:
         """Insert or update a key-value pair. O(1) average.
 
         Triggers automatic rehashing if the load factor exceeds 0.75.
@@ -97,7 +102,7 @@ class HashTable:
         if self.check_load():
             self.__rehash()
 
-    def __delitem__(self, key) -> None:
+    def __delitem__(self, key: K) -> None:
         """Remove a key-value pair. O(1) average.
 
         Raises
@@ -117,7 +122,7 @@ class HashTable:
                 return
         raise KeyError(f"Key {key} not found")
 
-    def remove(self, key, /) -> bool:
+    def remove(self, key: K, /) -> bool:
         """Remove a key-value pair if it exists. O(1) average.
 
         Returns True if the key was found and removed, False otherwise.
@@ -130,7 +135,7 @@ class HashTable:
                 return True
         return False
 
-    def __contains__(self, item) -> bool:
+    def __contains__(self, item: K) -> bool:
         """Return True if the key exists. O(1) average.
 
         Examples
@@ -139,12 +144,9 @@ class HashTable:
         True
         """
         index = self.__hash(item)
-        for entry in self.__data[index]:
-            if entry.key == item:
-                return True
-        return False
+        return any(entry.key == item for entry in self.__data[index])
 
-    def get(self, key, default: Any = None) -> Any:
+    def get(self, key: K, default: V | None = None) -> Any:
         """Return the value for the key, or a default if missing. O(1).
 
         Parameters
@@ -170,7 +172,7 @@ class HashTable:
                 return entry.value
         return default
 
-    def keys(self) -> Iterator:
+    def keys(self) -> Iterator[K]:
         """Yield all keys in the table. O(n)."""
         for bucket in self.__data:
             if bucket.is_empty():
@@ -178,7 +180,7 @@ class HashTable:
             for entry in bucket:
                 yield entry.key
 
-    def values(self) -> Iterator:
+    def values(self) -> Iterator[V]:
         """Yield all values in the table. O(n)."""
         for bucket in self.__data:
             if bucket.is_empty():
@@ -186,7 +188,7 @@ class HashTable:
             for entry in bucket:
                 yield entry.value
 
-    def items(self) -> Iterator:
+    def items(self) -> Iterator[tuple[K, V]]:
         """Yield all (key, value) pairs in the table. O(n)."""
         for i in range(len(self.__data)):
             if self.__data[i].is_empty():
@@ -199,7 +201,7 @@ class HashTable:
         self.__data = [SinglyList() for _ in range(self.__capacity)]
         self.__size = 0
 
-    def __hash(self, key: Any, /) -> int:
+    def __hash(self, key: K, /) -> int:
         """Compute the bucket index for a key."""
         return hash(key) % self.__capacity
 

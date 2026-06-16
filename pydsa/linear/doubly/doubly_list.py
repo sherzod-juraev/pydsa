@@ -1,9 +1,12 @@
+from collections.abc import Iterator
+from typing import TypeVar, cast
+
+from ...exc import EmptyError
 from .node import Node
-from typing import Self, Iterator, Any
-from ...exc import Empty
 
+T = TypeVar("T")
 
-class DoublyList:
+class DoublyList[T]:
     """
     A doubly linked list with head and tail pointers.
 
@@ -42,8 +45,8 @@ class DoublyList:
 
     def __init__(self) -> None:
 
-        self.__head: Node | None = None
-        self.__tail: Node | None = None
+        self.__head: Node[T] | None = None
+        self.__tail: Node[T] | None = None
         self.__length: int = 0
 
     def __len__(self) -> int:
@@ -54,21 +57,21 @@ class DoublyList:
         """Return True if the list is not empty. O(1)."""
         return self.__length > 0
 
-    def __iter__(self) -> Iterator:
+    def __iter__(self) -> Iterator[T]:
         """Yield each value from head to tail. O(n)."""
         current = self.__head
         while current:
             yield current.value
             current = current.next
 
-    def __reversed__(self) -> Iterator:
+    def __reversed__(self) -> Iterator[T]:
         """Yield each value from tail to head. O(n)."""
         current = self.__tail
         while current:
             yield current.value
             current = current.prev
 
-    def __getitem__(self, item) -> Any:
+    def __getitem__(self, item: int) -> T:
         """Return the value at the given index. O(n).
 
         Traverses from the nearer end. Supports negative indexing.
@@ -80,22 +83,19 @@ class DoublyList:
         """
         item = self.__get_index(item)
         if item <= self.__length // 2:
-            current = self.__head
+            current = cast(Node[T], self.__head)
             for _ in range(item):
-                current = current.next
+                current = cast(Node[T], current.next)
             return current.value
         else:
-            current = self.__tail
+            current = cast(Node[T], self.__tail)
             for _ in range(self.__length - 1 - item):
-                current = current.prev
+                current = cast(Node[T], current.prev)
             return current.value
 
-    def __contains__(self, item) -> bool:
+    def __contains__(self, item: T) -> bool:
         """Return True if the value exists in the list. O(n)."""
-        for val in self:
-            if item == val:
-                return True
-        return False
+        return any(item == val for val in self)
 
     def __get_index(self, index: int, /) -> int:
         """Normalize a possibly negative index to a valid positive index.
@@ -116,33 +116,35 @@ class DoublyList:
 
     def is_empty(self) -> bool:
         """Return True if the list has no elements. O(1)."""
-        return self.__length == 0
+        return self.__head is None and self.__tail is None
 
-    def get_first(self) -> Any:
+    def get_first(self) -> T:
         """Return the value of the first element. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        return self.__head.value
+            raise EmptyError(self)
+        head = cast(Node[T], self.__head)
+        return head.value
 
-    def get_last(self) -> Any:
+    def get_last(self) -> T:
         """Return the value of the last element. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        return self.__tail.value
+            raise EmptyError(self)
+        tail = cast(Node[T], self.__tail)
+        return tail.value
 
-    def get_at(self, index: int, /) -> Any:
+    def get_at(self, index: int, /) -> T:
         """Return the value at the specified index. O(n).
 
         Raises
@@ -152,28 +154,30 @@ class DoublyList:
         """
         return self[index]
 
-    def insert_first(self, value: Any, /) -> None:
+    def insert_first(self, value: T, /) -> None:
         """Insert a value at the head of the list. O(1)."""
         new_node = Node(value)
         if self.is_empty():
             self.__head = self.__tail = new_node
         else:
-            new_node.next = self.__head
-            self.__head.prev = new_node
+            head = cast(Node[T], self.__head)
+            new_node.next = head
+            head.prev = new_node
             self.__head = new_node
         self.__length += 1
 
-    def insert_last(self, value: Any, /) -> None:
+    def insert_last(self, value: T, /) -> None:
         """Insert a value at the tail of the list. O(1)."""
         if self.is_empty():
             return self.insert_first(value)
         new_node = Node(value)
-        new_node.prev = self.__tail
-        self.__tail.next = new_node
+        tail = cast(Node[T], self.__tail)
+        new_node.prev = tail
+        tail.next = new_node
         self.__tail = new_node
         self.__length += 1
 
-    def insert_at(self, index: int, value: Any, /) -> None:
+    def insert_at(self, index: int, value: T, /) -> None:
         """Insert a value at the specified index. O(n).
 
         Elements at and after the index are shifted to the right.
@@ -197,13 +201,13 @@ class DoublyList:
         elif index == self.__length:
             return self.insert_last(value)
         if index <= self.__length // 2:
-            current = self.__head
+            current = cast(Node[T], self.__head)
             for _ in range(index):
-                current = current.next
+                current = cast(Node[T], current.next)
         else:
-            current = self.__tail
+            current = cast(Node[T], self.__tail)
             for _ in range(self.__length - 1 - index):
-                current = current.prev
+                current = cast(Node[T], current.prev)
         new_node = Node(value)
         new_node.next = current
         new_node.prev = current.prev
@@ -212,18 +216,19 @@ class DoublyList:
         current.prev = new_node
         self.__length += 1
 
-    def remove_first(self) -> Any:
+    def remove_first(self) -> T:
         """Remove and return the first element. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        current = self.__head
-        self.__head = self.__head.next
+            raise EmptyError(self)
+        head = cast(Node[T], self.__head)
+        current = head
+        self.__head = head.next
         current.next = None
         if self.__head is None:
             self.__tail = None
@@ -232,26 +237,27 @@ class DoublyList:
         self.__length -= 1
         return current.value
 
-    def remove_last(self) -> Any:
+    def remove_last(self) -> T:
         """Remove and return the last element. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
+            raise EmptyError(self)
         if self.__length == 1:
             return self.remove_first()
-        current = self.__tail
-        self.__tail = self.__tail.prev
+        tail = cast(Node[T], self.__tail)
+        current = tail
+        self.__tail = cast(Node[T], tail.prev)
         self.__tail.next = None
         current.prev = None
         self.__length -= 1
         return current.value
 
-    def remove_at(self, index: int, /) -> Any:
+    def remove_at(self, index: int, /) -> T:
         """Remove and return the element at the specified index. O(n).
 
         Raises
@@ -265,40 +271,46 @@ class DoublyList:
         elif index == self.__length - 1:
             return self.remove_last()
         if index <= self.__length // 2:
-            current = self.__head
+            current = cast(Node[T], self.__head)
             for _ in range(index):
-                current = current.next
+                current = cast(Node[T], current.next)
         else:
-            current = self.__tail
+            current = cast(Node[T], self.__tail)
             for _ in range(self.__length - 1 - index):
-                current = current.prev
-        current.next.prev = current.prev
-        current.prev.next = current.next
+                current = cast(Node[T], current.prev)
+        next = cast(Node[T], current.next)
+        prev = cast(Node[T], current.prev)
+        next.prev = prev
+        prev.next = next
         current.next, current.prev = None, None
         self.__length -= 1
         return current.value
 
-    def remove(self, value: Any, /) -> bool:
+    def remove(self, value: T, /) -> bool:
         """Remove the first occurrence of value. Return True if found. O(n).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        if value == self.__head.value:
+            raise EmptyError(self)
+        head = cast(Node[T], self.__head)
+        tail = cast(Node[T], self.__tail)
+        if value == head.value:
             self.remove_first()
             return True
-        elif value == self.__tail.value:
+        elif value == tail.value:
             self.remove_last()
             return True
-        current = self.__head.next
+        current = head.next
         while current is not None and current is not self.__tail:
             if current.value == value:
-                current.next.prev = current.prev
-                current.prev.next = current.next
+                next = cast(Node[T], current.next)
+                prev = cast(Node[T], current.prev)
+                next.prev = prev
+                prev.next = next
                 current.next, current.prev = None, None
                 self.__length -= 1
                 return True
@@ -306,14 +318,14 @@ class DoublyList:
         return False
 
 
-    def index_of(self, value: Any, /) -> int:
+    def index_of(self, value: T, /) -> int:
         """Return the index of the first occurrence, or -1 if not found. O(n)."""
         for ind, val in enumerate(self):
             if val == value:
                 return ind
         return -1
 
-    def count(self, value: Any, /) -> int:
+    def count(self, value: T, /) -> int:
         """Return the number of occurrences of value. O(n)."""
         count = 0
         for val in self:
@@ -335,9 +347,9 @@ class DoublyList:
             current = current.prev
         self.__head, self.__tail = self.__tail, self.__head
 
-    def copy(self) -> Self:
+    def copy(self) -> "DoublyList[T]":
         """Return a shallow copy of the list. O(n) time, O(n) space."""
-        new_list = DoublyList()
+        new_list = DoublyList[T]()
         if self.__length == 0:
             return new_list
         for val in self:
@@ -355,16 +367,16 @@ class DoublyList:
 
         Uses Floyd's cycle detection algorithm.
         """
-        fast = self.__head
-        slow = self.__head
+        fast = cast(Node[T], self.__head)
+        slow = cast(Node[T], self.__head)
         while fast and fast.next:
-            fast = fast.next.next
-            slow = slow.next
+            fast = cast(Node[T], fast.next.next)
+            slow = cast(Node[T], slow.next)
             if fast == slow:
                 return True
         return False
 
-    def middle(self) -> Any:
+    def middle(self) -> T | tuple[T, T]:
         """Return the value of the middle element. O(n).
 
         If the list has even length, returns a tuple of the two
@@ -372,18 +384,19 @@ class DoublyList:
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
+            raise EmptyError(self)
         index = self.__length // 2
         is_even = self.__length % 2 == 0
         if self.__length % 2 == 0:
             index -= 1
-        current = self.__head
+        current = cast(Node[T], self.__head)
         for _ in range(index):
-            current = current.next
+            current = cast(Node[T], current.next)
         if is_even:
-            return current.value, current.next.value
+            next = cast(Node[T], current.next)
+            return current.value, next.value
         return current.value

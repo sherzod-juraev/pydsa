@@ -1,9 +1,12 @@
+from collections.abc import Iterator
+from typing import TypeVar, cast
+
+from ...exc import EmptyError
 from .node import Node
-from typing import Any, Iterator, Self
-from ...exc import Empty
 
+T = TypeVar("T")
 
-class SinglyList:
+class SinglyList[T]:
     """
     A singly linked list with head and tail pointers.
 
@@ -33,11 +36,11 @@ class SinglyList:
        "has_cycle", "O(n)", "O(1)"
        "middle", "O(n)", "O(1)"
     """
-    
+
     def __init__(self) -> None:
 
-        self.__head: Node | None = None
-        self.__tail: Node | None = None
+        self.__head: Node[T] | None = None
+        self.__tail: Node[T] | None = None
         self.__length: int = 0
 
     def __len__(self) -> int:
@@ -48,27 +51,24 @@ class SinglyList:
         """Return True if the list is not empty. O(1)."""
         return self.__length > 0
 
-    def __iter__(self) -> Iterator:
+    def __iter__(self) -> Iterator[T]:
         """Yield each value in order from head to tail. O(n)."""
         current = self.__head
         while current:
             yield current.value
             current = current.next
 
-    def __getitem__(self, item: int) -> Any:
+    def __getitem__(self, item: int) -> T:
         """Return the value at the given index. Supports negative indexing. O(n)."""
         item = self.__get_index(item)
-        current = self.__head
+        current = cast(Node[T], self.__head)
         for _ in range(item):
-            current = current.next
+            current = cast(Node[T], current.next)
         return current.value
 
-    def __contains__(self, item) -> bool:
+    def __contains__(self, item: T) -> bool:
         """Return True if the value exists in the list. O(n)."""
-        for val in self:
-            if val == item:
-                return True
-        return False
+        return any(val == item for val in self)
 
     def __get_index(self, index: int, /) -> int:
         """Normalize a possibly negative index to a valid positive index.
@@ -89,33 +89,34 @@ class SinglyList:
 
     def is_empty(self) -> bool:
         """Return True if the list has no elements. O(1)."""
-        return self.__length == 0
+        return self.__head is None and self.__tail is None
 
-    def get_first(self) -> Any:
+    def get_first(self) -> T:
         """Return the value of the first element. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        return self.__head.value
+            raise EmptyError(self)
+        current = cast(Node[T], self.__head)
+        return current.value
 
-    def get_last(self) -> Any:
+    def get_last(self) -> T:
         """Return the value of the last element. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
+            raise EmptyError(self)
         return self[-1]
 
-    def get_at(self, index: int, /) -> Any:
+    def get_at(self, index: int, /) -> T:
         """Return the value at the specified index. O(n).
 
         Raises
@@ -125,7 +126,7 @@ class SinglyList:
         """
         return self[index]
 
-    def insert_first(self, value: Any, /) -> None:
+    def insert_first(self, value: T, /) -> None:
         """Insert a value at the head of the list. O(1)."""
         new_node = Node(value)
         new_node.next = self.__head
@@ -134,16 +135,17 @@ class SinglyList:
             self.__tail = new_node
         self.__length += 1
 
-    def insert_last(self, value: Any, /) -> None:
+    def insert_last(self, value: T, /) -> None:
         """Insert a value at the tail of the list. O(1)."""
         if self.is_empty():
             return self.insert_first(value)
         new_node = Node(value)
-        self.__tail.next = new_node
+        tail = cast(Node[T], self.__tail)
+        tail.next = new_node
         self.__tail = new_node
         self.__length += 1
 
-    def insert_at(self, index: int, value: Any, /) -> None:
+    def insert_at(self, index: int, value: T, /) -> None:
         """Insert a value at the specified index. O(n).
 
         Raises
@@ -162,53 +164,53 @@ class SinglyList:
             return self.insert_first(value)
         elif index == self.__length:
             return self.insert_last(value)
-        current = self.__head
+        current = cast(Node[T], self.__head)
         for _ in range(index - 1):
-            current = current.next
+            current = cast(Node[T], current.next)
         new_node = Node(value)
         new_node.next = current.next
         current.next = new_node
         self.__length += 1
 
-    def remove_first(self) -> Any:
+    def remove_first(self) -> T:
         """Remove and return the first element. O(1).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        current = self.__head
-        self.__head = self.__head.next
+            raise EmptyError(self)
+        current = cast(Node[T], self.__head)
+        self.__head = current.next
         if self.__head is None:
             self.__tail = None
         self.__length -= 1
         return current.value
 
-    def remove_last(self) -> Any:
+    def remove_last(self) -> T:
         """Remove and return the last element. O(n).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
+            raise EmptyError(self)
         if self.__length == 1:
             return self.remove_first()
-        current = self.__head
+        current = cast(Node[T], self.__head)
         while current is not None and current.next != self.__tail:
-            current = current.next
-        last_node = self.__tail
+            current = cast(Node[T], current.next)
+        last_node = cast(Node[T], self.__tail)
         current.next = None
         self.__tail = current
         self.__length -= 1
         return last_node.value
 
-    def remove_at(self, index: int, /) -> Any:
+    def remove_at(self, index: int, /) -> T:
         """Remove and return the element at the specified index. O(n).
 
         Raises
@@ -221,33 +223,36 @@ class SinglyList:
             return self.remove_first()
         elif index == self.__length - 1:
             return self.remove_last()
-        current = self.__head
+        current = cast(Node[T], self.__head)
         for _ in range(index - 1):
-            current = current.next
-        remove_node = current.next
+            current = cast(Node[T], current.next)
+        remove_node = cast(Node[T], current.next)
         current.next = remove_node.next
         remove_node.next = None
         self.__length -= 1
         return remove_node.value
 
-    def remove(self, value: Any, /) -> bool:
+    def remove(self, value: T, /) -> bool:
         """Remove the first occurrence of value. Return True if found. O(n).
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
-        if self.__head.value == value:
+            raise EmptyError(self)
+        head = cast(Node[T], self.__head)
+        tail = cast(Node[T], self.__tail)
+        if head.value == value:
             self.remove_first()
             return True
-        elif self.__tail.value == value:
+        elif tail.value == value:
             self.remove_last()
             return True
-        current = self.__head
+        current = head
         while current is not self.__tail:
+            current.next = cast(Node[T], current.next)
             if current.next.value == value:
                 remove_node = current.next
                 current.next = remove_node.next
@@ -257,14 +262,14 @@ class SinglyList:
             current = current.next
         return False
 
-    def index_of(self, value: Any, /) -> int:
+    def index_of(self, value: T, /) -> int:
         """Return the index of the first occurrence, or -1 if not found. O(n)."""
         for ind, val in enumerate(self):
             if value == val:
                 return ind
         return -1
 
-    def count(self, value: Any, /) -> int:
+    def count(self, value: T, /) -> int:
         """Return the number of occurrences of value. O(n)."""
         count = 0
         for val in self:
@@ -277,7 +282,7 @@ class SinglyList:
         old_head = self.__head
         prev = None
         current = self.__head
-        while current:
+        while current is not None:
             next_node = current.next
             current.next = prev
             prev = current
@@ -286,9 +291,9 @@ class SinglyList:
         self.__tail = old_head
 
 
-    def copy(self) -> Self:
+    def copy(self) -> 'SinglyList[T]':
         """Return a shallow copy of the list. O(n) time, O(n) space."""
-        new_list = SinglyList()
+        new_list = SinglyList[T]()
         if self.__length == 0:
             return new_list
         for val in self:
@@ -303,16 +308,16 @@ class SinglyList:
 
     def has_cycle(self) -> bool:
         """Return True if the list contains a cycle. Uses Floyd's algorithm. O(n)."""
-        fast = self.__head
-        slow = self.__head
+        fast = cast(Node[T], self.__head)
+        slow = cast(Node[T], self.__head)
         while fast and fast.next:
-            fast = fast.next.next
-            slow = slow.next
+            fast = cast(Node[T], fast.next.next)
+            slow = cast(Node[T], slow.next)
             if fast == slow:
                 return True
         return False
 
-    def middle(self) -> Any:
+    def middle(self) -> T | tuple[T, T]:
         """Return the value of the middle element.
 
         If the list has even length, returns a tuple (left, right).
@@ -320,18 +325,19 @@ class SinglyList:
 
         Raises
         ------
-        Empty
+        EmptyError
             If the list is empty.
         """
         if self.is_empty():
-            raise Empty(self)
+            raise EmptyError(self)
         index = self.__length // 2
         is_even = self.__length % 2 == 0
         if self.__length % 2 == 0:
             index -= 1
-        current = self.__head
+        current = cast(Node[T], self.__head)
         for _ in range(index):
-            current = current.next
+            current = cast(Node[T], current.next)
         if is_even:
-            return current.value, current.next.value
+            next_node = cast(Node[T], current.next)
+            return current.value, next_node.value
         return current.value

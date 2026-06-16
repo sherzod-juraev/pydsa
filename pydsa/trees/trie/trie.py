@@ -1,6 +1,7 @@
-from typing import Iterator
-from .node import Node
+from collections.abc import Iterator
+
 from ...linear import Stack
+from .node import Node
 
 
 class Trie:
@@ -121,7 +122,7 @@ class Trie:
             True if the word was found and removed, False otherwise.
         """
         current: Node = self.__root
-        stack = Stack()
+        stack: Stack[tuple[Node, str]] = Stack()
         for char in word:
             if char not in current.children:
                 return False
@@ -165,7 +166,7 @@ class Trie:
             if char not in current.children:
                 return
             current = current.children[char]
-        stack = Stack()
+        stack: Stack[tuple[Node, str]] = Stack()
         stack.push((current, prefix))
         while stack:
             current, prefix = stack.pop()

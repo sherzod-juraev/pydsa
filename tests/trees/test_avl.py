@@ -1,20 +1,20 @@
 import pytest
 from pydsa import AVLTree
-from pydsa.exc import Empty
+from pydsa.exc import EmptyError
 
 
 class TestAVLTreeInit:
     """__init__"""
 
-    def test_empty_tree_has_zero_nodes(self):
+    def test_EmptyError_tree_has_zero_nodes(self):
         avl = AVLTree()
         assert len(avl) == 0
 
-    def test_empty_tree_is_falsy(self):
+    def test_EmptyError_tree_is_falsy(self):
         avl = AVLTree()
         assert not avl
 
-    def test_empty_tree_is_empty(self):
+    def test_EmptyError_tree_is_empty(self):
         avl = AVLTree()
         assert avl.is_empty()
 
@@ -73,7 +73,7 @@ class TestAVLTreeSearch:
         avl.insert(5)
         assert avl.search(99) is False
 
-    def test_search_empty_tree(self):
+    def test_search_EmptyError_tree(self):
         avl = AVLTree()
         assert avl.search(10) is False
 
@@ -91,7 +91,7 @@ class TestAVLTreeContains:
         avl.insert(42)
         assert 99 not in avl
 
-    def test_contains_empty(self):
+    def test_contains_EmptyError(self):
         avl = AVLTree()
         assert 10 not in avl
 
@@ -117,14 +117,14 @@ class TestAVLTreeMinMax:
         assert avl.min_value() == 42
         assert avl.max_value() == 42
 
-    def test_min_value_on_empty_raises(self):
+    def test_min_value_on_EmptyError_raises(self):
         avl = AVLTree()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             avl.min_value()
 
-    def test_max_value_on_empty_raises(self):
+    def test_max_value_on_EmptyError_raises(self):
         avl = AVLTree()
-        with pytest.raises(Empty):
+        with pytest.raises(EmptyError):
             avl.max_value()
 
 
@@ -169,7 +169,7 @@ class TestAVLTreeRemove:
         avl.remove(99)
         assert len(avl) == 3
 
-    def test_remove_from_empty(self):
+    def test_remove_from_EmptyError(self):
         avl = AVLTree()
         avl.remove(10)
         assert avl.is_empty()
@@ -201,7 +201,7 @@ class TestAVLTreeInorder:
             avl.insert(v)
         assert list(avl.inorder()) == list(range(100))
 
-    def test_inorder_empty(self):
+    def test_inorder_EmptyError(self):
         avl = AVLTree()
         assert list(avl.inorder()) == []
 
@@ -209,7 +209,7 @@ class TestAVLTreeInorder:
 class TestAVLTreeTraversals:
     """preorder / postorder / levelorder"""
 
-    def test_all_traversals_non_empty(self):
+    def test_all_traversals_non_EmptyError(self):
         avl = AVLTree()
         for v in [5, 3, 8, 1, 4, 7, 9]:
             avl.insert(v)
@@ -222,7 +222,7 @@ class TestAVLTreeTraversals:
         assert set(pre) == {1, 3, 4, 5, 7, 8, 9}  # no duplicates
         assert pre == pre  # just verifying no exceptions
 
-    def test_all_traversals_empty(self):
+    def test_all_traversals_EmptyError(self):
         avl = AVLTree()
         assert list(avl.preorder()) == []
         assert list(avl.inorder()) == []
@@ -233,7 +233,7 @@ class TestAVLTreeTraversals:
 class TestAVLTreeHeight:
     """height"""
 
-    def test_height_empty(self):
+    def test_height_EmptyError(self):
         avl = AVLTree()
         assert avl.height() == 0
 
@@ -261,7 +261,7 @@ class TestAVLTreeHeight:
 class TestAVLTreeClear:
     """clear"""
 
-    def test_clear_non_empty(self):
+    def test_clear_non_EmptyError(self):
         avl = AVLTree()
         for v in [5, 3, 8]:
             avl.insert(v)
@@ -269,7 +269,7 @@ class TestAVLTreeClear:
         assert avl.is_empty()
         assert len(avl) == 0
 
-    def test_clear_empty(self):
+    def test_clear_EmptyError(self):
         avl = AVLTree()
         avl.clear()
         assert avl.is_empty()
