@@ -5,6 +5,7 @@ from .singly.node import Node
 
 T = TypeVar("T")
 
+
 class Queue[T]:
     """
     A first-in, first-out (FIFO) queue implemented with a singly linked list.
@@ -29,7 +30,6 @@ class Queue[T]:
     operations. The underlying list uses both head and tail
     pointers to achieve constant-time insertion at the rear.
     """
-
 
     def __init__(self) -> None:
 

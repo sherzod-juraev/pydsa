@@ -15,13 +15,13 @@ from .linear import (
 )
 
 __all__ = [
-    'bubble_sort',
-    'selection_sort',
-    'insertion_sort',
-    'merge_sort',
-    'heap_sort',
-    'quick_sort',
-    'counting_sort',
-    'radix_sort',
-    'bucket_sort',
+    "bubble_sort",
+    "selection_sort",
+    "insertion_sort",
+    "merge_sort",
+    "heap_sort",
+    "quick_sort",
+    "counting_sort",
+    "radix_sort",
+    "bucket_sort",
 ]

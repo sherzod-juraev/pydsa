@@ -5,6 +5,7 @@ from .singly.node import Node
 
 T = TypeVar("T")
 
+
 class Stack[T]:
     """
     A last-in, first-out (LIFO) stack implemented with a singly linked list.
@@ -29,7 +30,6 @@ class Stack[T]:
     interface to LIFO operations. The underlying list is managed
     without a tail pointer since only the head is mutated.
     """
-
 
     def __init__(self) -> None:
 

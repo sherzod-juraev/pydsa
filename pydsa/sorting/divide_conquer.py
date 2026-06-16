@@ -90,6 +90,7 @@ def quick_sort(arr: np.ndarray, /) -> np.ndarray:
     - Performs well on average and is often faster than merge sort due to
       cache locality and low constant factors.
     """
+
     def _quick_sort(arr: np.ndarray, low: int, high: int, /) -> None:
         if low < high:
             pi = _partition(arr, low, high)

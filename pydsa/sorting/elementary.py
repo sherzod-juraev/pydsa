@@ -2,7 +2,7 @@ import numpy as np
 from numba import njit
 
 
-@njit # type: ignore
+@njit  # type: ignore
 def bubble_sort(arr: np.ndarray, /) -> np.ndarray:
     """
     Sort an array using bubble sort. O(n²) time, O(n) space.
@@ -42,7 +42,7 @@ def bubble_sort(arr: np.ndarray, /) -> np.ndarray:
     return copied
 
 
-@njit # type: ignore
+@njit  # type: ignore
 def selection_sort(arr: np.ndarray, /) -> np.ndarray:
     """
     Sort an array using selection sort. O(n²) time, O(n) space.
@@ -80,7 +80,7 @@ def selection_sort(arr: np.ndarray, /) -> np.ndarray:
     return copied
 
 
-@njit # type: ignore
+@njit  # type: ignore
 def insertion_sort(arr: np.ndarray, /) -> np.ndarray:
     """
     Sort an array using insertion sort. O(n²) time, O(n) space.

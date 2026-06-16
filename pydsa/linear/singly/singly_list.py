@@ -6,6 +6,7 @@ from .node import Node
 
 T = TypeVar("T")
 
+
 class SinglyList[T]:
     """
     A singly linked list with head and tail pointers.
@@ -82,8 +83,7 @@ class SinglyList[T]:
             index += self.__length
         if index < 0 or index >= self.__length:
             raise IndexError(
-                f"{type(self).__name__} index {index} out of range "
-                f"for length {self.__length}"
+                f"{type(self).__name__} index {index} out of range for length {self.__length}"
             )
         return index
 
@@ -157,8 +157,7 @@ class SinglyList[T]:
             index += self.__length
         if index < 0 or index > self.__length:
             raise IndexError(
-                f"{type(self).__name__} index {index} out of range "
-                f"for length {self.__length}"
+                f"{type(self).__name__} index {index} out of range for length {self.__length}"
             )
         if index == 0:
             return self.insert_first(value)
@@ -290,8 +289,7 @@ class SinglyList[T]:
         self.__head = prev
         self.__tail = old_head
 
-
-    def copy(self) -> 'SinglyList[T]':
+    def copy(self) -> "SinglyList[T]":
         """Return a shallow copy of the list. O(n) time, O(n) space."""
         new_list = SinglyList[T]()
         if self.__length == 0:

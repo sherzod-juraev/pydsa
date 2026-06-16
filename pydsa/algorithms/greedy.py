@@ -7,7 +7,10 @@ import numpy as np
 from ..linear import Stack
 
 
-def activity_selection(start: np.ndarray, finish: np.ndarray, ) -> np.ndarray:
+def activity_selection(
+    start: np.ndarray,
+    finish: np.ndarray,
+) -> np.ndarray:
     """
     Select the maximum number of non-overlapping activities.
 
@@ -32,7 +35,7 @@ def activity_selection(start: np.ndarray, finish: np.ndarray, ) -> np.ndarray:
         If ``start`` and ``finish`` have different shapes.
     """
     if start.shape != finish.shape:
-        raise ValueError('Shapes does not match')
+        raise ValueError("Shapes does not match")
     if start.shape[0] == 0:
         return np.array([])
     sorted_idx = np.argsort(finish)
@@ -73,7 +76,7 @@ def job_sequencing(deadlines: np.ndarray, profits: np.ndarray, /) -> np.ndarray:
         If ``deadlines`` and ``profits`` have different shapes.
     """
     if deadlines.shape != profits.shape:
-        raise ValueError('Shapes does not match')
+        raise ValueError("Shapes does not match")
     if deadlines.shape[0] == 0:
         return np.array([], dtype=int)
     sorted_idx = np.argsort(profits)[::-1]
@@ -89,7 +92,7 @@ def job_sequencing(deadlines: np.ndarray, profits: np.ndarray, /) -> np.ndarray:
 
 
 def fractional_knapsack(
-        weights: np.ndarray, prices: np.ndarray, capacity: int, /
+    weights: np.ndarray, prices: np.ndarray, capacity: int, /
 ) -> tuple[float, float]:
     """
     Solve the Fractional Knapsack problem greedily.
@@ -119,7 +122,7 @@ def fractional_knapsack(
         If ``weights`` and ``prices`` have different shapes.
     """
     if weights.shape != prices.shape:
-        raise ValueError('Shapes does not match')
+        raise ValueError("Shapes does not match")
     if weights.shape[0] == 0:
         return (0, 0)
     total_price = 0
@@ -138,12 +141,9 @@ def fractional_knapsack(
 
 class Node:
     """Internal node for Huffman coding tree."""
+
     def __init__(
-            self,
-            char: str | None,
-            freq: int,
-            left: Self | None = None,
-            right: Self | None = None
+        self, char: str | None, freq: int, left: Self | None = None, right: Self | None = None
     ):
         self.char = char
         self.freq = freq
@@ -163,12 +163,7 @@ class Node:
         return self.freq >= other.freq
 
     def __add__(self, other: Self) -> "Node":
-        return Node(
-            char=None,
-            freq=self.freq + other.freq,
-            left=self,
-            right=other
-        )
+        return Node(char=None, freq=self.freq + other.freq, left=self, right=other)
 
 
 def huffman_coding(text: str, /) -> tuple[str, dict[str, str]]:

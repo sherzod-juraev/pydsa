@@ -56,9 +56,7 @@ def fib_tab(n: int, /) -> int:
     return prev1
 
 
-def knapsack_tab(
-        weights: np.ndarray, prices: np.ndarray, capacity: int, /
-) -> np.ndarray:
+def knapsack_tab(weights: np.ndarray, prices: np.ndarray, capacity: int, /) -> np.ndarray:
     """
     Solve the 0/1 Knapsack problem using tabulation (bottom-up DP).
 
@@ -86,7 +84,7 @@ def knapsack_tab(
         If ``weights`` and ``prices`` have different shapes.
     """
     if weights.shape != prices.shape:
-        raise ValueError('shape does not match')
+        raise ValueError("shape does not match")
     dp = np.full((weights.shape[0] + 1, capacity + 1), 0, dtype=int)
     for i in range(1, weights.shape[0] + 1):
         for j in range(1, capacity + 1):
@@ -135,7 +133,7 @@ def lcs_tab(s1: str, s2: str, /) -> str:
                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
     i = dp.shape[0] - 1
     j = dp.shape[1] - 1
-    word = ''
+    word = ""
     while i > 0 and j > 0:
         if s1[i - 1] == s2[j - 1]:
             word = s1[i - 1] + word

@@ -6,8 +6,8 @@ from .search import (
 )
 
 __all__ = [
-    'linear_search',
-    'binary_search',
-    'jump_search',
-    'exponential_search',
+    "linear_search",
+    "binary_search",
+    "jump_search",
+    "exponential_search",
 ]

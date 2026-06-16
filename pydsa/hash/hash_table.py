@@ -45,6 +45,7 @@ class HashTable[K, V]:
     - API mirrors Python's ``dict``: ``table[key]``, ``key in table``,
       ``del table[key]``, ``table.get(key, default)``.
     """
+
     def __init__(self, capacity: int) -> None:
 
         self.__capacity: int = capacity

@@ -5,10 +5,10 @@ from .heap import MaxHeap, MinHeap
 from .trie import Trie
 
 __all__ = [
-    'BinaryTree',
-    'BSTree',
-    'AVLTree',
-    'MinHeap',
-    'MaxHeap',
-    'Trie',
+    "BinaryTree",
+    "BSTree",
+    "AVLTree",
+    "MinHeap",
+    "MaxHeap",
+    "Trie",
 ]

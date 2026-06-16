@@ -44,6 +44,7 @@ class AVLTree[T: Comparable]:
     - All traversals are iterative using custom Stack and Queue ADTs.
     - Duplicate values are silently ignored.
     """
+
     def __init__(self) -> None:
 
         self.__root: Node[T] | None = None
@@ -186,9 +187,7 @@ class AVLTree[T: Comparable]:
 
     def __update_height(self, node: Node[T], /) -> None:
         """Update the height of a node based on its children."""
-        node.height = 1 + max(
-            self.__get_height(node.left), self.__get_height(node.right)
-        )
+        node.height = 1 + max(self.__get_height(node.left), self.__get_height(node.right))
 
     def __get_balance(self, node: Node[T], /) -> Node[T]:
         """Update height and apply rotation if the node is unbalanced.
@@ -325,7 +324,7 @@ class AVLTree[T: Comparable]:
                 if peek_node.right and peek_node.right != last_visited:
                     current = peek_node.right
                 else:
-                    last_visited= stack.pop()
+                    last_visited = stack.pop()
                     yield last_visited.value
                     current = None
 

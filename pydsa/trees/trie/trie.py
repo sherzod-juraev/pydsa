@@ -39,6 +39,7 @@ class Trie:
     - Removal cleans up unreachable branches but stops at nodes
       that are marked as end-of-word or have multiple children.
     """
+
     def __init__(self) -> None:
 
         self.__root: Node = Node()

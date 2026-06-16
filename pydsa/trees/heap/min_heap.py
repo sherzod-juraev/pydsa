@@ -39,7 +39,7 @@ class MinHeap[T: Comparable]:
 
     def __init__(self) -> None:
 
-        self.__data: list[T]= []
+        self.__data: list[T] = []
 
     def __len__(self) -> int:
         """Return the number of elements. O(1)."""

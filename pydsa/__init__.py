@@ -43,24 +43,51 @@ from .trees import (
 )
 
 __all__ = [
-    "PydsaError", "EmptyError",
-    "SinglyList", "DoublyList", "Queue", "Stack",
-    "BinaryTree", "BSTree", "AVLTree", "MinHeap", "MaxHeap", "Trie",
-    "HashTable", "Graph",
-    "bubble_sort", "selection_sort", "insertion_sort",
-    "merge_sort", "quick_sort", "heap_sort",
-    "counting_sort", "radix_sort", "bucket_sort",
-    "linear_search", "binary_search", "jump_search", "exponential_search",
-    "fib_memo", "fib_tab", "knapsack_tab", "lcs_tab", "coin_change", "edit_distance",
-    "activity_selection", "job_sequencing", "fractional_knapsack", "huffman_coding",
+    "PydsaError",
+    "EmptyError",
+    "SinglyList",
+    "DoublyList",
+    "Queue",
+    "Stack",
+    "BinaryTree",
+    "BSTree",
+    "AVLTree",
+    "MinHeap",
+    "MaxHeap",
+    "Trie",
+    "HashTable",
+    "Graph",
+    "bubble_sort",
+    "selection_sort",
+    "insertion_sort",
+    "merge_sort",
+    "quick_sort",
+    "heap_sort",
+    "counting_sort",
+    "radix_sort",
+    "bucket_sort",
+    "linear_search",
+    "binary_search",
+    "jump_search",
+    "exponential_search",
+    "fib_memo",
+    "fib_tab",
+    "knapsack_tab",
+    "lcs_tab",
+    "coin_change",
+    "edit_distance",
+    "activity_selection",
+    "job_sequencing",
+    "fractional_knapsack",
+    "huffman_coding",
 ]
 
-_submodules = {
-    "linear", "trees", "hash", "graph", "sorting", "searching", "algorithms", "exc"
-}
+_submodules = {"linear", "trees", "hash", "graph", "sorting", "searching", "algorithms", "exc"}
+
 
 def __dir__():
     return list(__all__) + list(_submodules)
+
 
 def __getattr__(name):
     if name in _submodules:

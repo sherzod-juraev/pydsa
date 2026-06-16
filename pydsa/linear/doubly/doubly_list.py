@@ -6,6 +6,7 @@ from .node import Node
 
 T = TypeVar("T")
 
+
 class DoublyList[T]:
     """
     A doubly linked list with head and tail pointers.
@@ -41,7 +42,7 @@ class DoublyList[T]:
     -----
     Indexed access traverses from the nearer end, halving the
     worst-case path compared to a singly linked list.
-"""
+    """
 
     def __init__(self) -> None:
 
@@ -109,8 +110,7 @@ class DoublyList[T]:
             index += self.__length
         if index < 0 or index >= self.__length:
             raise IndexError(
-                f"{type(self).__name__} index {index} out of range "
-                f"for length {self.__length}"
+                f"{type(self).__name__} index {index} out of range for length {self.__length}"
             )
         return index
 
@@ -193,8 +193,7 @@ class DoublyList[T]:
             index += self.__length
         if index < 0 or index > self.__length:
             raise IndexError(
-                f"{type(self).__name__} index {index} out of range "
-                f"for length {self.__length}"
+                f"{type(self).__name__} index {index} out of range for length {self.__length}"
             )
         if index == 0:
             return self.insert_first(value)
@@ -316,7 +315,6 @@ class DoublyList[T]:
                 return True
             current = current.next
         return False
-
 
     def index_of(self, value: T, /) -> int:
         """Return the index of the first occurrence, or -1 if not found. O(n)."""

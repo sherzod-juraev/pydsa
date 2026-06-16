@@ -2,7 +2,7 @@ import numpy as np
 from numba import njit
 
 
-@njit # type: ignore
+@njit  # type: ignore
 def counting_sort(arr: np.ndarray, /) -> np.ndarray:
     """
     Sort an array using counting sort. O(n + k) time, O(k) space.
@@ -45,7 +45,7 @@ def counting_sort(arr: np.ndarray, /) -> np.ndarray:
     return output
 
 
-@njit # type: ignore
+@njit  # type: ignore
 def radix_sort(arr: np.ndarray, /) -> np.ndarray:
     """
     Sort an array using LSD radix sort. O(n × d) time, O(n + k) space.
@@ -97,7 +97,7 @@ def radix_sort(arr: np.ndarray, /) -> np.ndarray:
     return output
 
 
-@njit # type: ignore
+@njit  # type: ignore
 def bucket_sort(arr: np.ndarray, /) -> np.ndarray:
     """
     Sort an array using bucket sort. O(n + k) average time, O(n) space.

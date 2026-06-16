@@ -106,7 +106,7 @@ class Graph:
             If the vertex does not exist.
         """
         if vertex not in self.__adj:
-            raise KeyError(f'Vertex {vertex} not found')
+            raise KeyError(f"Vertex {vertex} not found")
 
         if self.__directed:
             for edges in self.__adj.values():
@@ -179,13 +179,13 @@ class Graph:
     def bfs(self, start: str, /) -> Iterator[str]:
         """Yield vertices in breadth-first order from ``start``. O(V + E).
 
-         Uses a custom ``Queue`` (FIFO).
+        Uses a custom ``Queue`` (FIFO).
 
-         Raises
-         ------
-         KeyError
-             If the start vertex does not exist.
-         """
+        Raises
+        ------
+        KeyError
+            If the start vertex does not exist.
+        """
         if start not in self.__adj:
             raise KeyError(f"Key {start} not found")
         queue = Queue[str]()
@@ -203,13 +203,13 @@ class Graph:
     def dfs(self, start: str, /) -> Iterator[str]:
         """Yield vertices in depth-first order from ``start``. O(V + E).
 
-           Uses a custom ``Stack`` (LIFO).
+        Uses a custom ``Stack`` (LIFO).
 
-           Raises
-           ------
-           KeyError
-               If the start vertex does not exist.
-           """
+        Raises
+        ------
+        KeyError
+            If the start vertex does not exist.
+        """
         if start not in self.__adj:
             raise KeyError(f"Key {start} not found")
         stack = Stack[str]()

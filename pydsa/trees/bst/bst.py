@@ -183,21 +183,21 @@ class BSTree[T: Comparable]:
     def max_value(self) -> T:
         """Return the maximum value in the tree (rightmost node). O(h).
 
-         Returns
-         -------
-         Any
-             The largest value in the tree.
+        Returns
+        -------
+        Any
+            The largest value in the tree.
 
-         Raises
-         ------
-         EmptyError
-             If the tree is empty.
+        Raises
+        ------
+        EmptyError
+            If the tree is empty.
 
-         Examples
-         --------
-         >>> bst.max_value()
-         14
-         """
+        Examples
+        --------
+        >>> bst.max_value()
+        14
+        """
         if self.is_empty():
             raise EmptyError(self)
         current: Node[T] = cast(Node[T], self.__root)
@@ -208,25 +208,25 @@ class BSTree[T: Comparable]:
     def remove(self, value: T, /) -> None:
         """Remove a value from the tree if it exists. O(h).
 
-         Handles three cases:
-         1. Node is a leaf — simply removed.
-         2. Node has one child — child replaces it.
-         3. Node has two children — replaced by its inorder successor
-            (smallest value in right subtree).
+        Handles three cases:
+        1. Node is a leaf — simply removed.
+        2. Node has one child — child replaces it.
+        3. Node has two children — replaced by its inorder successor
+           (smallest value in right subtree).
 
-         If the value is not found, the tree is unchanged.
+        If the value is not found, the tree is unchanged.
 
-         Parameters
-         ----------
-         value : Any
-             The value to remove.
+        Parameters
+        ----------
+        value : Any
+            The value to remove.
 
-         Examples
-         --------
-         >>> bst.remove(5)
-         >>> 5 in bst
-         False
-         """
+        Examples
+        --------
+        >>> bst.remove(5)
+        >>> 5 in bst
+        False
+        """
         if self.is_empty():
             return
         parent: Node[T] | None = None

@@ -44,7 +44,6 @@ class BinaryTree[T]:
     invariant, see the ``BST`` class.
     """
 
-
     def __init__(self) -> None:
 
         self.__root: Node[T] | None = None
@@ -111,18 +110,18 @@ class BinaryTree[T]:
             return
         current = cast(Node[T], self.__root)
         for i in range(len(path) - 1):
-            if path[i] == 'L':
+            if path[i] == "L":
                 if current.left is None:
                     raise ValueError(f"Path is broken: {path} does not exist")
                 current = current.left
-            elif path[i] == 'R':
+            elif path[i] == "R":
                 if current.right is None:
                     raise ValueError(f"Path is broken: {path} does not exist")
                 current = current.right
-        if path[-1] == 'L':
+        if path[-1] == "L":
             new_node.left = current.left
             current.left = new_node
-        elif path[-1] == 'R':
+        elif path[-1] == "R":
             new_node.right = current.right
             current.right = new_node
         self.__nodes += 1
