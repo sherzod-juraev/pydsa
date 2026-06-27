@@ -31,17 +31,18 @@ static type safety** with mypy strict mode and ruff linting. It answers the ques
 *"What does it actually take to build these things for real?"*
 
 **What makes it different:**
-- Zero external dependencies for core logic (`numpy` and `numba` are used only in
-  sorting/searching modules for performance, and are entirely optional)
-- Every component is written from scratch — custom `Stack[T]`, `Queue[T]`, `SinglyList[T]`,
-  `DoublyList[T]`, `AVLTree[T]`, `HashTable[K, V]`, `Graph`, and more
+- All core data structures are built from scratch with zero external dependencies —
+  custom `Stack[T]`, `Queue[T]`, `SinglyList[T]`, `DoublyList[T]`, `AVLTree[T]`,
+  `HashTable[K, V]`, `Graph`, and more are pure Python
+- `numpy` and `numba` are used **only** in sorting and searching modules for
+  performance optimization, and are entirely optional — the core library works
+  without them
 - **Full generic type safety** — all structures are type-safe with `TypeVar` and `Protocol`
 - Iterative implementations throughout — no recursion depth limits, no hidden
   overhead, production-style clarity
 - **Python 3.12+ syntax** — `class Stack[T]` style generics
 - 914 passing tests covering edge cases, invariants, stability, and large inputs
 - **0 mypy errors** in strict mode, **0 ruff errors**
-
 ---
 
 ## Installation
