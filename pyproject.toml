@@ -4,10 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pydsa"
-version = "1.0.3"
+version = "1.0.5"
 description = "Pure Python Data Structures & Algorithms — built from scratch"
 requires-python = ">=3.12"
-authors = [{name = "Sherzod Juraev"}]
+authors = [
+    {name = "Sherzod Juraev"},
+    {email = "juraevsherzod9943@gmail.com"}
+]
 readme = "README.md"
 license = {text = "MIT"}
 keywords = ["data-structures", "algorithms", "education", "python", "dsa"]
