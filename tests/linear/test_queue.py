@@ -1,128 +1,91 @@
 import pytest
-from pydsa import Queue
-from pydsa.exc import EmptyError
+
+from pydsa import EmptyError, Queue
 
 
-class TestQueueInit:
-    """__init__"""
-
-    def test_EmptyError_queue_has_zero_length(self):
-        q = Queue()
-        assert len(q) == 0
-
-    def test_EmptyError_queue_is_EmptyError(self):
-        q = Queue()
-        assert q.is_empty()
+@pytest.fixture
+def empty_queue() -> Queue[int]:
+    return Queue[int]()
 
 
-class TestQueueEnqueue:
-    """enqueue"""
-
-    def test_enqueue_increases_length(self):
-        q = Queue()
-        q.enqueue(10)
-        assert len(q) == 1
-
-    def test_enqueue_multiple(self):
-        q = Queue()
-        q.enqueue(10)
-        q.enqueue(20)
-        q.enqueue(30)
-        assert len(q) == 3
-
-    def test_enqueue_and_peek(self):
-        q = Queue()
-        q.enqueue(42)
-        assert q.peek() == 42
+@pytest.fixture
+def filled_queue() -> Queue[int]:
+    q = Queue[int]()
+    for v in [1, 2, 3]:
+        q.enqueue(v)
+    return q
 
 
-class TestQueueDequeue:
-    """dequeue"""
+class TestConstruction:
+    def test_new_queue_is_empty(self, empty_queue: Queue[int]) -> None:
+        assert empty_queue.is_empty()
+        assert len(empty_queue) == 0
+        assert bool(empty_queue) is False
 
-    def test_dequeue_returns_first_enqueued(self):
-        q = Queue()
-        q.enqueue(10)
-        q.enqueue(20)
-        assert q.dequeue() == 10
 
-    def test_dequeue_removes_element(self):
-        q = Queue()
-        q.enqueue(10)
-        q.enqueue(20)
-        q.dequeue()
-        assert len(q) == 1
-        assert q.peek() == 20
+class TestEnqueue:
+    def test_into_empty(self, empty_queue: Queue[int]) -> None:
+        empty_queue.enqueue(1)
+        assert len(empty_queue) == 1
+        assert empty_queue.peek() == 1
+        assert bool(empty_queue) is True
 
-    def test_dequeue_until_EmptyError(self):
-        q = Queue()
-        q.enqueue(1)
-        q.enqueue(2)
-        q.enqueue(3)
-        q.dequeue()
-        q.dequeue()
-        q.dequeue()
-        assert q.is_empty()
+    def test_first_enqueued_stays_at_front(self, empty_queue: Queue[int]) -> None:
+        for v in [1, 2, 3]:
+            empty_queue.enqueue(v)
+        assert empty_queue.peek() == 1
+        assert len(empty_queue) == 3
 
-    def test_dequeue_on_EmptyError_raises(self):
-        q = Queue()
+
+class TestDequeue:
+    def test_raises_on_empty(self, empty_queue: Queue[int]) -> None:
         with pytest.raises(EmptyError):
-            q.dequeue()
+            empty_queue.dequeue()
 
-    def test_dequeue_updates_tail_when_single_element(self):
-        q = Queue()
-        q.enqueue(1)
-        q.dequeue()
-        assert q.is_empty()
-        q.enqueue(2)
-        assert q.peek() == 2
+    def test_fifo_order(self, filled_queue: Queue[int]) -> None:
+        assert filled_queue.dequeue() == 1
+        assert filled_queue.dequeue() == 2
+        assert filled_queue.dequeue() == 3
 
+    def test_length_decreases(self, filled_queue: Queue[int]) -> None:
+        filled_queue.dequeue()
+        assert len(filled_queue) == 2
 
-class TestQueuePeek:
-    """peek"""
-
-    def test_peek_does_not_remove(self):
-        q = Queue()
-        q.enqueue(10)
-        assert q.peek() == 10
-        assert len(q) == 1
-
-    def test_peek_on_EmptyError_raises(self):
-        q = Queue()
+    def test_drains_to_empty_and_clears_tail(self, filled_queue: Queue[int]) -> None:
+        for _ in range(3):
+            filled_queue.dequeue()
+        assert filled_queue.is_empty()
         with pytest.raises(EmptyError):
-            q.peek()
+            filled_queue.dequeue()
 
 
-class TestQueueFIFO:
-    """FIFO behavior"""
+class TestPeek:
+    def test_raises_on_empty(self, empty_queue: Queue[int]) -> None:
+        with pytest.raises(EmptyError):
+            empty_queue.peek()
 
-    def test_fifo_order(self):
-        q = Queue()
-        for v in [1, 2, 3, 4, 5]:
-            q.enqueue(v)
-        result = []
-        while not q.is_empty():
-            result.append(q.dequeue())
-        assert result == [1, 2, 3, 4, 5]
-
-    def test_interleaved_enqueue_dequeue(self):
-        q = Queue()
-        q.enqueue(1)
-        q.enqueue(2)
-        assert q.dequeue() == 1
-        q.enqueue(3)
-        assert q.dequeue() == 2
-        assert q.dequeue() == 3
-        assert q.is_empty()
+    def test_does_not_remove_element(self, filled_queue: Queue[int]) -> None:
+        filled_queue.peek()
+        assert len(filled_queue) == 3
+        assert filled_queue.peek() == 1
 
 
-class TestQueueLargeData:
-    """Large data"""
+class TestInterleavedOperations:
+    def test_enqueue_dequeue_enqueue_maintains_fifo(self, empty_queue: Queue[int]) -> None:
+        empty_queue.enqueue(1)
+        empty_queue.enqueue(2)
+        assert empty_queue.dequeue() == 1
+        empty_queue.enqueue(3)
+        assert empty_queue.dequeue() == 2
+        assert empty_queue.dequeue() == 3
+        assert empty_queue.is_empty()
 
-    def test_many_enqueue_dequeue(self):
-        q = Queue()
-        n = 1000
-        for i in range(n):
-            q.enqueue(i)
-        for i in range(n):
-            assert q.dequeue() == i
-        assert q.is_empty()
+    def test_tail_pointer_correct_after_full_drain_and_reenqueue(
+        self, empty_queue: Queue[int]
+    ) -> None:
+        empty_queue.enqueue(1)
+        empty_queue.dequeue()
+        empty_queue.enqueue(2)
+        empty_queue.enqueue(3)
+        assert empty_queue.dequeue() == 2
+        assert empty_queue.dequeue() == 3

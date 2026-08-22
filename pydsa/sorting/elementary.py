@@ -1,36 +1,47 @@
-import numpy as np
-from numba import njit
+"""Elementary sorting algorithms.
+
+Provides bubble sort, selection sort, and insertion sort.
+"""
+
+from collections.abc import Sequence
+
+from .._types import Comparable
 
 
-@njit  # type: ignore
-def bubble_sort(arr: np.ndarray, /) -> np.ndarray:
-    """
-    Sort an array using bubble sort. O(n²) time, O(n) space.
+def bubble_sort[T: Comparable](arr: Sequence[T], /) -> list[T]:
+    """Sort by repeatedly swapping adjacent out-of-order elements.
 
-    Repeatedly steps through the array, compares adjacent elements,
-    and swaps them if they are in the wrong order. The largest
-    element "bubbles" to the end in each pass. Early termination
-    occurs if no swaps are made in a pass, giving O(n) best case
-    for already-sorted input.
+    Largest element "bubbles" to the end each pass. Adaptive — stops early
+    if no swaps occur, giving O(n) best case on already-sorted input.
+
+    Time Complexity: O(n²) average and worst case, O(n) best case
+    Space Complexity: O(n) — returns a new list, does not mutate input
 
     Parameters
     ----------
-    arr : np.ndarray
-        Input array.
+    arr : Sequence[T]
+        Input sequence.
 
     Returns
     -------
-    np.ndarray
-        Sorted copy of the input array.
+    list[T]
+        Sorted copy of input.
 
     Notes
     -----
-    - **Stable**: Yes.
-    - **In-place**: Operates on a copy; original is unchanged.
-    - Compiled with ``@njit`` (Numba) for C-level loop performance.
+    Stable: Yes — preserves relative order of equal elements.
+    Adaptive: O(n) on already-sorted input.
+
+    Examples
+    --------
+    >>> bubble_sort([5, 2, 8, 1, 9])
+    [1, 2, 5, 8, 9]
+
+    >>> bubble_sort(["zebra", "apple", "mango"])
+    ['apple', 'mango', 'zebra']
     """
-    copied = arr.copy()
-    n = copied.shape[0]
+    copied = list(arr)
+    n = len(copied)
     for i in range(n - 1):
         swapped = False
         for j in range(n - i - 1):
@@ -42,34 +53,40 @@ def bubble_sort(arr: np.ndarray, /) -> np.ndarray:
     return copied
 
 
-@njit  # type: ignore
-def selection_sort(arr: np.ndarray, /) -> np.ndarray:
-    """
-    Sort an array using selection sort. O(n²) time, O(n) space.
+def selection_sort[T: Comparable](arr: Sequence[T], /) -> list[T]:
+    """Sort by selecting the minimum from unsorted region each iteration.
 
-    Divides the array into a sorted and unsorted region. In each
-    iteration, the smallest element from the unsorted region is
-    selected and placed at the end of the sorted region.
+    Divides array into sorted (left) and unsorted (right) regions.
+    Each pass finds the smallest element in unsorted region and swaps to sorted.
+
+    Time Complexity: O(n²) in all cases (best, average, worst)
+    Space Complexity: O(n) — returns a new list, does not mutate input
 
     Parameters
     ----------
-    arr : np.ndarray
-        Input array.
+    arr : Sequence[T]
+        Input sequence.
 
     Returns
     -------
-    np.ndarray
-        Sorted copy of the input array.
+    list[T]
+        Sorted copy of input.
 
     Notes
     -----
-    - **Stable**: No (swapping may change order of equal elements).
-    - **In-place**: Operates on a copy; original is unchanged.
-    - Does O(n²) comparisons even on sorted input — not adaptive.
-    - Compiled with ``@njit`` (Numba) for C-level loop performance.
+    Unstable: Swap operations may reorder equal elements.
+    Non-adaptive: Always O(n²) even on sorted input (no early termination).
+
+    Examples
+    --------
+    >>> selection_sort([5, 2, 8, 1, 9])
+    [1, 2, 5, 8, 9]
+
+    >>> selection_sort(["zebra", "apple", "mango"])
+    ['apple', 'mango', 'zebra']
     """
-    copied = arr.copy()
-    n = copied.shape[0]
+    copied = list(arr)
+    n = len(copied)
     for i in range(n - 1):
         min_idx = i
         for j in range(i + 1, n):
@@ -80,35 +97,43 @@ def selection_sort(arr: np.ndarray, /) -> np.ndarray:
     return copied
 
 
-@njit  # type: ignore
-def insertion_sort(arr: np.ndarray, /) -> np.ndarray:
-    """
-    Sort an array using insertion sort. O(n²) time, O(n) space.
+def insertion_sort[T: Comparable](arr: Sequence[T], /) -> list[T]:
+    """Sort by inserting each element into its correct position.
 
-    Builds the sorted array one element at a time by taking each
-    element and inserting it into its correct position among the
-    previously sorted elements. Efficient for small or partially
-    sorted datasets — O(n) best case when the array is already sorted.
+    Builds sorted array one element at a time. Each element is inserted
+    into the correct position among previously sorted elements. Efficient
+    for small or partially sorted datasets — O(n) best case.
+
+    Time Complexity: O(n²) average and worst case, O(n) best case
+    Space Complexity: O(n) — returns a new list, does not mutate input
 
     Parameters
     ----------
-    arr : np.ndarray
-        Input array.
+    arr : Sequence[T]
+        Input sequence.
 
     Returns
     -------
-    np.ndarray
-        Sorted copy of the input array.
+    list[T]
+        Sorted copy of input.
 
     Notes
     -----
-    - **Stable**: Yes.
-    - **Adaptive**: O(n) best case for already-sorted input.
-    - **In-place**: Operates on a copy; original is unchanged.
-    - Compiled with ``@njit`` (Numba) for C-level loop performance.
+    Stable: Yes — preserves relative order of equal elements.
+    Adaptive: O(n) on already-sorted input. Minimal shifts needed.
+    Preferred for small arrays (< 50 elements) due to low overhead.
+
+    Examples
+    --------
+    >>> insertion_sort([5, 2, 8, 1, 9])
+    [1, 2, 5, 8, 9]
+
+    >>> sorted_arr = [1, 2, 3, 4, 5]
+    >>> insertion_sort(sorted_arr)  # O(n) best case
+    [1, 2, 3, 4, 5]
     """
-    copied = arr.copy()
-    n = copied.shape[0]
+    copied = list(arr)
+    n = len(copied)
     for i in range(n - 1):
         j = i + 1
         value = copied[j]

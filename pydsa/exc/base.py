@@ -1,2 +1,5 @@
+"""Base exception type for the pydsa package."""
+
+
 class PydsaError(Exception):
-    pass
+    """Base class for all exceptions raised by pydsa."""

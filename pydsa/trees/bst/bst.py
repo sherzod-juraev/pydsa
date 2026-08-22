@@ -1,3 +1,10 @@
+"""Binary searching tree (BST) implementation.
+
+Provides :class:`BSTree`, a binary searching tree with the
+``left < root < right`` invariant, supporting insertion, deletion,
+searching, and four traversal strategies.
+"""
+
 from collections.abc import Iterator
 from typing import cast
 
@@ -8,22 +15,22 @@ from ..binary_tree.node import Node
 
 
 class BSTree[T: Comparable]:
-    """
-    A binary searching tree (BST) where each node satisfies the invariant
-    ``left < root < right``.
+    """A binary searching tree (BST).
+
+    Each node satisfies the invariant ``left < root < right``.
 
     Values are inserted automatically based on comparison with existing
     nodes. Duplicate values are silently ignored. The tree supports
     insertion, deletion, searching, and four traversal strategies, all
     implemented iteratively using custom Stack and Queue ADTs.
 
-    Time Complexity
+    Time Complexity Summary
     .. csv-table:: BST Operations Complexity
        :header: "Operation", "Time (avg)", "Time (worst)", "Space"
        :widths: 20, 12, 12, 10
 
        "insert", "O(log n)", "O(n)", "O(1)"
-       "searching", "O(log n)", "O(n)", "O(1)"
+       "search", "O(log n)", "O(n)", "O(1)"
        "min_value", "O(log n)", "O(n)", "O(1)"
        "max_value", "O(log n)", "O(n)", "O(1)"
        "remove", "O(log n)", "O(n)", "O(1)"
@@ -46,7 +53,7 @@ class BSTree[T: Comparable]:
     """
 
     def __init__(self) -> None:
-
+        """Initialize an empty tree."""
         self.__root: Node[T] | None = None
         self.__nodes: int = 0
 
@@ -139,7 +146,7 @@ class BSTree[T: Comparable]:
         Parameters
         ----------
         value : Any
-            The value to searching for.
+            The value to search for.
 
         Returns
         -------
@@ -148,9 +155,12 @@ class BSTree[T: Comparable]:
 
         Examples
         --------
-        >>> bst.searching(5)
+        >>> bst = BSTree()
+        >>> for v in [5, 3, 8, 1, 4, 7, 9]:
+        ...     bst.insert(v)
+        >>> bst.search(5)
         True
-        >>> bst.searching(99)
+        >>> bst.search(99)
         False
         """
         return value in self
@@ -170,6 +180,9 @@ class BSTree[T: Comparable]:
 
         Examples
         --------
+        >>> bst = BSTree()
+        >>> for v in [5, 3, 8, 1, 4, 7, 9]:
+        ...     bst.insert(v)
         >>> bst.min_value()
         1
         """
@@ -195,8 +208,11 @@ class BSTree[T: Comparable]:
 
         Examples
         --------
+        >>> bst = BSTree()
+        >>> for v in [5, 3, 8, 1, 4, 7, 9]:
+        ...     bst.insert(v)
         >>> bst.max_value()
-        14
+        9
         """
         if self.is_empty():
             raise EmptyError(self)
@@ -223,6 +239,9 @@ class BSTree[T: Comparable]:
 
         Examples
         --------
+        >>> bst = BSTree()
+        >>> for v in [5, 3, 8, 1, 4, 7, 9]:
+        ...     bst.insert(v)
         >>> bst.remove(5)
         >>> 5 in bst
         False
@@ -264,6 +283,9 @@ class BSTree[T: Comparable]:
 
         Examples
         --------
+        >>> bst = BSTree()
+        >>> for v in [5, 3, 8, 1, 4, 7, 9]:
+        ...     bst.insert(v)
         >>> list(bst.preorder())
         [5, 3, 1, 4, 8, 7, 9]
         """
@@ -291,6 +313,9 @@ class BSTree[T: Comparable]:
 
         Examples
         --------
+        >>> bst = BSTree()
+        >>> for v in [5, 3, 8, 1, 4, 7, 9]:
+        ...     bst.insert(v)
         >>> list(bst.inorder())
         [1, 3, 4, 5, 7, 8, 9]
         """
@@ -316,6 +341,9 @@ class BSTree[T: Comparable]:
 
         Examples
         --------
+        >>> bst = BSTree()
+        >>> for v in [5, 3, 8, 1, 4, 7, 9]:
+        ...     bst.insert(v)
         >>> list(bst.postorder())
         [1, 4, 3, 7, 9, 8, 5]
         """
@@ -347,6 +375,9 @@ class BSTree[T: Comparable]:
 
         Examples
         --------
+        >>> bst = BSTree()
+        >>> for v in [5, 3, 8, 1, 4, 7, 9]:
+        ...     bst.insert(v)
         >>> list(bst.levelorder())
         [5, 3, 8, 1, 4, 7, 9]
         """
@@ -374,6 +405,9 @@ class BSTree[T: Comparable]:
 
         Examples
         --------
+        >>> bst = BSTree()
+        >>> for v in [5, 3, 8, 1, 4, 7, 9]:
+        ...     bst.insert(v)
         >>> bst.height()
         3
         """

@@ -1,11 +1,14 @@
+"""Hash table implementation.
+
+Provides :class:`HashTable`, a hash table using separate chaining for
+collision resolution, with a dict-like API (``table[key]``,
+``key in table``, ``del table[key]``, ``table.get(key, default)``).
+"""
+
 from collections.abc import Iterator
-from typing import Any, TypeVar
 
 from ..linear import SinglyList
 from ._entry import Entry
-
-K = TypeVar("K")
-V = TypeVar("V")
 
 
 class HashTable[K, V]:
@@ -41,13 +44,12 @@ class HashTable[K, V]:
     - Load factor threshold is 0.75; rehashing doubles capacity.
     - ``hash()`` is Python's built-in, capable of hashing any
       immutable object (str, int, float, tuple, etc.).
-    - For open addressing variant, see ``HashTableOA`` (planned).
     - API mirrors Python's ``dict``: ``table[key]``, ``key in table``,
       ``del table[key]``, ``table.get(key, default)``.
     """
 
     def __init__(self, capacity: int) -> None:
-
+        """Initialize an empty hash table with the given capacity."""
         self.__capacity: int = capacity
         self.__data: list[SinglyList[Entry[K, V]]] = [SinglyList() for _ in range(capacity)]
         self.__size: int = 0
@@ -70,7 +72,7 @@ class HashTable[K, V]:
 
         Examples
         --------
-        >>> ht = HashTable()
+        >>> ht = HashTable[str, str](capacity=16)
         >>> ht["name"] = "John"
         >>> ht["name"]
         'John'
@@ -88,9 +90,11 @@ class HashTable[K, V]:
 
         Examples
         --------
-        >>> ht = HashTable()
+        >>> ht = HashTable[str, int](capacity=16)
         >>> ht["age"] = 25
-        >>> ht["age"] = 26  # update
+        >>> ht["age"] = 26
+        >>> ht["age"]
+        26
         """
         index = self.__hash(key)
         for entry in self.__data[index]:
@@ -113,7 +117,11 @@ class HashTable[K, V]:
 
         Examples
         --------
+        >>> ht = HashTable[str, int](capacity=16)
+        >>> ht["age"] = 25
         >>> del ht["age"]
+        >>> "age" in ht
+        False
         """
         index = self.__hash(key)
         for i, entry in enumerate(self.__data[index]):
@@ -127,6 +135,15 @@ class HashTable[K, V]:
         """Remove a key-value pair if it exists. O(1) average.
 
         Returns True if the key was found and removed, False otherwise.
+
+        Examples
+        --------
+        >>> ht = HashTable[str, int](capacity=16)
+        >>> ht["age"] = 25
+        >>> ht.remove("age")
+        True
+        >>> ht.remove("age")
+        False
         """
         index = self.__hash(key)
         for i, entry in enumerate(self.__data[index]):
@@ -141,29 +158,34 @@ class HashTable[K, V]:
 
         Examples
         --------
-        >>> "name" in ht
+        >>> ht = HashTable[str, int](capacity=16)
+        >>> ht["age"] = 25
+        >>> "age" in ht
         True
+        >>> "missing" in ht
+        False
         """
         index = self.__hash(item)
         return any(entry.key == item for entry in self.__data[index])
 
-    def get(self, key: K, default: V | None = None) -> Any:
+    def get(self, key: K, default: V | None = None) -> V | None:
         """Return the value for the key, or a default if missing. O(1).
 
         Parameters
         ----------
-        key : Any
+        key : K
             The key to look up.
-        default : Any, optional
+        default : V, optional
             Value returned when the key is not found (default None).
 
         Returns
         -------
-        Any
+        V or None
             The associated value or the default.
 
         Examples
         --------
+        >>> ht = HashTable[str, int](capacity=16)
         >>> ht.get("missing", 0)
         0
         """

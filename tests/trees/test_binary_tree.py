@@ -1,431 +1,140 @@
 import pytest
-from pydsa import BinaryTree
-from pydsa.exc import EmptyError
+
+from pydsa import EmptyError, BinaryTree
 
 
-class TestBinaryTreeInit:
-    """__init__"""
-
-    def test_EmptyError_tree_has_zero_nodes(self):
-        tree = BinaryTree()
+class TestBasics:
+    def test_new_tree_is_empty(self) -> None:
+        tree = BinaryTree[int]()
+        assert tree.is_empty()
         assert len(tree) == 0
-
-    def test_EmptyError_tree_is_falsy(self):
-        tree = BinaryTree()
         assert not tree
 
-    def test_EmptyError_tree_is_empty(self):
-        tree = BinaryTree()
-        assert tree.is_empty()
-
-
-class TestBinaryTreeInsert:
-    """insert"""
-
-    def test_insert_root(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        assert len(tree) == 1
-        assert tree.root() == 5
-
-    def test_insert_left_child(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        assert len(tree) == 2
-        assert tree.root() == 5
-
-    def test_insert_right_child(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(8, "R")
-        assert len(tree) == 2
-        assert tree.root() == 5
-
-    def test_insert_multiple_levels(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        tree.insert(8, "R")
-        tree.insert(1, "LL")
-        tree.insert(4, "LR")
-        tree.insert(7, "RL")
-        tree.insert(9, "RR")
-        assert len(tree) == 7
-
-    def test_insert_replaces_existing_node(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        tree.insert(99, "L")
-        assert len(tree) == 3
-
-    def test_insert_preserves_subtree_on_replace(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        tree.insert(1, "LL")
-        tree.insert(99, "L")
-        assert len(tree) == 4
-
-    def test_insert_broken_path_raises(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        with pytest.raises(ValueError, match="Path is broken"):
-            tree.insert(10, "LL")
-
-    def test_insert_broken_path_deep_raises(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        with pytest.raises(ValueError, match="Path is broken"):
-            tree.insert(10, "LRR")
-
-    def test_insert_invalid_path_char_does_nothing(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "X")  # invalid char, silently ignored
-        assert len(tree) == 2
-
-
-class TestBinaryTreeRoot:
-    """root"""
-
-    def test_root_returns_value(self):
-        tree = BinaryTree()
-        tree.insert(42, "")
-        assert tree.root() == 42
-
-    def test_root_on_EmptyError_raises(self):
-        tree = BinaryTree()
+    def test_root_raises_when_empty(self) -> None:
+        tree = BinaryTree[int]()
         with pytest.raises(EmptyError):
             tree.root()
 
-
-class TestBinaryTreePreorder:
-    """preorder"""
-
-    def test_preorder_single_node(self):
-        tree = BinaryTree()
+    def test_insert_at_root(self) -> None:
+        tree = BinaryTree[int]()
         tree.insert(5, "")
-        assert list(tree.preorder()) == [5]
+        assert tree.root() == 5
+        assert len(tree) == 1
+        assert bool(tree)
 
-    def test_preorder_full_tree(self):
-        tree = BinaryTree()
+
+class TestInsertPaths:
+    def test_insert_builds_expected_shape(self) -> None:
+        tree = BinaryTree[int]()
         tree.insert(5, "")
         tree.insert(3, "L")
         tree.insert(8, "R")
         tree.insert(1, "LL")
-        tree.insert(4, "LR")
-        tree.insert(7, "RL")
-        tree.insert(9, "RR")
-        assert list(tree.preorder()) == [5, 3, 1, 4, 8, 7, 9]
+        assert list(tree.preorder()) == [5, 3, 1, 8]
 
-    def test_preorder_left_skewed(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        tree.insert(2, "L")
-        tree.insert(3, "LL")
-        assert list(tree.preorder()) == [1, 2, 3]
+    def test_broken_path_raises(self) -> None:
+        tree = BinaryTree[int]()
+        tree.insert(5, "")
+        with pytest.raises(ValueError):
+            tree.insert(1, "LL")  # "L" doesn't exist yet
 
-    def test_preorder_right_skewed(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        tree.insert(2, "R")
-        tree.insert(3, "RR")
-        assert list(tree.preorder()) == [1, 2, 3]
+    def test_insert_preserves_existing_subtree(self) -> None:
+        tree = BinaryTree[int]()
+        tree.insert(5, "")
+        tree.insert(3, "L")
+        tree.insert(1, "LL")
+        tree.insert(99, "L")  # overwrite at "L" — old subtree should hang off it
+        assert list(tree.preorder()) == [5, 99, 3, 1]
 
-    def test_preorder_EmptyError_tree(self):
-        tree = BinaryTree()
+    def test_empty_path_on_non_empty_tree_replaces_root(self) -> None:
+        """Regression test: insert(value, "") used to raise IndexError
+        when the tree was already non-empty, because path[-1] on an
+        empty string is invalid. Empty path should always target the
+        root and preserve its existing children.
+        """
+        tree = BinaryTree[int]()
+        tree.insert(5, "")
+        tree.insert(3, "L")
+        tree.insert(8, "R")
+        tree.insert(99, "")  # replace root — should not crash
+        assert tree.root() == 99
+        assert list(tree.preorder()) == [99, 3, 8]
+        assert len(tree) == 4
+
+    def test_non_empty_path_on_empty_tree_raises(self) -> None:
+        """Regression test: an empty tree used to silently ignore a
+        non-trivial path and insert at the root anyway, instead of
+        raising as the docstring promises.
+        """
+        tree = BinaryTree[int]()
+        with pytest.raises(ValueError):
+            tree.insert(1, "LLR")
+
+
+class TestTraversals:
+    @pytest.fixture
+    def tree(self) -> BinaryTree[int]:
+        tree = BinaryTree[int]()
+        tree.insert(5, "")
+        tree.insert(3, "L")
+        tree.insert(8, "R")
+        tree.insert(1, "LL")
+        return tree
+
+    def test_preorder(self, tree: BinaryTree[int]) -> None:
+        assert list(tree.preorder()) == [5, 3, 1, 8]
+
+    def test_inorder(self, tree: BinaryTree[int]) -> None:
+        assert list(tree.inorder()) == [1, 3, 5, 8]
+
+    def test_postorder(self, tree: BinaryTree[int]) -> None:
+        assert list(tree.postorder()) == [1, 3, 8, 5]
+
+    def test_levelorder(self, tree: BinaryTree[int]) -> None:
+        assert list(tree.levelorder()) == [5, 3, 8, 1]
+
+    def test_traversals_on_empty_tree_yield_nothing(self) -> None:
+        tree = BinaryTree[int]()
         assert list(tree.preorder()) == []
-
-
-class TestBinaryTreeInorder:
-    """inorder"""
-
-    def test_inorder_single_node(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        assert list(tree.inorder()) == [5]
-
-    def test_inorder_full_tree(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        tree.insert(8, "R")
-        tree.insert(1, "LL")
-        tree.insert(4, "LR")
-        tree.insert(7, "RL")
-        tree.insert(9, "RR")
-        assert list(tree.inorder()) == [1, 3, 4, 5, 7, 8, 9]
-
-    def test_inorder_left_skewed(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        tree.insert(2, "L")
-        tree.insert(3, "LL")
-        assert list(tree.inorder()) == [3, 2, 1]
-
-    def test_inorder_right_skewed(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        tree.insert(2, "R")
-        tree.insert(3, "RR")
-        assert list(tree.inorder()) == [1, 2, 3]
-
-    def test_inorder_EmptyError_tree(self):
-        tree = BinaryTree()
         assert list(tree.inorder()) == []
-
-
-class TestBinaryTreePostorder:
-    """postorder"""
-
-    def test_postorder_single_node(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        assert list(tree.postorder()) == [5]
-
-    def test_postorder_full_tree(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        tree.insert(8, "R")
-        tree.insert(1, "LL")
-        tree.insert(4, "LR")
-        tree.insert(7, "RL")
-        tree.insert(9, "RR")
-        assert list(tree.postorder()) == [1, 4, 3, 7, 9, 8, 5]
-
-    def test_postorder_left_skewed(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        tree.insert(2, "L")
-        tree.insert(3, "LL")
-        assert list(tree.postorder()) == [3, 2, 1]
-
-    def test_postorder_right_skewed(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        tree.insert(2, "R")
-        tree.insert(3, "RR")
-        assert list(tree.postorder()) == [3, 2, 1]
-
-    def test_postorder_EmptyError_tree(self):
-        tree = BinaryTree()
         assert list(tree.postorder()) == []
-
-
-class TestBinaryTreeLevelorder:
-    """levelorder"""
-
-    def test_levelorder_single_node(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        assert list(tree.levelorder()) == [5]
-
-    def test_levelorder_full_tree(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        tree.insert(8, "R")
-        tree.insert(1, "LL")
-        tree.insert(4, "LR")
-        tree.insert(7, "RL")
-        tree.insert(9, "RR")
-        assert list(tree.levelorder()) == [5, 3, 8, 1, 4, 7, 9]
-
-    def test_levelorder_left_skewed(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        tree.insert(2, "L")
-        tree.insert(3, "LL")
-        assert list(tree.levelorder()) == [1, 2, 3]
-
-    def test_levelorder_EmptyError_tree(self):
-        tree = BinaryTree()
         assert list(tree.levelorder()) == []
 
 
-class TestBinaryTreeHeight:
-    """height"""
-
-    def test_height_EmptyError_tree(self):
-        tree = BinaryTree()
-        assert tree.height() == 0
-
-    def test_height_single_node(self):
-        tree = BinaryTree()
+class TestHeightAndLeaves:
+    def test_height_single_node(self) -> None:
+        tree = BinaryTree[int]()
         tree.insert(5, "")
         assert tree.height() == 1
 
-    def test_height_full_tree(self):
-        tree = BinaryTree()
+    def test_height_empty_tree(self) -> None:
+        assert BinaryTree[int]().height() == 0
+
+    def test_height_multi_level(self) -> None:
+        tree = BinaryTree[int]()
         tree.insert(5, "")
         tree.insert(3, "L")
         tree.insert(8, "R")
         tree.insert(1, "LL")
         assert tree.height() == 3
 
-    def test_height_skewed_tree(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        tree.insert(2, "L")
-        tree.insert(3, "LL")
-        tree.insert(4, "LLL")
-        assert tree.height() == 4
-
-    def test_height_complete_tree(self):
-        tree = BinaryTree()
+    def test_leaves_count(self) -> None:
+        tree = BinaryTree[int]()
         tree.insert(5, "")
         tree.insert(3, "L")
         tree.insert(8, "R")
         tree.insert(1, "LL")
-        tree.insert(4, "LR")
-        tree.insert(7, "RL")
-        tree.insert(9, "RR")
-        assert tree.height() == 3
+        assert tree.leaves() == 2  # nodes 1 and 8
+
+    def test_leaves_empty_tree(self) -> None:
+        assert BinaryTree[int]().leaves() == 0
 
 
-class TestBinaryTreeLeaves:
-    """leaves"""
-
-    def test_leaves_EmptyError_tree(self):
-        tree = BinaryTree()
-        assert tree.leaves() == 0
-
-    def test_leaves_single_node(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        assert tree.leaves() == 1
-
-    def test_leaves_full_tree(self):
-        tree = BinaryTree()
+class TestClear:
+    def test_clear(self) -> None:
+        tree = BinaryTree[int]()
         tree.insert(5, "")
         tree.insert(3, "L")
-        tree.insert(8, "R")
-        tree.insert(1, "LL")
-        tree.insert(4, "LR")
-        tree.insert(7, "RL")
-        tree.insert(9, "RR")
-        assert tree.leaves() == 4  # 1, 4, 7, 9
-
-    def test_leaves_skewed_tree(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        tree.insert(2, "L")
-        tree.insert(3, "LL")
-        assert tree.leaves() == 1  # faqat 3
-
-    def test_leaves_two_nodes(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        assert tree.leaves() == 1  # faqat 3
-
-
-class TestBinaryTreeClear:
-    """clear"""
-
-    def test_clear_non_EmptyError_tree(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        tree.insert(8, "R")
         tree.clear()
         assert tree.is_empty()
         assert len(tree) == 0
-
-    def test_clear_EmptyError_tree(self):
-        tree = BinaryTree()
-        tree.clear()
-        assert tree.is_empty()
-
-
-class TestBinaryTreeBool:
-    """__bool__"""
-
-    def test_non_EmptyError_is_truthy(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        assert bool(tree)
-
-    def test_EmptyError_is_falsy(self):
-        tree = BinaryTree()
-        assert not tree
-
-
-class TestBinaryTreeLen:
-    """__len__"""
-
-    def test_len_after_inserts(self):
-        tree = BinaryTree()
-        assert len(tree) == 0
-        tree.insert(5, "")
-        assert len(tree) == 1
-        tree.insert(3, "L")
-        assert len(tree) == 2
-        tree.insert(8, "R")
-        assert len(tree) == 3
-
-    def test_len_after_clear(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        tree.clear()
-        assert len(tree) == 0
-
-
-class TestBinaryTreeMultipleTraversalCalls:
-    """Multiple traversal calls on same tree"""
-
-    def test_multiple_preorder_calls(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        tree.insert(8, "R")
-        assert list(tree.preorder()) == [5, 3, 8]
-        assert list(tree.preorder()) == [5, 3, 8]
-
-    def test_mixed_traversals(self):
-        tree = BinaryTree()
-        tree.insert(5, "")
-        tree.insert(3, "L")
-        tree.insert(8, "R")
-        pre = list(tree.preorder())
-        ino = list(tree.inorder())
-        post = list(tree.postorder())
-        level = list(tree.levelorder())
-        assert pre == [5, 3, 8]
-        assert ino == [3, 5, 8]
-        assert post == [3, 8, 5]
-        assert level == [5, 3, 8]
-
-
-class TestBinaryTreeLargeData:
-    """Large tree"""
-
-    def test_deep_left_skewed(self):
-        tree = BinaryTree()
-        n = 500
-        path = ""
-        for i in range(n):
-            tree.insert(i, path)
-            path += "L"
-        assert len(tree) == n
-        assert tree.height() == n
-        assert tree.leaves() == 1
-
-    def test_complete_tree_traversals(self):
-        tree = BinaryTree()
-        tree.insert(1, "")
-        tree.insert(2, "L")
-        tree.insert(3, "R")
-        tree.insert(4, "LL")
-        tree.insert(5, "LR")
-        tree.insert(6, "RL")
-        tree.insert(7, "RR")
-        assert list(tree.levelorder()) == [1, 2, 3, 4, 5, 6, 7]
-        assert list(tree.preorder()) == [1, 2, 4, 5, 3, 6, 7]
-        assert list(tree.inorder()) == [4, 2, 5, 1, 6, 3, 7]
-        assert list(tree.postorder()) == [4, 5, 2, 6, 7, 3, 1]

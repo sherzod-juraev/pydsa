@@ -1,88 +1,124 @@
-import numpy as np
-from numba import njit
+"""Searching algorithms.
+
+Provides classic search algorithms: linear, binary, jump, and
+exponential search.
+"""
+
+import math
+from collections.abc import Sequence
+
+from .._types import Comparable
 
 
-@njit  # type: ignore
-def linear_search(arr: np.ndarray, target: int, /) -> int:
-    """
-    Linear search — O(n) time, O(1) space.
+def linear_search[T: Comparable](arr: Sequence[T], target: T, /) -> int:
+    """Search for target by checking each element sequentially.
 
-    Sequentially checks each element until the target is found.
-    Works on unsorted arrays.
+    Time Complexity: O(n)
+    Space Complexity: O(1)
+
+    Works on unsorted arrays. No preprocessing required.
 
     Parameters
     ----------
-    arr : np.ndarray
-        Input array.
-    target : Any
+    arr : Sequence[T]
+        Input sequence (sorted or unsorted).
+    target : T
         Value to search for.
 
     Returns
     -------
     int
-        Index of the first occurrence, or -1 if not found.
+        Index of first occurrence (0-based), or -1 if not found.
+
+    Examples
+    --------
+    >>> linear_search([15, 3, 9, 1, 7], 9)
+    2
+    >>> linear_search([15, 3, 9, 1, 7], 100)
+    -1
     """
-    for i in range(arr.shape[0]):
+    for i in range(len(arr)):
         if arr[i] == target:
             return i
     return -1
 
 
-@njit  # type: ignore
-def binary_search(arr: np.ndarray, target: int, /) -> int:
-    """
-    Binary search — O(log n) time, O(1) space.
+def binary_search[T: Comparable](arr: Sequence[T], target: T, /) -> int:
+    """Search sorted array by repeatedly halving the search interval.
 
-    Requires a sorted array. Repeatedly halves the search interval
-    by comparing the target with the middle element.
+    Time Complexity: O(log n)
+    Space Complexity: O(1)
+
+    Requires: Input sequence must be sorted in ascending order.
 
     Parameters
     ----------
-    arr : np.ndarray
-        Sorted input array.
-    target : Any
+    arr : Sequence[T]
+        Sorted input sequence (ascending order).
+    target : T
         Value to search for.
 
     Returns
     -------
     int
-        Index of the target, or -1 if not found.
+        Index of target (0-based), or -1 if not found.
+
+    Examples
+    --------
+    >>> binary_search([1, 3, 7, 9, 15], 9)
+    3
+    >>> binary_search([1, 3, 7, 9, 15], 5)
+    -1
+
+    Notes
+    -----
+    Returns incorrect results without raising exception if input is unsorted.
+    Always verify input is sorted in ascending order.
     """
     left = 0
-    right = arr.shape[0] - 1
+    right = len(arr) - 1
     while left <= right:
-        midd_idx = int((left + right) // 2)
-        if target == arr[midd_idx]:
-            return midd_idx
-        elif target < arr[midd_idx]:
-            right = midd_idx - 1
+        mid_idx = (left + right) // 2
+        if target == arr[mid_idx]:
+            return mid_idx
+        elif target < arr[mid_idx]:
+            right = mid_idx - 1
         else:
-            left = midd_idx + 1
+            left = mid_idx + 1
     return -1
 
 
-@njit  # type: ignore
-def jump_search(arr: np.ndarray, target: int, /) -> int:
-    """
-    Jump search — O(√n) time, O(1) space.
+def jump_search[T: Comparable](arr: Sequence[T], target: T, /) -> int:
+    """Search sorted array by jumping in fixed intervals, then linear search.
 
-    Requires a sorted array. Jumps ahead by a fixed step of √n,
-    then performs a linear search in the identified block.
+    Time Complexity: O(√n)
+    Space Complexity: O(1)
+
+    Requires: Input sequence must be sorted in ascending order.
 
     Parameters
     ----------
-    arr : np.ndarray
-        Sorted input array.
-    target : Any
+    arr : Sequence[T]
+        Sorted input sequence (ascending order).
+    target : T
         Value to search for.
 
     Returns
     -------
     int
-        Index of the target, or -1 if not found.
+        Index of target (0-based), or -1 if not found.
+
+    Examples
+    --------
+    >>> jump_search([1, 3, 7, 9, 15, 20, 25, 30], 9)
+    3
+    >>> jump_search([1, 3, 7, 9, 15, 20, 25, 30], 20)
+    5
+    >>> jump_search([1, 3, 7, 9, 15, 20, 25, 30], 5)
+    -1
     """
-    n = arr.shape[0]
-    step = int(np.sqrt(n))
+    n = len(arr)
+    step = int(math.sqrt(n))
     high = step
     while high < n and arr[high] < target:
         high += step
@@ -94,40 +130,49 @@ def jump_search(arr: np.ndarray, target: int, /) -> int:
     return -1
 
 
-@njit  # type: ignore
-def exponential_search(arr: np.ndarray, target: int, /) -> int:
-    """
-    Exponential search — O(log n) time, O(1) space.
+def exponential_search[T: Comparable](arr: Sequence[T], target: T, /) -> int:
+    """Search sorted array by finding range (1, 2, 4, ...), then binary search.
 
-    Requires a sorted array. Finds a range by repeatedly doubling
-    the bound (1, 2, 4, 8, ...), then performs binary search
-    within that range. Ideal for unbounded or large arrays where
-    the target is near the beginning.
+    Time Complexity: O(log n)
+    Space Complexity: O(1)
+
+    Requires: Input sequence must be sorted in ascending order.
+
+    Optimal for unbounded arrays or when target is likely near the start.
 
     Parameters
     ----------
-    arr : np.ndarray
-        Sorted input array.
-    target : Any
+    arr : Sequence[T]
+        Sorted input sequence (ascending order).
+    target : T
         Value to search for.
 
     Returns
     -------
     int
-        Index of the target, or -1 if not found.
+        Index of target (0-based), or -1 if not found.
+
+    Examples
+    --------
+    >>> exponential_search([1, 3, 5, 7, 9, 15, 20, 30, 50], 15)
+    5
+    >>> exponential_search([1, 3, 5, 7, 9, 15, 20, 30, 50], 50)
+    8
+    >>> exponential_search([1, 3, 5, 7, 9, 15, 20, 30, 50], 100)
+    -1
     """
-    n = arr.shape[0]
+    n = len(arr)
     high = 1
     while high < n and arr[high] < target:
         high *= 2
     left = high // 2
     right = min(high, n - 1)
     while left <= right:
-        midd_idx = int((left + right) // 2)
-        if target == arr[midd_idx]:
-            return midd_idx
-        elif target < arr[midd_idx]:
-            right = midd_idx - 1
+        mid_idx = (left + right) // 2
+        if target == arr[mid_idx]:
+            return mid_idx
+        elif target < arr[mid_idx]:
+            right = mid_idx - 1
         else:
-            left = midd_idx + 1
+            left = mid_idx + 1
     return -1

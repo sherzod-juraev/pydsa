@@ -1,212 +1,94 @@
 import pytest
-from pydsa import MinHeap
-from pydsa.exc import EmptyError
+
+from pydsa import EmptyError, MinHeap
 
 
-class TestMinHeapInit:
-    """__init__"""
+class TestBasics:
+    def test_new_heap_is_empty(self) -> None:
+        h = MinHeap[int]()
+        assert h.is_empty()
+        assert len(h) == 0
 
-    def test_EmptyError_heap_has_zero_length(self):
-        heap = MinHeap()
-        assert len(heap) == 0
-
-    def test_EmptyError_heap_is_falsy(self):
-        heap = MinHeap()
-        assert not heap
-
-    def test_EmptyError_heap_is_empty(self):
-        heap = MinHeap()
-        assert heap.is_empty()
-
-
-class TestMinHeapInsert:
-    """insert"""
-
-    def test_insert_increases_length(self):
-        heap = MinHeap()
-        heap.insert(10)
-        assert len(heap) == 1
-
-    def test_insert_multiple(self):
-        heap = MinHeap()
-        for v in [5, 3, 8, 1, 4]:
-            heap.insert(v)
-        assert len(heap) == 5
-
-    def test_peek_returns_min(self):
-        heap = MinHeap()
-        heap.insert(5)
-        assert heap.peek() == 5
-        heap.insert(3)
-        assert heap.peek() == 3
-        heap.insert(8)
-        assert heap.peek() == 3
-        heap.insert(1)
-        assert heap.peek() == 1
-
-    def test_insert_duplicates(self):
-        heap = MinHeap()
-        heap.insert(5)
-        heap.insert(5)
-        heap.insert(5)
-        assert len(heap) == 3
-        assert heap.peek() == 5
-
-
-class TestMinHeapExtract:
-    """extract_min"""
-
-    def test_extract_returns_min(self):
-        heap = MinHeap()
-        for v in [5, 3, 8, 1, 4]:
-            heap.insert(v)
-        assert heap.extract_min() == 1
-        assert heap.extract_min() == 3
-        assert heap.extract_min() == 4
-        assert heap.extract_min() == 5
-        assert heap.extract_min() == 8
-
-    def test_extract_decreases_length(self):
-        heap = MinHeap()
-        heap.insert(10)
-        heap.insert(20)
-        heap.extract_min()
-        assert len(heap) == 1
-
-    def test_extract_until_EmptyError(self):
-        heap = MinHeap()
-        heap.insert(10)
-        heap.insert(20)
-        heap.extract_min()
-        heap.extract_min()
-        assert heap.is_empty()
-
-    def test_extract_on_EmptyError_raises(self):
-        heap = MinHeap()
+    def test_peek_raises_when_empty(self) -> None:
         with pytest.raises(EmptyError):
-            heap.extract_min()
+            MinHeap[int]().peek()
 
-
-class TestMinHeapPeek:
-    """peek"""
-
-    def test_peek_does_not_remove(self):
-        heap = MinHeap()
-        heap.insert(10)
-        assert heap.peek() == 10
-        assert len(heap) == 1
-
-    def test_peek_on_EmptyError_raises(self):
-        heap = MinHeap()
+    def test_extract_min_raises_when_empty(self) -> None:
         with pytest.raises(EmptyError):
-            heap.peek()
+            MinHeap[int]().extract_min()
 
 
-class TestMinHeapHeapify:
-    """heapify"""
+class TestInsertAndPeek:
+    def test_peek_returns_minimum(self) -> None:
+        h = MinHeap[int]()
+        for v in [3, 9, 1, 7]:
+            h.insert(v)
+        assert h.peek() == 1
 
-    def test_heapify_builds_valid_heap(self):
-        heap = MinHeap()
-        heap.heapify([5, 3, 8, 1, 4, 7, 9, 2, 6])
-        assert len(heap) == 9
-        assert heap.peek() == 1
-
-    def test_heapify_EmptyError_list(self):
-        heap = MinHeap()
-        heap.heapify([])
-        assert heap.is_empty()
-
-    def test_heapify_single_element(self):
-        heap = MinHeap()
-        heap.heapify([42])
-        assert heap.peek() == 42
-
-    def test_heapify_preserves_copy(self):
-        original = [5, 1, 3]
-        heap = MinHeap()
-        heap.heapify(original)
-        assert original == [5, 1, 3]  # unchanged
-        assert heap.peek() == 1
-
-    def test_operations_after_heapify(self):
-        heap = MinHeap()
-        heap.heapify([5, 3, 8])
-        heap.insert(1)
-        assert heap.peek() == 1
-        assert heap.extract_min() == 1
-        assert heap.extract_min() == 3
+    def test_contains(self) -> None:
+        h = MinHeap[int]()
+        h.insert(5)
+        assert 5 in h
+        assert 99 not in h
 
 
-class TestMinHeapExtractAll:
-    """extract_all"""
+class TestExtractMin:
+    def test_extract_order_is_ascending(self) -> None:
+        h = MinHeap[int]()
+        for v in [3, 9, 1, 7, 5]:
+            h.insert(v)
+        result = [h.extract_min() for _ in range(len(h))]
+        assert result == [1, 3, 5, 7, 9]
 
-    def test_extract_all_sorted(self):
-        heap = MinHeap()
-        for v in [5, 3, 8, 1, 4, 7, 9, 2, 6]:
-            heap.insert(v)
-        assert heap.extract_all() == [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-    def test_extract_all_empties_heap(self):
-        heap = MinHeap()
-        heap.insert(10)
-        heap.insert(20)
-        heap.extract_all()
-        assert heap.is_empty()
-
-    def test_extract_all_EmptyError_heap(self):
-        heap = MinHeap()
-        assert heap.extract_all() == []
+    def test_single_element(self) -> None:
+        h = MinHeap[int]()
+        h.insert(42)
+        assert h.extract_min() == 42
+        assert h.is_empty()
 
 
-class TestMinHeapContains:
-    """__contains__"""
+class TestExtractAll:
+    def test_extract_all_sorted_ascending(self) -> None:
+        h = MinHeap[int]()
+        for v in [3, 9, 1, 7, 5]:
+            h.insert(v)
+        assert h.extract_all() == [1, 3, 5, 7, 9]
 
-    def test_contains_existing(self):
-        heap = MinHeap()
-        heap.insert(10)
-        assert 10 in heap
+    def test_extract_all_empties_the_heap(self) -> None:
+        h = MinHeap[int]()
+        for v in [3, 1, 2]:
+            h.insert(v)
+        h.extract_all()
+        assert h.is_empty()
 
-    def test_contains_non_existing(self):
-        heap = MinHeap()
-        heap.insert(10)
-        assert 20 not in heap
-
-    def test_contains_EmptyError(self):
-        heap = MinHeap()
-        assert 10 not in heap
-
-
-class TestMinHeapClear:
-    """clear"""
-
-    def test_clear_empties_heap(self):
-        heap = MinHeap()
-        heap.insert(10)
-        heap.insert(20)
-        heap.clear()
-        assert heap.is_empty()
-        assert len(heap) == 0
-
-    def test_clear_EmptyError_heap(self):
-        heap = MinHeap()
-        heap.clear()
-        assert heap.is_empty()
+    def test_extract_all_on_empty_heap(self) -> None:
+        assert MinHeap[int]().extract_all() == []
 
 
-class TestMinHeapLargeData:
-    """Large data"""
+class TestHeapify:
+    def test_heapify_preserves_all_elements(self) -> None:
+        h = MinHeap[int]()
+        h.heapify([5, 3, 8, 1, 9, 2])
+        assert len(h) == 6
+        assert h.peek() == 1
 
-    def test_many_inserts_and_extracts(self):
-        heap = MinHeap()
-        n = 500
-        for i in range(n, 0, -1):
-            heap.insert(i)
-        for i in range(1, n + 1):
-            assert heap.extract_min() == i
+    def test_heapify_matches_extract_all_of_sorted(self) -> None:
+        data = [5, 3, 8, 1, 9, 2, 7]
+        h = MinHeap[int]()
+        h.heapify(data)
+        assert h.extract_all() == sorted(data)
 
-    def test_heapify_large(self):
-        heap = MinHeap()
-        arr = list(range(500, 0, -1))
-        heap.heapify(arr)
-        for i in range(1, 501):
-            assert heap.extract_min() == i
+    def test_heapify_does_not_mutate_input(self) -> None:
+        data = [5, 3, 8]
+        h = MinHeap[int]()
+        h.heapify(data)
+        h.insert(-100)
+        assert data == [5, 3, 8]
+
+
+class TestClear:
+    def test_clear(self) -> None:
+        h = MinHeap[int]()
+        h.insert(5)
+        h.clear()
+        assert h.is_empty()

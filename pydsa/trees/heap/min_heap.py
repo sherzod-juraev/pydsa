@@ -1,3 +1,9 @@
+"""Min-heap implementation.
+
+Provides :class:`MinHeap`, a binary min-heap backed by a dynamic
+array, using Floyd's linear-time heapify algorithm.
+"""
+
 from ..._types import Comparable
 from ...exc import EmptyError
 
@@ -18,12 +24,13 @@ class MinHeap[T: Comparable]:
        "left child", "2 * i + 1"
        "right child", "2 * i + 2"
 
+    Time Complexity Summary
     .. csv-table:: Heap Operations Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 15, 10
 
        "insert", "O(log n)", "O(1)"
-       "extract_min/max", "O(log n)", "O(1)"
+       "extract_min", "O(log n)", "O(1)"
        "peek", "O(1)", "O(1)"
        "heapify", "O(n)", "O(n)"
        "extract_all", "O(n log n)", "O(n)"
@@ -38,7 +45,7 @@ class MinHeap[T: Comparable]:
     """
 
     def __init__(self) -> None:
-
+        """Initialize an empty heap."""
         self.__data: list[T] = []
 
     def __len__(self) -> int:
@@ -64,6 +71,14 @@ class MinHeap[T: Comparable]:
         ------
         EmptyError
             If the heap is empty.
+
+        Examples
+        --------
+        >>> h = MinHeap[int]()
+        >>> h.insert(9)
+        >>> h.insert(3)
+        >>> h.peek()
+        3
         """
         if self.is_empty():
             raise EmptyError(self)
@@ -88,6 +103,15 @@ class MinHeap[T: Comparable]:
         ------
         EmptyError
             If the heap is empty.
+
+        Examples
+        --------
+        >>> h = MinHeap[int]()
+        >>> h.insert(9)
+        >>> h.insert(3)
+        >>> h.insert(1)
+        >>> h.extract_min()
+        1
         """
         if self.is_empty():
             raise EmptyError(self)

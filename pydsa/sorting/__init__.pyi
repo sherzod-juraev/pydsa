@@ -7,7 +7,7 @@ from .elementary import (
     insertion_sort,
     selection_sort,
 )
-from .heap_sort import heap_sort
+from .heap import heap_sort
 from .linear import (
     bucket_sort,
     counting_sort,

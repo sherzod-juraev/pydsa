@@ -1,11 +1,17 @@
+"""Graph implementation.
+
+Provides :class:`Graph`, a directed or undirected graph backed by an
+adjacency list, with BFS/DFS traversal, path existence checking, and
+connectivity testing.
+"""
+
 from collections.abc import Iterator
 
 from ..linear import Queue, Stack
 
 
 class Graph:
-    """
-    A graph data structure supporting both directed and undirected edges.
+    """A graph data structure supporting both directed and undirected edges.
 
     Implemented with an adjacency list. Supports adding and removing
     vertices and edges, BFS and DFS traversal, path existence checking,
@@ -15,6 +21,8 @@ class Graph:
     --------------
     Adjacency list: ``dict[str, list[str]]``
         Each vertex maps to a list of its neighbors.
+
+    Time Complexity Summary
 
     .. csv-table:: Graph Operations Complexity
        :header: "Operation", "Time", "Space"
@@ -34,7 +42,7 @@ class Graph:
        "is_connected", "O(V + E)", "O(V)"
        "__contains__", "O(1)", "O(1)"
 
-    *Amortized — yielding each neighbor is O(1) per element.
+    Amortized — yielding each neighbor is O(1) per element.
 
     Notes
     -----
@@ -46,7 +54,13 @@ class Graph:
     """
 
     def __init__(self, directed: bool = True) -> None:
+        """Initialize an empty graph.
 
+        Parameters
+        ----------
+        directed : bool, optional
+            Whether edges are directed (default True).
+        """
         self.__directed: bool = directed
         self.__adj: dict[str, list[str]] = {}
         self.__v_size: int = 0
@@ -68,6 +82,13 @@ class Graph:
         """Add a vertex if it does not already exist. O(1).
 
         If the vertex already exists, this is a no-op.
+
+        Examples
+        --------
+        >>> g = Graph()
+        >>> g.add_vertex("A")
+        >>> "A" in g
+        True
         """
         if vertex not in self.__adj:
             self.__adj[vertex] = []
@@ -85,6 +106,15 @@ class Graph:
             Source vertex.
         v : str
             Target vertex.
+
+        Examples
+        --------
+        >>> g = Graph(directed=False)
+        >>> g.add_edge("A", "B")
+        >>> list(g.neighbors("A"))
+        ['B']
+        >>> list(g.neighbors("B"))
+        ['A']
         """
         if u not in self.__adj:
             self.add_vertex(u)
@@ -114,7 +144,7 @@ class Graph:
                     edges.remove(vertex)
                     self.__e_size -= 1
         else:
-            for v in self.__adj[vertex]:
+            for v in list(self.__adj[vertex]):
                 self.__adj[v].remove(vertex)
                 self.__e_size -= 1
         self.__e_size -= len(self.__adj[vertex])
@@ -185,9 +215,17 @@ class Graph:
         ------
         KeyError
             If the start vertex does not exist.
+
+        Examples
+        --------
+        >>> g = Graph(directed=False)
+        >>> g.add_edge("A", "B")
+        >>> g.add_edge("A", "C")
+        >>> list(g.bfs("A"))
+        ['A', 'B', 'C']
         """
         if start not in self.__adj:
-            raise KeyError(f"Key {start} not found")
+            raise KeyError(f"Vertex {start} not found")
         queue = Queue[str]()
         visited = set()
         queue.enqueue(start)
@@ -209,9 +247,16 @@ class Graph:
         ------
         KeyError
             If the start vertex does not exist.
+
+        Examples
+        --------
+        >>> g = Graph(directed=False)
+        >>> g.add_edge("A", "B")
+        >>> list(g.dfs("A"))
+        ['A', 'B']
         """
         if start not in self.__adj:
-            raise KeyError(f"Key {start} not found")
+            raise KeyError(f"Vertex {start} not found")
         stack = Stack[str]()
         visited = set()
         stack.push(start)
@@ -229,6 +274,15 @@ class Graph:
 
         Uses BFS internally. Returns False if either vertex is
         missing or no path exists.
+
+        Examples
+        --------
+        >>> g = Graph()
+        >>> g.add_edge("A", "B")
+        >>> g.has_path("A", "B")
+        True
+        >>> g.has_path("B", "A")
+        False
         """
         if u not in self.__adj or v not in self.__adj:
             return False

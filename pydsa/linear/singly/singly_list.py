@@ -1,15 +1,19 @@
+"""Singly linked list implementation.
+
+Provides :class:`SinglyList`, a singly linked list with head and tail
+pointers offering O(1) insertion and removal at both ends, O(n) indexed
+access, and utilities such as cycle detection and in-place reversal.
+"""
+
 from collections.abc import Iterator
-from typing import TypeVar, cast
+from typing import cast
 
 from ...exc import EmptyError
 from .node import Node
 
-T = TypeVar("T")
-
 
 class SinglyList[T]:
-    """
-    A singly linked list with head and tail pointers.
+    """A singly linked list with head and tail pointers.
 
     Each node stores a value and a reference to the next node.
     The list maintains constant-time access to both ends, enabling
@@ -36,10 +40,17 @@ class SinglyList[T]:
        "copy", "O(n)", "O(n)"
        "has_cycle", "O(n)", "O(1)"
        "middle", "O(n)", "O(1)"
+
+    Notes
+    -----
+    Because each node only references its successor, ``remove_last``
+    must walk from the head to find the second-to-last node, making it
+    O(n) — unlike :class:`~pydsa.linear.doubly.DoublyList`, where
+    backward pointers make the same operation O(1).
     """
 
     def __init__(self) -> None:
-
+        """Initialize an empty list."""
         self.__head: Node[T] | None = None
         self.__tail: Node[T] | None = None
         self.__length: int = 0
@@ -136,7 +147,16 @@ class SinglyList[T]:
         self.__length += 1
 
     def insert_last(self, value: T, /) -> None:
-        """Insert a value at the tail of the list. O(1)."""
+        """Insert a value at the tail of the list. O(1).
+
+        Examples
+        --------
+        >>> lst = SinglyList[int]()
+        >>> lst.insert_last(1)
+        >>> lst.insert_last(2)
+        >>> list(lst)
+        [1, 2]
+        """
         if self.is_empty():
             return self.insert_first(value)
         new_node = Node(value)
@@ -277,7 +297,17 @@ class SinglyList[T]:
         return count
 
     def reverse(self) -> None:
-        """Reverse the list in-place. O(n) time, O(1) space."""
+        """Reverse the list in-place. O(n) time, O(1) space.
+
+        Examples
+        --------
+        >>> lst = SinglyList[int]()
+        >>> for v in [1, 2, 3]:
+        ...     lst.insert_last(v)
+        >>> lst.reverse()
+        >>> list(lst)
+        [3, 2, 1]
+        """
         old_head = self.__head
         prev = None
         current = self.__head
@@ -305,7 +335,15 @@ class SinglyList[T]:
         self.__length = 0
 
     def has_cycle(self) -> bool:
-        """Return True if the list contains a cycle. Uses Floyd's algorithm. O(n)."""
+        """Return True if the list contains a cycle. Uses Floyd's algorithm. O(n).
+
+        Examples
+        --------
+        >>> lst = SinglyList[int]()
+        >>> lst.insert_last(1)
+        >>> lst.has_cycle()
+        False
+        """
         fast = cast(Node[T], self.__head)
         slow = cast(Node[T], self.__head)
         while fast and fast.next:

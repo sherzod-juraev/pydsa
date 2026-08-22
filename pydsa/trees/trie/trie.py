@@ -1,3 +1,9 @@
+"""Trie (prefix tree) implementation.
+
+Provides :class:`Trie`, a prefix tree for efficient string storage,
+exact-match search, and prefix queries.
+"""
+
 from collections.abc import Iterator
 
 from ...linear import Stack
@@ -13,12 +19,13 @@ class Trie:
     Common prefixes are shared among words, reducing memory usage
     and enabling fast prefix-based queries.
 
+    Time Complexity Summary
     .. csv-table:: Time & Space Complexity
        :header: "Operation", "Time", "Space"
        :widths: 25, 15, 15
 
        "insert", "O(L)", "O(L)"
-       "searching", "O(L)", "O(1)"
+       "search", "O(L)", "O(1)"
        "starts_with", "O(L)", "O(1)"
        "remove", "O(L)", "O(L)"
        "words_with_prefix", "O(P + L·K)", "O(P + L)"
@@ -41,7 +48,7 @@ class Trie:
     """
 
     def __init__(self) -> None:
-
+        """Initialize an empty trie."""
         self.__root: Node = Node()
         self.__size: int = 0
 
@@ -71,6 +78,13 @@ class Trie:
         ----------
         word : str
             The word to insert.
+
+        Examples
+        --------
+        >>> trie = Trie()
+        >>> trie.insert("cat")
+        >>> "cat" in trie
+        True
         """
         current: Node = self.__root
         for char in word:
@@ -82,7 +96,17 @@ class Trie:
             self.__size += 1
 
     def search(self, word: str, /) -> bool:
-        """Return True if the exact word exists. O(L)."""
+        """Return True if the exact word exists. O(L).
+
+        Examples
+        --------
+        >>> trie = Trie()
+        >>> trie.insert("cat")
+        >>> trie.search("cat")
+        True
+        >>> trie.search("ca")
+        False
+        """
         return word in self
 
     def starts_with(self, prefix: str, /) -> bool:
@@ -97,6 +121,13 @@ class Trie:
         -------
         bool
             True if at least one word has this prefix.
+
+        Examples
+        --------
+        >>> trie = Trie()
+        >>> trie.insert("cat")
+        >>> trie.starts_with("ca")
+        True
         """
         current: Node = self.__root
         for char in prefix:
@@ -121,6 +152,15 @@ class Trie:
         -------
         bool
             True if the word was found and removed, False otherwise.
+
+        Examples
+        --------
+        >>> trie = Trie()
+        >>> trie.insert("cat")
+        >>> trie.remove("cat")
+        True
+        >>> "cat" in trie
+        False
         """
         current: Node = self.__root
         stack: Stack[tuple[Node, str]] = Stack()
@@ -150,7 +190,7 @@ class Trie:
         Parameters
         ----------
         prefix : str
-            The prefix to searching for.
+            The prefix to search for.
 
         Yields
         ------
@@ -159,6 +199,9 @@ class Trie:
 
         Examples
         --------
+        >>> trie = Trie()
+        >>> for w in ["car", "cat", "cats", "dog"]:
+        ...     trie.insert(w)
         >>> list(trie.words_with_prefix("ca"))
         ['car', 'cat', 'cats']
         """

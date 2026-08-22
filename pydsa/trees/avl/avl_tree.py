@@ -1,3 +1,10 @@
+"""AVL tree (self-balancing BST) implementation.
+
+Provides :class:`AVLTree`, a self-balancing binary searching tree
+that guarantees O(log n) height via rotations after insertion and
+removal.
+"""
+
 from collections.abc import Iterator
 from typing import cast
 
@@ -9,22 +16,24 @@ from .node import Node
 
 class AVLTree[T: Comparable]:
     """
-    A self-balancing binary searching tree (AVL) where the height
-    difference between left and right subtrees of T node is at most 1.
+    A self-balancing binary searching tree (AVL).
+
+    The height difference between the left and right subtrees of every node is
+    at most 1.
 
     After every insertion and deletion, balance factors are checked
     and rotations (LL, RR, LR, RL) are applied to restore the invariant.
     This guarantees O(log n) height and O(log n) searching, insert, and
     remove operations in both average and worst cases.
 
-    Time Complexity
+    Time Complexity Summary
     .. csv-table:: AVL Tree Operations Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 10, 10
 
        "insert", "O(log n)", "O(log n)"
        "remove", "O(log n)", "O(log n)"
-       "searching", "O(log n)", "O(1)"
+       "search", "O(log n)", "O(1)"
        "min_value", "O(log n)", "O(1)"
        "max_value", "O(log n)", "O(1)"
        "preorder", "O(n)", "O(h)"
@@ -46,7 +55,7 @@ class AVLTree[T: Comparable]:
     """
 
     def __init__(self) -> None:
-
+        """Initialize an empty tree."""
         self.__root: Node[T] | None = None
         self.__nodes: int = 0
 
@@ -97,6 +106,14 @@ class AVLTree[T: Comparable]:
         ----------
         value : T
             The value to insert.
+
+        Examples
+        --------
+        >>> avl = AVLTree()
+        >>> for v in [10, 20, 30]:  # would degenerate a plain BST
+        ...     avl.insert(v)
+        >>> avl.height()  # stays balanced instead of height 3
+        2
         """
         if self.is_empty():
             self.__root = Node(value)
@@ -244,7 +261,17 @@ class AVLTree[T: Comparable]:
         return right_tree
 
     def search(self, value: T, /) -> bool:
-        """Return True if the value exists in the tree. O(log n)."""
+        """Return True if the value exists in the tree. O(log n).
+
+        Examples
+        --------
+        >>> avl = AVLTree()
+        >>> avl.insert(5)
+        >>> avl.search(5)
+        True
+        >>> avl.search(99)
+        False
+        """
         return value in self
 
     def min_value(self) -> T:
@@ -295,6 +322,14 @@ class AVLTree[T: Comparable]:
         """Yield values in inorder traversal (left → root → right). O(n).
 
         Because this is a BST, values are yielded in sorted ascending order.
+
+        Examples
+        --------
+        >>> avl = AVLTree()
+        >>> for v in [5, 3, 8, 1, 4]:
+        ...     avl.insert(v)
+        >>> list(avl.inorder())
+        [1, 3, 4, 5, 8]
         """
         if self.is_empty():
             return

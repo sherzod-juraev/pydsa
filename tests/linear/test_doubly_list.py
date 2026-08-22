@@ -1,723 +1,311 @@
 import pytest
-from pydsa import DoublyList
-from pydsa.exc import EmptyError
 
+from pydsa import DoublyList, EmptyError
 
-class TestDoublyListInit:
-    """__init__"""
 
-    def test_EmptyError_list_has_zero_length(self):
-        lst = DoublyList()
-        assert len(lst) == 0
+@pytest.fixture
+def empty_list() -> DoublyList[int]:
+    return DoublyList[int]()
 
-    def test_EmptyError_list_is_falsy(self):
-        lst = DoublyList()
-        assert not lst
 
-    def test_EmptyError_list_is_empty(self):
-        lst = DoublyList()
-        assert lst.is_empty()
+@pytest.fixture
+def filled_list() -> DoublyList[int]:
+    lst = DoublyList[int]()
+    for v in [1, 2, 3, 4, 5]:
+        lst.insert_last(v)
+    return lst
 
 
-class TestDoublyListInsertFirst:
-    """insert_first"""
+class TestConstruction:
+    def test_new_list_is_empty(self, empty_list: DoublyList[int]) -> None:
+        assert empty_list.is_empty()
+        assert len(empty_list) == 0
+        assert bool(empty_list) is False
 
-    def test_insert_into_EmptyError_list(self):
-        lst = DoublyList()
-        lst.insert_first(10)
-        assert len(lst) == 1
-        assert lst.get_first() == 10
-        assert lst.get_last() == 10
+    def test_new_list_iterates_to_nothing(self, empty_list: DoublyList[int]) -> None:
+        assert list(empty_list) == []
+        assert list(reversed(empty_list)) == []
 
-    def test_insert_multiple(self):
-        lst = DoublyList()
-        lst.insert_first(30)
-        lst.insert_first(20)
-        lst.insert_first(10)
-        assert len(lst) == 3
-        assert lst.get_first() == 10
-        assert lst.get_last() == 30
 
-    def test_head_and_tail_same_for_single_element(self):
-        lst = DoublyList()
-        lst.insert_first(42)
-        assert lst.get_first() == lst.get_last()
+class TestInsertFirst:
+    def test_into_empty(self, empty_list: DoublyList[int]) -> None:
+        empty_list.insert_first(1)
+        assert list(empty_list) == [1]
+        assert empty_list.get_first() == 1
+        assert empty_list.get_last() == 1
 
-    def test_list_is_truthy_after_insert(self):
-        lst = DoublyList()
-        lst.insert_first(1)
-        assert bool(lst)
-
-
-class TestDoublyListInsertLast:
-    """insert_last"""
-
-    def test_insert_into_EmptyError_list(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        assert len(lst) == 1
-        assert lst.get_first() == 10
-        assert lst.get_last() == 10
-
-    def test_insert_multiple(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        lst.insert_last(20)
-        lst.insert_last(30)
-        assert len(lst) == 3
-        assert lst.get_first() == 10
-        assert lst.get_last() == 30
-
-    def test_mixed_with_insert_first(self):
-        lst = DoublyList()
-        lst.insert_first(20)
-        lst.insert_first(10)
-        lst.insert_last(30)
-        assert list(lst) == [10, 20, 30]
-
-
-class TestDoublyListInsertAt:
-    """insert_at"""
-
-    def test_insert_at_head(self):
-        lst = DoublyList()
-        lst.insert_last(20)
-        lst.insert_at(0, 10)
-        assert list(lst) == [10, 20]
-
-    def test_insert_at_tail_via_length(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        lst.insert_at(1, 20)
-        assert list(lst) == [10, 20]
-
-    def test_insert_in_middle(self):
-        lst = DoublyList()
-        for v in [10, 30]:
-            lst.insert_last(v)
-        lst.insert_at(1, 20)
-        assert list(lst) == [10, 20, 30]
-
-    def test_insert_into_EmptyError_list_at_zero(self):
-        lst = DoublyList()
-        lst.insert_at(0, 42)
-        assert len(lst) == 1
-        assert lst.get_first() == 42
-
-    def test_insert_at_negative_index(self):
-        lst = DoublyList()
-        for v in [10, 20]:
-            lst.insert_last(v)
-        lst.insert_at(-1, 15)
-        assert list(lst) == [10, 15, 20]
-
-    def test_insert_at_negative_index_head(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        lst.insert_at(-1, 5)
-        assert list(lst) == [5, 10]
-
-    def test_insert_at_invalid_index_raises(self):
-        lst = DoublyList()
-        with pytest.raises(IndexError):
-            lst.insert_at(1, 99)
-
-    def test_insert_at_negative_out_of_bounds_raises(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        with pytest.raises(IndexError):
-            lst.insert_at(-3, 99)
-
-    def test_insert_in_middle_from_tail_side(self):
-        lst = DoublyList()
-        for v in [10, 20, 30, 40, 50]:
-            lst.insert_last(v)
-        lst.insert_at(3, 99)
-        assert list(lst) == [10, 20, 30, 99, 40, 50]
-
-
-class TestDoublyListGetFirst:
-    """get_first"""
-
-    def test_returns_first(self):
-        lst = DoublyList()
-        lst.insert_first(10)
-        assert lst.get_first() == 10
-
-    def test_raises_on_EmptyError(self):
-        lst = DoublyList()
-        with pytest.raises(EmptyError):
-            lst.get_first()
-
-
-class TestDoublyListGetLast:
-    """get_last"""
-
-    def test_returns_last(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        lst.insert_last(20)
-        assert lst.get_last() == 20
-
-    def test_single_element_returns_same(self):
-        lst = DoublyList()
-        lst.insert_first(5)
-        assert lst.get_last() == 5
-
-    def test_raises_on_EmptyError(self):
-        lst = DoublyList()
-        with pytest.raises(EmptyError):
-            lst.get_last()
-
-
-class TestDoublyListGetAt:
-    """get_at"""
-
-    def test_returns_correct(self):
-        lst = DoublyList()
-        for v in [10, 20, 30, 40, 50]:
-            lst.insert_last(v)
-        assert lst.get_at(1) == 20
-        assert lst.get_at(3) == 40
-
-    def test_negative_index(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        assert lst.get_at(-1) == 30
-
-    def test_raises_on_invalid_index(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        with pytest.raises(IndexError):
-            lst.get_at(5)
-
-    def test_raises_on_EmptyError_list(self):
-        lst = DoublyList()
-        with pytest.raises(IndexError):
-            lst.get_at(0)
-
-
-class TestDoublyListRemoveFirst:
-    """remove_first"""
-
-    def test_removes_and_returns(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        val = lst.remove_first()
-        assert val == 10
-        assert lst.is_empty()
-
-    def test_updates_head_and_tail(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        lst.insert_last(20)
-        lst.remove_first()
-        assert lst.get_first() == 20
-        assert lst.get_last() == 20
-        assert len(lst) == 1
-
-    def test_raises_on_EmptyError(self):
-        lst = DoublyList()
-        with pytest.raises(EmptyError):
-            lst.remove_first()
-
-
-class TestDoublyListRemoveLast:
-    """remove_last"""
-
-    def test_removes_and_returns(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        val = lst.remove_last()
-        assert val == 10
-        assert lst.is_empty()
-
-    def test_updates_tail(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        val = lst.remove_last()
-        assert val == 30
-        assert lst.get_last() == 20
-        assert len(lst) == 2
-
-    def test_single_element_clears_list(self):
-        lst = DoublyList()
-        lst.insert_first(1)
-        lst.remove_last()
-        assert lst.is_empty()
-
-    def test_raises_on_EmptyError(self):
-        lst = DoublyList()
-        with pytest.raises(EmptyError):
-            lst.remove_last()
-
-
-class TestDoublyListRemoveAt:
-    """remove_at"""
-
-    def test_remove_head(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        val = lst.remove_at(0)
-        assert val == 10
-        assert lst.get_first() == 20
-
-    def test_remove_tail(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        val = lst.remove_at(2)
-        assert val == 30
-        assert lst.get_last() == 20
-
-    def test_remove_middle(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        val = lst.remove_at(1)
-        assert val == 20
-        assert list(lst) == [10, 30]
-
-    def test_negative_index(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        assert lst.remove_at(-1) == 30
-
-    def test_remove_single_element(self):
-        lst = DoublyList()
-        lst.insert_last(42)
-        val = lst.remove_at(0)
-        assert val == 42
-        assert lst.is_empty()
-
-    def test_raises_on_invalid_index_EmptyError(self):
-        lst = DoublyList()
-        with pytest.raises(IndexError):
-            lst.remove_at(0)
-
-    def test_raises_on_invalid_index_nonEmptyError(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        with pytest.raises(IndexError):
-            lst.remove_at(5)
-
-
-class TestDoublyListRemove:
-    """remove"""
-
-    def test_removes_head(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        assert lst.remove(10) is True
-        assert list(lst) == [20, 30]
-
-    def test_removes_tail(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        assert lst.remove(30) is True
-        assert list(lst) == [10, 20]
-
-    def test_removes_middle(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        assert lst.remove(20) is True
-        assert list(lst) == [10, 30]
-
-    def test_removes_only_first_occurrence(self):
-        lst = DoublyList()
-        for v in [10, 20, 10, 30]:
-            lst.insert_last(v)
-        assert lst.remove(10) is True
-        assert list(lst) == [20, 10, 30]
-
-    def test_returns_false_if_not_found(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        assert lst.remove(99) is False
-
-    def test_single_element_becomes_EmptyError(self):
-        lst = DoublyList()
-        lst.insert_first(1)
-        lst.remove(1)
-        assert lst.is_empty()
-
-    def test_raises_on_EmptyError(self):
-        lst = DoublyList()
-        with pytest.raises(EmptyError):
-            lst.remove(10)
-
-
-class TestDoublyListIndex:
-    """index_of"""
-
-    def test_returns_index(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        assert lst.index_of(20) == 1
-
-    def test_returns_first_occurrence(self):
-        lst = DoublyList()
-        for v in [10, 20, 10]:
-            lst.insert_last(v)
-        assert lst.index_of(10) == 0
-
-    def test_returns_negative_one_if_not_found(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        assert lst.index_of(99) == -1
-
-    def test_EmptyError_list_returns_negative_one(self):
-        lst = DoublyList()
-        assert lst.index_of(10) == -1
-
-
-class TestDoublyListCount:
-    """count"""
-
-    def test_counts_occurrences(self):
-        lst = DoublyList()
-        for v in [10, 20, 10, 10, 30]:
-            lst.insert_last(v)
-        assert lst.count(10) == 3
-
-    def test_returns_zero_if_not_found(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        assert lst.count(99) == 0
-
-    def test_EmptyError_list_returns_zero(self):
-        lst = DoublyList()
-        assert lst.count(10) == 0
-
-
-class TestDoublyListContains:
-    """__contains__"""
-
-    def test_contains_returns_true(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        assert 10 in lst
-
-    def test_contains_returns_false(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        assert 20 not in lst
-
-    def test_EmptyError_list_returns_false(self):
-        lst = DoublyList()
-        assert 10 not in lst
-
-
-class TestDoublyListGetItem:
-    """__getitem__"""
-
-    def test_positive_index(self):
-        lst = DoublyList()
-        for v in [10, 20, 30, 40, 50]:
-            lst.insert_last(v)
-        assert lst[1] == 20
-        assert lst[3] == 40
-
-    def test_negative_index(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        assert lst[-1] == 30
-        assert lst[-2] == 20
-
-    def test_raises_on_invalid_index(self):
-        lst = DoublyList()
-        with pytest.raises(IndexError):
-            _ = lst[0]
-
-    def test_raises_on_negative_out_of_bounds(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        with pytest.raises(IndexError):
-            _ = lst[-2]
-
-
-class TestDoublyListIter:
-    """__iter__"""
-
-    def test_iterates_in_order(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        assert list(lst) == [10, 20, 30]
-
-    def test_EmptyError_list_yields_nothing(self):
-        lst = DoublyList()
-        assert list(lst) == []
-
-
-class TestDoublyListReversed:
-    """__reversed__"""
-
-    def test_reversed_iterates_tail_to_head(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        assert list(reversed(lst)) == [30, 20, 10]
-
-    def test_reversed_EmptyError_list(self):
-        lst = DoublyList()
-        assert list(reversed(lst)) == []
-
-    def test_reversed_single_element(self):
-        lst = DoublyList()
-        lst.insert_last(42)
-        assert list(reversed(lst)) == [42]
-
-
-class TestDoublyListReverse:
-    """reverse"""
-
-    def test_reverses_multiple_elements(self):
-        lst = DoublyList()
-        for v in [1, 2, 3, 4, 5]:
-            lst.insert_last(v)
-        lst.reverse()
-        assert list(lst) == [5, 4, 3, 2, 1]
-
-    def test_reverses_two_elements(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        lst.insert_last(20)
-        lst.reverse()
-        assert list(lst) == [20, 10]
-
-    def test_reverses_single_element(self):
-        lst = DoublyList()
-        lst.insert_last(42)
-        lst.reverse()
-        assert list(lst) == [42]
-
-    def test_head_and_tail_swapped_after_reverse(self):
-        lst = DoublyList()
+    def test_multiple_prepends_reverse_order(self, empty_list: DoublyList[int]) -> None:
         for v in [1, 2, 3]:
-            lst.insert_last(v)
-        lst.reverse()
-        assert lst.get_first() == 3
-        assert lst.get_last() == 1
+            empty_list.insert_first(v)
+        assert list(empty_list) == [3, 2, 1]
 
-    def test_reverse_twice_restores_original(self):
-        lst = DoublyList()
+    def test_head_prev_is_none(self, filled_list: DoublyList[int]) -> None:
+        filled_list.insert_first(0)
+        assert list(reversed(filled_list)) == [5, 4, 3, 2, 1, 0]
+
+
+class TestInsertLast:
+    def test_into_empty(self, empty_list: DoublyList[int]) -> None:
+        empty_list.insert_last(1)
+        assert list(empty_list) == [1]
+        assert empty_list.get_first() == 1
+        assert empty_list.get_last() == 1
+
+    def test_multiple_appends_preserve_order(self, empty_list: DoublyList[int]) -> None:
         for v in [1, 2, 3]:
-            lst.insert_last(v)
-        lst.reverse()
-        lst.reverse()
-        assert list(lst) == [1, 2, 3]
+            empty_list.insert_last(v)
+        assert list(empty_list) == [1, 2, 3]
 
-    def test_EmptyError_list_no_error(self):
-        lst = DoublyList()
-        lst.reverse()
-        assert lst.is_empty()
-
-    def test_reverse_preserves_prev_links(self):
-        lst = DoublyList()
-        for v in [1, 2, 3, 4]:
-            lst.insert_last(v)
-        lst.reverse()
-        assert list(reversed(lst)) == [1, 2, 3, 4]
+    def test_on_filled_list(self, filled_list: DoublyList[int]) -> None:
+        filled_list.insert_last(6)
+        assert list(filled_list) == [1, 2, 3, 4, 5, 6]
+        assert filled_list.get_last() == 6
 
 
-class TestDoublyListCopy:
-    """copy"""
+class TestInsertAt:
+    def test_at_zero_equals_insert_first(self, filled_list: DoublyList[int]) -> None:
+        filled_list.insert_at(0, 0)
+        assert list(filled_list) == [0, 1, 2, 3, 4, 5]
 
-    def test_copy_has_same_elements(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        cpy = lst.copy()
-        assert list(cpy) == [10, 20, 30]
+    def test_at_length_equals_insert_last(self, filled_list: DoublyList[int]) -> None:
+        filled_list.insert_at(len(filled_list), 6)
+        assert list(filled_list) == [1, 2, 3, 4, 5, 6]
 
-    def test_copy_is_independent(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        cpy = lst.copy()
-        lst.insert_last(20)
-        assert len(cpy) == 1
-        assert cpy.get_last() == 10
+    def test_at_middle_from_head_side(self, filled_list: DoublyList[int]) -> None:
+        filled_list.insert_at(2, 99)
+        assert list(filled_list) == [1, 2, 99, 3, 4, 5]
 
-    def test_copy_EmptyError_list(self):
-        lst = DoublyList()
-        cpy = lst.copy()
-        assert cpy.is_empty()
-        assert isinstance(cpy, DoublyList)
+    def test_at_middle_from_tail_side(self, filled_list: DoublyList[int]) -> None:
+        filled_list.insert_at(4, 99)
+        assert list(filled_list) == [1, 2, 3, 4, 99, 5]
 
+    def test_negative_index(self, filled_list: DoublyList[int]) -> None:
+        filled_list.insert_at(-1, 99)
+        assert list(filled_list) == [1, 2, 3, 4, 99, 5]
 
-class TestDoublyListClear:
-    """clear"""
+    @pytest.mark.parametrize("index", [6, -6])
+    def test_out_of_range_raises(self, filled_list: DoublyList[int], index: int) -> None:
+        with pytest.raises(IndexError):
+            filled_list.insert_at(index, 99)
 
-    def test_clears_all_elements(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        lst.clear()
-        assert lst.is_empty()
-        assert len(lst) == 0
-
-    def test_clear_EmptyError_list_no_error(self):
-        lst = DoublyList()
-        lst.clear()
-        assert lst.is_empty()
-        assert not lst
+    def test_prev_pointers_consistent_after_insert(self, filled_list: DoublyList[int]) -> None:
+        filled_list.insert_at(2, 99)
+        assert list(reversed(filled_list)) == [5, 4, 3, 99, 2, 1]
 
 
-class TestDoublyListHasCycle:
-    """has_cycle"""
-
-    def test_no_cycle_in_normal_list(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        assert lst.has_cycle() is False
-
-    def test_no_cycle_in_EmptyError_list(self):
-        lst = DoublyList()
-        assert lst.has_cycle() is False
-
-    def test_no_cycle_single_element(self):
-        lst = DoublyList()
-        lst.insert_first(1)
-        assert lst.has_cycle() is False
-
-
-class TestDoublyListMiddle:
-    """middle"""
-
-    def test_middle_odd_length(self):
-        lst = DoublyList()
-        for v in [1, 2, 3, 4, 5]:
-            lst.insert_last(v)
-        assert lst.middle() == 3
-
-    def test_middle_even_length_returns_tuple(self):
-        lst = DoublyList()
-        for v in [1, 2, 3, 4]:
-            lst.insert_last(v)
-        assert lst.middle() == (2, 3)
-
-    def test_middle_single_element(self):
-        lst = DoublyList()
-        lst.insert_last(42)
-        assert lst.middle() == 42
-
-    def test_middle_two_elements(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        lst.insert_last(20)
-        assert lst.middle() == (10, 20)
-
-    def test_raises_on_EmptyError(self):
-        lst = DoublyList()
+class TestRemoveFirst:
+    def test_raises_on_empty(self, empty_list: DoublyList[int]) -> None:
         with pytest.raises(EmptyError):
-            lst.middle()
+            empty_list.remove_first()
+
+    def test_removes_and_returns_head(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.remove_first() == 1
+        assert list(filled_list) == [2, 3, 4, 5]
+
+    def test_new_head_prev_is_none(self, filled_list: DoublyList[int]) -> None:
+        filled_list.remove_first()
+        filled_list.insert_first(0)
+        assert list(filled_list) == [0, 2, 3, 4, 5]
+
+    def test_down_to_single_element_clears_tail(self, empty_list: DoublyList[int]) -> None:
+        empty_list.insert_last(1)
+        empty_list.remove_first()
+        assert empty_list.is_empty()
+        with pytest.raises(EmptyError):
+            empty_list.get_last()
 
 
-class TestDoublyListBool:
-    """__bool__"""
+class TestRemoveLast:
+    def test_raises_on_empty(self, empty_list: DoublyList[int]) -> None:
+        with pytest.raises(EmptyError):
+            empty_list.remove_last()
 
-    def test_non_EmptyError_is_truthy(self):
-        lst = DoublyList()
-        lst.insert_first(1)
-        assert bool(lst)
+    def test_removes_and_returns_tail(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.remove_last() == 5
+        assert list(filled_list) == [1, 2, 3, 4]
 
-    def test_EmptyError_is_falsy(self):
-        lst = DoublyList()
-        assert not lst
+    def test_new_tail_next_is_none(self, filled_list: DoublyList[int]) -> None:
+        filled_list.remove_last()
+        filled_list.insert_last(99)
+        assert list(filled_list) == [1, 2, 3, 4, 99]
 
-
-class TestDoublyListLen:
-    """__len__"""
-
-    def test_length_updates_after_insert(self):
-        lst = DoublyList()
-        lst.insert_first(1)
-        assert len(lst) == 1
-        lst.insert_last(2)
-        assert len(lst) == 2
-
-    def test_length_updates_after_remove(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        lst.insert_last(20)
-        lst.remove_first()
-        assert len(lst) == 1
+    def test_single_element_delegates_to_remove_first(self, empty_list: DoublyList[int]) -> None:
+        empty_list.insert_last(1)
+        assert empty_list.remove_last() == 1
+        assert empty_list.is_empty()
 
 
-class TestDoublyListWithCustomObjects:
-    """Custom object types"""
+class TestRemoveAt:
+    def test_raises_on_out_of_range(self, filled_list: DoublyList[int]) -> None:
+        with pytest.raises(IndexError):
+            filled_list.remove_at(10)
 
-    def test_works_with_strings(self):
-        lst = DoublyList()
-        lst.insert_last("hello")
-        assert lst.get_first() == "hello"
+    def test_at_zero_delegates_to_remove_first(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.remove_at(0) == 1
+        assert list(filled_list) == [2, 3, 4, 5]
 
-    def test_works_with_none(self):
-        lst = DoublyList()
-        lst.insert_last(None)
-        assert lst.get_first() is None
+    def test_at_last_index_delegates_to_remove_last(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.remove_at(4) == 5
+        assert list(filled_list) == [1, 2, 3, 4]
 
-    def test_works_with_nested_lists(self):
-        lst = DoublyList()
-        inner = [1, 2, 3]
-        lst.insert_last(inner)
-        assert lst.get_first() is inner
+    def test_at_middle_relinks_both_neighbors(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.remove_at(2) == 3
+        assert list(filled_list) == [1, 2, 4, 5]
+        assert list(reversed(filled_list)) == [5, 4, 2, 1]
 
-
-class TestDoublyListLargeData:
-    """Large data"""
-
-    def test_many_elements(self):
-        lst = DoublyList()
-        n = 1000
-        for i in range(n):
-            lst.insert_last(i)
-        assert len(lst) == n
-        assert lst.get_first() == 0
-        assert lst.get_last() == n - 1
-
-    def test_many_removals_from_both_ends(self):
-        lst = DoublyList()
-        n = 500
-        for i in range(n):
-            lst.insert_last(i)
-        for _ in range(n // 2):
-            lst.remove_first()
-            lst.remove_last()
-        assert lst.is_empty()
+    def test_negative_index(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.remove_at(-2) == 4
+        assert list(filled_list) == [1, 2, 3, 5]
 
 
-class TestDoublyListBidirectional:
-    """Bidirectional traversal integrity"""
+class TestRemove:
+    def test_raises_on_empty(self, empty_list: DoublyList[int]) -> None:
+        with pytest.raises(EmptyError):
+            empty_list.remove(1)
 
-    def test_prev_links_after_insert_first(self):
-        lst = DoublyList()
-        lst.insert_first(10)
-        lst.insert_first(20)
-        assert lst.get_last() == 10
-        assert list(reversed(lst)) == [10, 20]
+    def test_value_at_head(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.remove(1) is True
+        assert list(filled_list) == [2, 3, 4, 5]
 
-    def test_prev_links_after_insert_last(self):
-        lst = DoublyList()
-        lst.insert_last(10)
-        lst.insert_last(20)
-        assert list(reversed(lst)) == [20, 10]
+    def test_value_at_tail(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.remove(5) is True
+        assert list(filled_list) == [1, 2, 3, 4]
 
-    def test_prev_links_after_remove_middle(self):
-        lst = DoublyList()
-        for v in [10, 20, 30]:
-            lst.insert_last(v)
-        lst.remove(20)
-        assert list(lst) == [10, 30]
-        assert list(reversed(lst)) == [30, 10]
+    def test_value_in_middle(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.remove(3) is True
+        assert list(filled_list) == [1, 2, 4, 5]
+        assert list(reversed(filled_list)) == [5, 4, 2, 1]
+
+    def test_value_not_found_returns_false(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.remove(999) is False
+
+    def test_removes_only_first_occurrence(self, empty_list: DoublyList[int]) -> None:
+        for v in [1, 2, 1, 3]:
+            empty_list.insert_last(v)
+        empty_list.remove(1)
+        assert list(empty_list) == [2, 1, 3]
+
+
+class TestGetters:
+    def test_get_first_raises_on_empty(self, empty_list: DoublyList[int]) -> None:
+        with pytest.raises(EmptyError):
+            empty_list.get_first()
+
+    def test_get_last_raises_on_empty(self, empty_list: DoublyList[int]) -> None:
+        with pytest.raises(EmptyError):
+            empty_list.get_last()
+
+    def test_get_at_from_head_side(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.get_at(1) == 2
+
+    def test_get_at_from_tail_side(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.get_at(3) == 4
+
+    def test_get_at_negative_index(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.get_at(-1) == 5
+
+    def test_get_at_out_of_range_raises(self, filled_list: DoublyList[int]) -> None:
+        with pytest.raises(IndexError):
+            filled_list.get_at(100)
+
+
+class TestIndexOfAndCount:
+    def test_index_of_found(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.index_of(3) == 2
+
+    def test_index_of_not_found(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.index_of(999) == -1
+
+    def test_count_multiple_occurrences(self, empty_list: DoublyList[int]) -> None:
+        for v in [1, 2, 1, 1, 3]:
+            empty_list.insert_last(v)
+        assert empty_list.count(1) == 3
+
+
+class TestContains:
+    def test_true_when_present(self, filled_list: DoublyList[int]) -> None:
+        assert 3 in filled_list
+
+    def test_false_when_absent(self, filled_list: DoublyList[int]) -> None:
+        assert 999 not in filled_list
+
+
+class TestReverse:
+    def test_reverses_order(self, filled_list: DoublyList[int]) -> None:
+        filled_list.reverse()
+        assert list(filled_list) == [5, 4, 3, 2, 1]
+
+    def test_reversed_iterator_matches_forward_before_reverse(
+        self, filled_list: DoublyList[int]
+    ) -> None:
+        before_reversed = list(reversed(filled_list))
+        filled_list.reverse()
+        assert list(filled_list) == before_reversed
+
+    def test_empty_list_noop(self, empty_list: DoublyList[int]) -> None:
+        empty_list.reverse()
+        assert list(empty_list) == []
+
+    def test_single_element_noop(self, empty_list: DoublyList[int]) -> None:
+        empty_list.insert_last(1)
+        empty_list.reverse()
+        assert list(empty_list) == [1]
+
+    def test_list_still_usable_after_reverse(self, filled_list: DoublyList[int]) -> None:
+        filled_list.reverse()
+        filled_list.insert_last(0)
+        filled_list.insert_first(6)
+        assert list(filled_list) == [6, 5, 4, 3, 2, 1, 0]
+
+
+class TestCopy:
+    def test_copy_has_same_elements(self, filled_list: DoublyList[int]) -> None:
+        copy = filled_list.copy()
+        assert list(copy) == list(filled_list)
+        assert copy is not filled_list
+
+    def test_copy_of_empty_list(self, empty_list: DoublyList[int]) -> None:
+        assert empty_list.copy().is_empty()
+
+    def test_mutating_copy_does_not_affect_original(self, filled_list: DoublyList[int]) -> None:
+        copy = filled_list.copy()
+        copy.insert_last(99)
+        assert list(filled_list) == [1, 2, 3, 4, 5]
+
+
+class TestClear:
+    def test_clears_filled_list(self, filled_list: DoublyList[int]) -> None:
+        filled_list.clear()
+        assert filled_list.is_empty()
+
+    def test_usable_after_clear(self, filled_list: DoublyList[int]) -> None:
+        filled_list.clear()
+        filled_list.insert_last(42)
+        assert list(filled_list) == [42]
+
+
+class TestHasCycle:
+    def test_false_for_acyclic_list(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.has_cycle() is False
+
+    def test_false_for_empty_list(self, empty_list: DoublyList[int]) -> None:
+        assert empty_list.has_cycle() is False
+
+
+class TestMiddle:
+    def test_raises_on_empty(self, empty_list: DoublyList[int]) -> None:
+        with pytest.raises(EmptyError):
+            empty_list.middle()
+
+    def test_odd_length_returns_single_value(self, filled_list: DoublyList[int]) -> None:
+        assert filled_list.middle() == 3
+
+    def test_even_length_returns_tuple(self, empty_list: DoublyList[int]) -> None:
+        for v in [1, 2, 3, 4]:
+            empty_list.insert_last(v)
+        assert empty_list.middle() == (2, 3)
+
+    def test_two_elements(self, empty_list: DoublyList[int]) -> None:
+        empty_list.insert_last(1)
+        empty_list.insert_last(2)
+        assert empty_list.middle() == (1, 2)

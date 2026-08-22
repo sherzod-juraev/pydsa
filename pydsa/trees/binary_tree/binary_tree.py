@@ -1,24 +1,28 @@
+"""General binary tree implementation.
+
+Provides :class:`BinaryTree`, a general binary tree with path-based
+insertion and four traversal strategies (preorder, inorder, postorder,
+level-order).
+"""
+
 from collections.abc import Iterator
-from typing import TypeVar, cast
+from typing import cast
 
 from ...exc import EmptyError
 from ...linear import Queue, Stack
 from .node import Node
 
-T = TypeVar("T")
-
 
 class BinaryTree[T]:
     """
-    A general binary tree with path-based insertion and four traversal
-    strategies.
+    A general binary tree with path-based insertion and four traversal strategies.
 
     Nodes are inserted by specifying a path string (e.g., ``"LLR"``)
     from the root. The tree supports preorder, inorder, postorder
     (all iterative, O(n) time, O(h) space), and level-order (BFS,
     O(n) time, O(w) space) traversal.
 
-    Time Complexity
+    Time Complexity Summary
     .. csv-table:: Binary Tree Operations Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 10, 10
@@ -41,11 +45,11 @@ class BinaryTree[T]:
     -----
     This is a general binary tree without ordering constraints.
     For a binary searching tree (BST) with the ``left < root < right``
-    invariant, see the ``BST`` class.
+    invariant, see the ``BSTree`` class.
     """
 
     def __init__(self) -> None:
-
+        """Initialize an empty tree."""
         self.__root: Node[T] | None = None
         self.__nodes: int = 0
 
@@ -78,9 +82,11 @@ class BinaryTree[T]:
         """Insert a value at the node specified by a path string. O(h).
 
         The path is a sequence of ``'L'`` and ``'R'`` characters
-        starting from the root. An empty path inserts at the root.
-        If a node already exists at the given path, its subtree is
-        preserved as the subtree of the new node.
+        starting from the root. An empty path always targets the
+        root — if the tree is non-empty, the new node replaces the
+        root while preserving its existing subtree. If a node already
+        exists at a non-root path, its subtree is preserved as the
+        subtree of the new node.
 
         Parameters
         ----------
@@ -88,6 +94,7 @@ class BinaryTree[T]:
             The value to insert.
         path : str
             Path from root, e.g., ``"LLR"`` means left, left, right.
+            Empty string targets the root.
 
         Raises
         ------
@@ -104,10 +111,14 @@ class BinaryTree[T]:
         >>> tree.insert(1, "LL")
         """
         new_node = Node(value)
-        if self.is_empty():
+        if not path:
+            new_node.left = self.__root.left if self.__root is not None else None
+            new_node.right = self.__root.right if self.__root is not None else None
             self.__root = new_node
             self.__nodes += 1
             return
+        if self.is_empty():
+            raise ValueError(f"Path is broken: {path} does not exist")
         current = cast(Node[T], self.__root)
         for i in range(len(path) - 1):
             if path[i] == "L":
@@ -138,6 +149,11 @@ class BinaryTree[T]:
 
         Examples
         --------
+        >>> tree = BinaryTree()
+        >>> tree.insert(5, "")
+        >>> tree.insert(3, "L")
+        >>> tree.insert(8, "R")
+        >>> tree.insert(1, "LL")
         >>> list(tree.preorder())
         [5, 3, 1, 8]
         """
@@ -165,6 +181,11 @@ class BinaryTree[T]:
 
         Examples
         --------
+        >>> tree = BinaryTree()
+        >>> tree.insert(5, "")
+        >>> tree.insert(3, "L")
+        >>> tree.insert(8, "R")
+        >>> tree.insert(1, "LL")
         >>> list(tree.inorder())
         [1, 3, 5, 8]
         """
@@ -193,6 +214,11 @@ class BinaryTree[T]:
 
         Examples
         --------
+        >>> tree = BinaryTree()
+        >>> tree.insert(5, "")
+        >>> tree.insert(3, "L")
+        >>> tree.insert(8, "R")
+        >>> tree.insert(1, "LL")
         >>> list(tree.postorder())
         [1, 3, 8, 5]
         """
@@ -227,6 +253,11 @@ class BinaryTree[T]:
 
         Examples
         --------
+        >>> tree = BinaryTree()
+        >>> tree.insert(5, "")
+        >>> tree.insert(3, "L")
+        >>> tree.insert(8, "R")
+        >>> tree.insert(1, "LL")
         >>> list(tree.levelorder())
         [5, 3, 8, 1]
         """
@@ -243,8 +274,10 @@ class BinaryTree[T]:
                 queue.enqueue(node.right)
 
     def height(self) -> int:
-        """Return the height of the tree (number of nodes on the longest path
-        from root to leaf). O(n).
+        """Return the height of the tree (number of nodes on the longest path).
+
+        The longest path is measured from the root to a leaf. The operation
+        takes O(n) time.
 
         A tree with a single node has height 1.
 
@@ -255,6 +288,11 @@ class BinaryTree[T]:
 
         Examples
         --------
+        >>> tree = BinaryTree()
+        >>> tree.insert(5, "")
+        >>> tree.insert(3, "L")
+        >>> tree.insert(8, "R")
+        >>> tree.insert(1, "LL")
         >>> tree.height()
         3
         """
@@ -283,6 +321,11 @@ class BinaryTree[T]:
 
         Examples
         --------
+        >>> tree = BinaryTree()
+        >>> tree.insert(5, "")
+        >>> tree.insert(3, "L")
+        >>> tree.insert(8, "R")
+        >>> tree.insert(1, "LL")
         >>> tree.leaves()
         2
         """

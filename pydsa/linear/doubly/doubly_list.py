@@ -1,10 +1,15 @@
+"""Doubly linked list implementation.
+
+Provides :class:`DoublyList`, a doubly linked list with head and tail
+pointers offering O(1) insertion and removal at both ends, and O(n)
+indexed access that traverses from whichever end is nearer.
+"""
+
 from collections.abc import Iterator
-from typing import TypeVar, cast
+from typing import cast
 
 from ...exc import EmptyError
 from .node import Node
-
-T = TypeVar("T")
 
 
 class DoublyList[T]:
@@ -45,7 +50,7 @@ class DoublyList[T]:
     """
 
     def __init__(self) -> None:
-
+        """Initialize an empty list."""
         self.__head: Node[T] | None = None
         self.__tail: Node[T] | None = None
         self.__length: int = 0
@@ -66,7 +71,16 @@ class DoublyList[T]:
             current = current.next
 
     def __reversed__(self) -> Iterator[T]:
-        """Yield each value from tail to head. O(n)."""
+        """Yield each value from tail to head. O(n).
+
+        Examples
+        --------
+        >>> lst = DoublyList[int]()
+        >>> for v in [1, 2, 3]:
+        ...     lst.insert_last(v)
+        >>> list(reversed(lst))
+        [3, 2, 1]
+        """
         current = self.__tail
         while current:
             yield current.value
@@ -155,7 +169,16 @@ class DoublyList[T]:
         return self[index]
 
     def insert_first(self, value: T, /) -> None:
-        """Insert a value at the head of the list. O(1)."""
+        """Insert a value at the head of the list. O(1).
+
+        Examples
+        --------
+        >>> lst = DoublyList[int]()
+        >>> lst.insert_first(2)
+        >>> lst.insert_first(1)
+        >>> list(lst)
+        [1, 2]
+        """
         new_node = Node(value)
         if self.is_empty():
             self.__head = self.__tail = new_node

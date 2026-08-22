@@ -1,3 +1,9 @@
+"""Max-heap implementation.
+
+Provides :class:`MaxHeap`, a binary max-heap backed by a dynamic
+array, using Floyd's linear-time heapify algorithm.
+"""
+
 from ..._types import Comparable
 from ...exc import EmptyError
 
@@ -18,6 +24,7 @@ class MaxHeap[T: Comparable]:
        "left child", "2 * i + 1"
        "right child", "2 * i + 2"
 
+    Time Complexity Summary
     .. csv-table:: Time & Space Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 15, 10
@@ -38,7 +45,7 @@ class MaxHeap[T: Comparable]:
     """
 
     def __init__(self) -> None:
-
+        """Initialize an empty heap."""
         self.__data: list[T] = []
 
     def __len__(self) -> int:
@@ -64,6 +71,14 @@ class MaxHeap[T: Comparable]:
         ------
         EmptyError
             If the heap is empty.
+
+        Examples
+        --------
+        >>> h = MaxHeap[int]()
+        >>> h.insert(3)
+        >>> h.insert(9)
+        >>> h.peek()
+        9
         """
         if self.is_empty():
             raise EmptyError(self)
@@ -88,6 +103,15 @@ class MaxHeap[T: Comparable]:
         ------
         EmptyError
             If the heap is empty.
+
+        Examples
+        --------
+        >>> h = MaxHeap[int]()
+        >>> h.insert(3)
+        >>> h.insert(9)
+        >>> h.insert(1)
+        >>> h.extract_max()
+        9
         """
         if self.is_empty():
             raise EmptyError(self)

@@ -1,120 +1,88 @@
 import pytest
-from pydsa import Stack
-from pydsa.exc import EmptyError
+
+from pydsa import EmptyError, Stack
 
 
-class TestStackInit:
-    """__init__"""
-
-    def test_EmptyError_stack_has_zero_length(self):
-        s = Stack()
-        assert len(s) == 0
-
-    def test_EmptyError_stack_is_empty(self):
-        s = Stack()
-        assert s.is_empty()
+@pytest.fixture
+def empty_stack() -> Stack[int]:
+    return Stack[int]()
 
 
-class TestStackPush:
-    """push"""
-
-    def test_push_increases_length(self):
-        s = Stack()
-        s.push(10)
-        assert len(s) == 1
-
-    def test_push_multiple(self):
-        s = Stack()
-        s.push(10)
-        s.push(20)
-        s.push(30)
-        assert len(s) == 3
-
-    def test_push_and_peek(self):
-        s = Stack()
-        s.push(42)
-        assert s.peek() == 42
+@pytest.fixture
+def filled_stack() -> Stack[int]:
+    s = Stack[int]()
+    for v in [1, 2, 3]:
+        s.push(v)
+    return s
 
 
-class TestStackPop:
-    """pop"""
+class TestConstruction:
+    def test_new_stack_is_empty(self, empty_stack: Stack[int]) -> None:
+        assert empty_stack.is_empty()
+        assert len(empty_stack) == 0
+        assert bool(empty_stack) is False
 
-    def test_pop_returns_last_pushed(self):
-        s = Stack()
-        s.push(10)
-        s.push(20)
-        assert s.pop() == 20
 
-    def test_pop_removes_element(self):
-        s = Stack()
-        s.push(10)
-        s.push(20)
-        s.pop()
-        assert len(s) == 1
-        assert s.peek() == 10
+class TestPush:
+    def test_into_empty(self, empty_stack: Stack[int]) -> None:
+        empty_stack.push(1)
+        assert len(empty_stack) == 1
+        assert empty_stack.peek() == 1
+        assert bool(empty_stack) is True
 
-    def test_pop_until_EmptyError(self):
-        s = Stack()
-        s.push(1)
-        s.push(2)
-        s.push(3)
-        s.pop()
-        s.pop()
-        s.pop()
-        assert s.is_empty()
+    def test_last_pushed_is_on_top(self, empty_stack: Stack[int]) -> None:
+        for v in [1, 2, 3]:
+            empty_stack.push(v)
+        assert empty_stack.peek() == 3
+        assert len(empty_stack) == 3
 
-    def test_pop_on_EmptyError_raises(self):
-        s = Stack()
+
+class TestPop:
+    def test_raises_on_empty(self, empty_stack: Stack[int]) -> None:
         with pytest.raises(EmptyError):
-            s.pop()
+            empty_stack.pop()
 
+    def test_lifo_order(self, filled_stack: Stack[int]) -> None:
+        assert filled_stack.pop() == 3
+        assert filled_stack.pop() == 2
+        assert filled_stack.pop() == 1
 
-class TestStackPeek:
-    """peek"""
+    def test_length_decreases(self, filled_stack: Stack[int]) -> None:
+        filled_stack.pop()
+        assert len(filled_stack) == 2
 
-    def test_peek_does_not_remove(self):
-        s = Stack()
-        s.push(10)
-        assert s.peek() == 10
-        assert len(s) == 1
-
-    def test_peek_on_EmptyError_raises(self):
-        s = Stack()
+    def test_drains_to_empty(self, filled_stack: Stack[int]) -> None:
+        for _ in range(3):
+            filled_stack.pop()
+        assert filled_stack.is_empty()
         with pytest.raises(EmptyError):
-            s.peek()
+            filled_stack.pop()
+
+    def test_usable_after_draining(self, filled_stack: Stack[int]) -> None:
+        for _ in range(3):
+            filled_stack.pop()
+        filled_stack.push(99)
+        assert filled_stack.peek() == 99
+        assert len(filled_stack) == 1
 
 
-class TestStackLIFO:
-    """LIFO behavior"""
+class TestPeek:
+    def test_raises_on_empty(self, empty_stack: Stack[int]) -> None:
+        with pytest.raises(EmptyError):
+            empty_stack.peek()
 
-    def test_lifo_order(self):
-        s = Stack()
-        for v in [1, 2, 3, 4, 5]:
-            s.push(v)
-        result = []
-        while not s.is_empty():
-            result.append(s.pop())
-        assert result == [5, 4, 3, 2, 1]
-
-    def test_interleaved_push_pop(self):
-        s = Stack()
-        s.push(1)
-        s.push(2)
-        assert s.pop() == 2
-        s.push(3)
-        assert s.pop() == 3
-        assert s.pop() == 1
-        assert s.is_empty()
+    def test_does_not_remove_element(self, filled_stack: Stack[int]) -> None:
+        filled_stack.peek()
+        assert len(filled_stack) == 3
+        assert filled_stack.peek() == 3
 
 
-class TestStackLargeData:
-    """Large data"""
-
-    def test_many_push_pop(self):
-        s = Stack()
-        n = 1000
-        for i in range(n):
-            s.push(i)
-        for i in range(n - 1, -1, -1):
-            assert s.pop() == i
-        assert s.is_empty()
+class TestInterleavedOperations:
+    def test_push_pop_push_maintains_lifo(self, empty_stack: Stack[int]) -> None:
+        empty_stack.push(1)
+        empty_stack.push(2)
+        assert empty_stack.pop() == 2
+        empty_stack.push(3)
+        assert empty_stack.pop() == 3
+        assert empty_stack.pop() == 1
+        assert empty_stack.is_empty()

@@ -1,3 +1,9 @@
+"""Algorithms package.
+
+Exposes dynamic-programming solutions (:mod:`pydsa.algorithms.dp`) and
+greedy algorithms (:mod:`pydsa.algorithms.greedy`).
+"""
+
 from .dp import (
     coin_change,
     edit_distance,

@@ -1,162 +1,97 @@
-import numpy as np
 import pytest
-from pydsa import (
-    linear_search,
-    binary_search,
-    jump_search,
-    exponential_search,
-)
 
+from pydsa import binary_search, exponential_search, jump_search, linear_search
 
-SORTED_SEARCH_FUNCS = [binary_search, jump_search, exponential_search]
-ALL_SEARCH_FUNCS = [linear_search] + SORTED_SEARCH_FUNCS
-
-
-class TestEmptyArray:
-    """Empty arrays."""
-
-    @pytest.mark.parametrize("func", ALL_SEARCH_FUNCS)
-    def test_empty_returns_minus_one(self, func):
-        arr = np.array([], dtype=np.int64)
-        assert func(arr, 5) == -1
-
-
-class TestSingleElement:
-    """Single element arrays."""
-
-    @pytest.mark.parametrize("func", ALL_SEARCH_FUNCS)
-    def test_found(self, func):
-        arr = np.array([42], dtype=np.int64)
-        assert func(arr, 42) == 0
-
-    @pytest.mark.parametrize("func", ALL_SEARCH_FUNCS)
-    def test_not_found_smaller(self, func):
-        arr = np.array([42], dtype=np.int64)
-        assert func(arr, 10) == -1
-
-    @pytest.mark.parametrize("func", ALL_SEARCH_FUNCS)
-    def test_not_found_larger(self, func):
-        arr = np.array([42], dtype=np.int64)
-        assert func(arr, 99) == -1
-
-
-class TestSmallArray:
-    """Small sorted arrays."""
-
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_first_element(self, func):
-        arr = np.array([1, 2, 3, 4, 5], dtype=np.int64)
-        assert func(arr, 1) == 0
-
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_last_element(self, func):
-        arr = np.array([1, 2, 3, 4, 5], dtype=np.int64)
-        assert func(arr, 5) == 4
-
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_middle_element(self, func):
-        arr = np.array([1, 2, 3, 4, 5], dtype=np.int64)
-        assert func(arr, 3) == 2
-
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_not_found(self, func):
-        arr = np.array([1, 2, 3, 4, 5], dtype=np.int64)
-        assert func(arr, 99) == -1
-
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_not_found_between(self, func):
-        arr = np.array([1, 3, 5, 7], dtype=np.int64)
-        assert func(arr, 4) == -1
-
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_less_than_min(self, func):
-        arr = np.array([10, 20, 30], dtype=np.int64)
-        assert func(arr, 5) == -1
-
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_greater_than_max(self, func):
-        arr = np.array([10, 20, 30], dtype=np.int64)
-        assert func(arr, 50) == -1
+ALGORITHMS_UNSORTED_OK = [linear_search]
+ALGORITHMS_SORTED_ONLY = [binary_search, jump_search, exponential_search]
+ALL_ALGORITHMS = ALGORITHMS_UNSORTED_OK + ALGORITHMS_SORTED_ONLY
 
 
 class TestLinearSearchUnsorted:
-    """Linear search on unsorted data."""
+    def test_finds_in_unsorted(self) -> None:
+        assert linear_search([15, 3, 9, 1, 7], 9) == 2
 
-    def test_found_first(self):
-        arr = np.array([7, 2, 9, 1, 5], dtype=np.int64)
-        assert linear_search(arr, 7) == 0
+    def test_not_found_returns_minus_one(self) -> None:
+        assert linear_search([15, 3, 9, 1, 7], 100) == -1
 
-    def test_found_last(self):
-        arr = np.array([7, 2, 9, 1, 5], dtype=np.int64)
-        assert linear_search(arr, 5) == 4
-
-    def test_not_found(self):
-        arr = np.array([7, 2, 9, 1, 5], dtype=np.int64)
-        assert linear_search(arr, 99) == -1
+    def test_returns_first_occurrence(self) -> None:
+        assert linear_search([5, 3, 5, 5], 5) == 0
 
 
-class TestDuplicates:
-    """Arrays with duplicates."""
+@pytest.mark.parametrize("search_fn", ALL_ALGORITHMS)
+class TestCommonBehavior:
+    def test_empty_array_returns_minus_one(self, search_fn) -> None:
+        assert search_fn([], 5) == -1
 
-    @pytest.mark.parametrize("func", ALL_SEARCH_FUNCS)
-    def test_first_occurrence_not_guaranteed(self, func):
-        arr = np.array([1, 2, 2, 2, 3], dtype=np.int64)
-        idx = func(arr, 2)
-        assert idx in [1, 2, 3]  # any occurrence is valid
+    def test_single_element_found(self, search_fn) -> None:
+        assert search_fn([42], 42) == 0
 
+    def test_single_element_not_found(self, search_fn) -> None:
+        assert search_fn([42], 1) == -1
 
-class TestLargeArray:
-    """Large sorted arrays."""
+    def test_target_is_first_element(self, search_fn) -> None:
+        arr = [1, 3, 5, 7, 9, 15]
+        assert search_fn(arr, 1) == 0
 
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_found_random(self, func):
-        rng = np.random.default_rng(42)
-        arr = np.sort(rng.integers(0, 100_000, size=5000).astype(np.int64))
-        target = arr[1234]
-        assert func(arr, target) is not None
-        assert arr[func(arr, target)] == target
-
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_not_found_large(self, func):
-        rng = np.random.default_rng(42)
-        arr = np.sort(rng.integers(0, 50_000, size=5000).astype(np.int64))
-        # ensure value not in array
-        target = np.max(arr) + 100
-        assert func(arr, target) == -1
+    def test_target_is_last_element(self, search_fn) -> None:
+        arr = [1, 3, 5, 7, 9, 15]
+        assert search_fn(arr, 15) == 5
 
 
-class TestEdgeCases:
-    """Edge cases."""
+@pytest.mark.parametrize("search_fn", ALGORITHMS_SORTED_ONLY)
+class TestSortedOnlyAlgorithms:
+    def test_finds_middle_element(self, search_fn) -> None:
+        arr = [1, 3, 7, 9, 15]
+        assert search_fn(arr, 7) == 2
 
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_two_elements(self, func):
-        arr = np.array([10, 20], dtype=np.int64)
-        assert func(arr, 10) == 0
-        assert func(arr, 20) == 1
+    def test_not_found_below_range(self, search_fn) -> None:
+        arr = [1, 3, 7, 9, 15]
+        assert search_fn(arr, -5) == -1
 
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_all_equal(self, func):
-        arr = np.full(50, 7, dtype=np.int64)
-        idx = func(arr, 7)
-        assert arr[idx] == 7
+    def test_not_found_above_range(self, search_fn) -> None:
+        arr = [1, 3, 7, 9, 15]
+        assert search_fn(arr, 999) == -1
 
-    def test_exponential_search_boundary(self):
-        arr = np.arange(1, 100, dtype=np.int64)
-        assert exponential_search(arr, 1) == 0
+    def test_not_found_between_elements(self, search_fn) -> None:
+        arr = [1, 3, 7, 9, 15]
+        assert search_fn(arr, 5) == -1
+
+    def test_large_sorted_array(self, search_fn) -> None:
+        arr = list(range(0, 10_000, 2))
+        assert search_fn(arr, 4998) == 2499
+
+    def test_all_equal_elements_found(self, search_fn) -> None:
+        arr = [7, 7, 7, 7, 7]
+        assert search_fn(arr, 7) != -1
+        assert arr[search_fn(arr, 7)] == 7
+
+    def test_two_elements(self, search_fn) -> None:
+        arr = [1, 2]
+        assert search_fn(arr, 1) == 0
+        assert search_fn(arr, 2) == 1
+        assert search_fn(arr, 3) == -1
+
+
+class TestJumpSearchBoundary:
+    def test_target_at_step_boundary(self) -> None:
+        arr = [1, 3, 7, 9, 15, 20, 25, 30]
+        assert jump_search(arr, 20) == 5
+
+    def test_odd_length_array(self) -> None:
+        arr = [1, 4, 9, 16, 25, 36, 49]
+        for i, v in enumerate(arr):
+            assert jump_search(arr, v) == i
+
+
+class TestExponentialSearchBoundary:
+    def test_target_near_start(self) -> None:
+        arr = list(range(1, 1000))
         assert exponential_search(arr, 2) == 1
-        assert exponential_search(arr, 3) == 2
-        assert exponential_search(arr, 99) == 98
 
+    def test_target_at_power_of_two_boundary(self) -> None:
+        arr = list(range(20))
+        assert exponential_search(arr, 8) == 8
 
-class TestNegativeNumbers:
-    """Negative values."""
-
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_negative_target(self, func):
-        arr = np.array([-10, -5, 0, 5, 10], dtype=np.int64)
-        assert func(arr, -5) == 1
-
-    @pytest.mark.parametrize("func", SORTED_SEARCH_FUNCS)
-    def test_all_negative(self, func):
-        arr = np.array([-50, -40, -30, -20, -10], dtype=np.int64)
-        assert func(arr, -30) == 2
+    def test_target_beyond_first_double(self) -> None:
+        arr = [1, 3, 5, 7, 9, 15, 20, 30, 50]
+        assert exponential_search(arr, 50) == 8

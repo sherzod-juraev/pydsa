@@ -1,9 +1,14 @@
-from typing import TypeVar, cast
+"""Queue (FIFO) implementation.
+
+Provides :class:`Queue`, a first-in-first-out queue built as a thin
+adapter over :class:`~pydsa.linear.singly.node.Node`, enqueuing at
+the tail and dequeuing from the head.
+"""
+
+from typing import cast
 
 from ..exc import EmptyError
 from .singly.node import Node
-
-T = TypeVar("T")
 
 
 class Queue[T]:
@@ -14,6 +19,7 @@ class Queue[T]:
     giving O(1) time for both operations. A tail pointer is
     maintained to avoid traversing the list on each enqueue.
 
+    Time Complexity Summary
     .. csv-table:: Queue Operations Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 10, 10
@@ -32,10 +38,10 @@ class Queue[T]:
     """
 
     def __init__(self) -> None:
-
+        """Initialize an empty queue."""
         self.__head: Node[T] | None = None
         self.__tail: Node[T] | None = None
-        self.__length = 0
+        self.__length: int = 0
 
     def __len__(self) -> int:
         """Return the number of elements. O(1)."""
@@ -46,23 +52,20 @@ class Queue[T]:
         return self.__length == 0
 
     def __bool__(self) -> bool:
+        """Return True if the queue is not empty. O(1)."""
         return not self.is_empty()
 
-    def peek(self) -> T:
-        """Return the front element without removing it. O(1).
-
-        Raises
-        ------
-        EmptyError
-            If the queue is empty.
-        """
-        if self.is_empty():
-            raise EmptyError(self)
-        head = cast(Node[T], self.__head)
-        return head.value
-
     def enqueue(self, value: T, /) -> None:
-        """Add a value to the rear of the queue. O(1)."""
+        """Add a value to the rear of the queue. O(1).
+
+        Examples
+        --------
+        >>> q = Queue[int]()
+        >>> q.enqueue(1)
+        >>> q.enqueue(2)
+        >>> q.peek()
+        1
+        """
         new_node = Node(value)
         if self.is_empty():
             self.__head = new_node
@@ -80,6 +83,14 @@ class Queue[T]:
         ------
         EmptyError
             If the queue is empty.
+
+        Examples
+        --------
+        >>> q = Queue[int]()
+        >>> q.enqueue(1)
+        >>> q.enqueue(2)
+        >>> q.dequeue()
+        1
         """
         if self.is_empty():
             raise EmptyError(self)
@@ -91,3 +102,16 @@ class Queue[T]:
         current.next = None
         self.__length -= 1
         return current.value
+
+    def peek(self) -> T:
+        """Return the front element without removing it. O(1).
+
+        Raises
+        ------
+        EmptyError
+            If the queue is empty.
+        """
+        if self.is_empty():
+            raise EmptyError(self)
+        head = cast(Node[T], self.__head)
+        return head.value

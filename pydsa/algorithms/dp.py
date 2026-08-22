@@ -1,4 +1,12 @@
-import numpy as np
+"""Dynamic programming algorithms.
+
+Provides classic DP solutions: Fibonacci (memoized and tabulated),
+0/1 Knapsack, Longest Common Subsequence, Coin Change, and Levenshtein
+edit distance.
+"""
+
+import math
+from collections.abc import Sequence
 
 
 def fib_memo(n: int, memo: dict[int, int] | None = None, /) -> int:
@@ -19,6 +27,11 @@ def fib_memo(n: int, memo: dict[int, int] | None = None, /) -> int:
     -------
     int
         The n-th Fibonacci number.
+
+    Examples
+    --------
+    >>> fib_memo(10)
+    55
     """
     if memo is None:
         memo = {}
@@ -46,6 +59,11 @@ def fib_tab(n: int, /) -> int:
     -------
     int
         The n-th Fibonacci number.
+
+    Examples
+    --------
+    >>> fib_tab(10)
+    55
     """
     if n <= 1:
         return n
@@ -56,7 +74,7 @@ def fib_tab(n: int, /) -> int:
     return prev1
 
 
-def knapsack_tab(weights: np.ndarray, prices: np.ndarray, capacity: int, /) -> np.ndarray:
+def knapsack_tab(weights: Sequence[int], prices: Sequence[int], capacity: int, /) -> list[int]:
     """
     Solve the 0/1 Knapsack problem using tabulation (bottom-up DP).
 
@@ -66,27 +84,33 @@ def knapsack_tab(weights: np.ndarray, prices: np.ndarray, capacity: int, /) -> n
 
     Parameters
     ----------
-    weights : np.ndarray
-        1D array of item weights.
-    prices : np.ndarray
-        1D array of item prices.
+    weights : Sequence[int]
+        Item weights.
+    prices : Sequence[int]
+        Item prices.
     capacity : int
         Maximum weight capacity.
 
     Returns
     -------
-    np.ndarray
+    list[int]
         Indices of items selected for the optimal solution.
 
     Raises
     ------
     ValueError
-        If ``weights`` and ``prices`` have different shapes.
+        If ``weights`` and ``prices`` have different lengths.
+
+    Examples
+    --------
+    >>> knapsack_tab([1, 3, 4, 5], [1, 4, 5, 7], 7)
+    [1, 2]
     """
-    if weights.shape != prices.shape:
-        raise ValueError("shape does not match")
-    dp = np.full((weights.shape[0] + 1, capacity + 1), 0, dtype=int)
-    for i in range(1, weights.shape[0] + 1):
+    if len(weights) != len(prices):
+        raise ValueError("weights and prices must have the same length")
+    n = len(weights)
+    dp = [[0] * (capacity + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
         for j in range(1, capacity + 1):
             if weights[i - 1] <= j:
                 take = prices[i - 1] + dp[i - 1][j - weights[i - 1]]
@@ -94,15 +118,15 @@ def knapsack_tab(weights: np.ndarray, prices: np.ndarray, capacity: int, /) -> n
                 dp[i][j] = max(take, skip)
             else:
                 dp[i][j] = dp[i - 1][j]
-    i = dp.shape[0] - 1
+    i = n
     w = capacity
-    selected_items = []
+    selected_items: list[int] = []
     while i > 0 and w > 0:
         if dp[i][w] != dp[i - 1][w]:
             selected_items.append(i - 1)
             w -= weights[i - 1]
         i -= 1
-    return np.array(selected_items)[::-1]
+    return selected_items[::-1]
 
 
 def lcs_tab(s1: str, s2: str, /) -> str:
@@ -123,16 +147,21 @@ def lcs_tab(s1: str, s2: str, /) -> str:
     -------
     str
         The longest common subsequence.
+
+    Examples
+    --------
+    >>> lcs_tab("ABCBDAB", "BDCABA")
+    'BCBA'
     """
-    dp = np.full((len(s1) + 1, len(s2) + 1), 0, dtype=int)
-    for i in range(1, dp.shape[0]):
-        for j in range(1, dp.shape[1]):
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
             if s1[i - 1] == s2[j - 1]:
                 dp[i][j] = dp[i - 1][j - 1] + 1
             else:
                 dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
-    i = dp.shape[0] - 1
-    j = dp.shape[1] - 1
+    i, j = m, n
     word = ""
     while i > 0 and j > 0:
         if s1[i - 1] == s2[j - 1]:
@@ -146,41 +175,46 @@ def lcs_tab(s1: str, s2: str, /) -> str:
     return word
 
 
-def coin_change(coins: np.ndarray, amount: int, /) -> np.ndarray:
+def coin_change(coins: Sequence[int], amount: int, /) -> list[int]:
     """
     Solve the Coin Change problem (fewest coins) using bottom-up DP.
 
     Given coin denominations and a target amount, returns the
     combination of coins that uses the fewest total coins.
-    If the amount cannot be formed, returns an empty array.
+    If the amount cannot be formed, returns an empty list.
 
     Parameters
     ----------
-    coins : np.ndarray
-        1D array of coin denominations.
+    coins : Sequence[int]
+        Coin denominations.
     amount : int
         Target amount to form.
 
     Returns
     -------
-    np.ndarray
-        Coins used in the optimal solution, or empty array if impossible.
+    list[int]
+        Coins used in the optimal solution, or empty list if impossible.
+
+    Examples
+    --------
+    >>> sorted(coin_change([1, 2, 5], 11))
+    [1, 5, 5]
     """
-    dp = np.full(amount + 1, np.inf, dtype=float)
+    dp: list[float] = [math.inf] * (amount + 1)
     dp[0] = 0
     for coin in coins:
         for cur_amount in range(coin, amount + 1):
             dp[cur_amount] = min(dp[cur_amount], dp[cur_amount - coin] + 1)
-    if dp[amount] == np.inf:
-        return np.array([])
-    selected_coins = []
+    if dp[amount] == math.inf:
+        return []
+    selected_coins: list[int] = []
     while amount > 0:
         for coin in coins:
             if coin <= amount and dp[amount] == dp[amount - coin] + 1:
                 selected_coins.append(coin)
                 amount -= coin
                 break
-    return np.array(selected_coins)[::-1]
+    return selected_coins[::-1]
 
 
 def edit_distance(s1: str, s2: str, /) -> int:
@@ -202,12 +236,20 @@ def edit_distance(s1: str, s2: str, /) -> int:
     -------
     int
         Minimum edit distance.
+
+    Examples
+    --------
+    >>> edit_distance("kitten", "sitting")
+    3
     """
-    dp = np.full((len(s1) + 1, len(s2) + 1), 0, dtype=int)
-    dp[0] = np.arange(len(s2) + 1)
-    dp[:, 0] = np.arange(len(s1) + 1)
-    for i in range(1, dp.shape[0]):
-        for j in range(1, dp.shape[1]):
+    m, n = len(s1), len(s2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for j in range(n + 1):
+        dp[0][j] = j
+    for i in range(m + 1):
+        dp[i][0] = i
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
             if s1[i - 1] == s2[j - 1]:
                 dp[i][j] = dp[i - 1][j - 1]
             else:
@@ -215,4 +257,4 @@ def edit_distance(s1: str, s2: str, /) -> int:
                 delete = dp[i - 1][j] + 1
                 replace = dp[i - 1][j - 1] + 1
                 dp[i][j] = min(insert, delete, replace)
-    return int(dp[-1][-1])
+    return dp[m][n]

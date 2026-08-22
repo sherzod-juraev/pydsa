@@ -1,16 +1,18 @@
+"""Greedy algorithms.
+
+Provides classic greedy solutions: Activity Selection, Job Sequencing,
+Fractional Knapsack, and Huffman Coding.
+"""
+
 import heapq
 from collections import Counter
+from collections.abc import Sequence
 from typing import Self
-
-import numpy as np
 
 from ..linear import Stack
 
 
-def activity_selection(
-    start: np.ndarray,
-    finish: np.ndarray,
-) -> np.ndarray:
+def activity_selection(start: Sequence[int], finish: Sequence[int], /) -> list[int]:
     """
     Select the maximum number of non-overlapping activities.
 
@@ -19,38 +21,43 @@ def activity_selection(
 
     Parameters
     ----------
-    start : np.ndarray
+    start : Sequence[int]
         Start times of activities.
-    finish : np.ndarray
+    finish : Sequence[int]
         Finish times of activities.
 
     Returns
     -------
-    np.ndarray
+    list[int]
         Indices of selected activities, sorted by finish time.
 
     Raises
     ------
     ValueError
-        If ``start`` and ``finish`` have different shapes.
+        If ``start`` and ``finish`` have different lengths.
+
+    Examples
+    --------
+    >>> activity_selection([1, 3, 0, 5, 8, 5], [2, 4, 6, 7, 9, 9])
+    [0, 1, 3, 4]
     """
-    if start.shape != finish.shape:
-        raise ValueError("Shapes does not match")
-    if start.shape[0] == 0:
-        return np.array([])
-    sorted_idx = np.argsort(finish)
-    selected = []
-    selected.append(sorted_idx[0])
-    n = sorted_idx.shape[0]
+    if len(start) != len(finish):
+        raise ValueError("start and finish must have the same length")
+    n = len(start)
+    if n == 0:
+        return []
+    sorted_idx = sorted(range(n), key=lambda i: finish[i])
+    selected = [sorted_idx[0]]
     last_finish = finish[sorted_idx[0]]
     for i in range(1, n):
-        if last_finish <= start[sorted_idx[i]]:
-            selected.append(sorted_idx[i])
-            last_finish = finish[sorted_idx[i]]
-    return np.array(selected)
+        idx = sorted_idx[i]
+        if last_finish <= start[idx]:
+            selected.append(idx)
+            last_finish = finish[idx]
+    return selected
 
 
-def job_sequencing(deadlines: np.ndarray, profits: np.ndarray, /) -> np.ndarray:
+def job_sequencing(deadlines: Sequence[int], profits: Sequence[int], /) -> list[int]:
     """
     Schedule jobs with deadlines to maximize total profit.
 
@@ -60,39 +67,39 @@ def job_sequencing(deadlines: np.ndarray, profits: np.ndarray, /) -> np.ndarray:
 
     Parameters
     ----------
-    deadlines : np.ndarray
+    deadlines : Sequence[int]
         Deadline for each job (1-based).
-    profits : np.ndarray
+    profits : Sequence[int]
         Profit for each job.
 
     Returns
     -------
-    np.ndarray
+    list[int]
         Indices of selected jobs that yield maximum profit.
 
     Raises
     ------
     ValueError
-        If ``deadlines`` and ``profits`` have different shapes.
+        If ``deadlines`` and ``profits`` have different lengths.
     """
-    if deadlines.shape != profits.shape:
-        raise ValueError("Shapes does not match")
-    if deadlines.shape[0] == 0:
-        return np.array([], dtype=int)
-    sorted_idx = np.argsort(profits)[::-1]
-    max_deadline = np.max(deadlines)
-    slots = np.full(max_deadline, -1, dtype=int)
+    if len(deadlines) != len(profits):
+        raise ValueError("deadlines and profits must have the same length")
+    n = len(deadlines)
+    if n == 0:
+        return []
+    sorted_idx = sorted(range(n), key=lambda i: profits[i], reverse=True)
+    max_deadline = max(deadlines)
+    slots: list[int | None] = [None] * max_deadline
     for idx in sorted_idx:
         for t in range(deadlines[idx] - 1, -1, -1):
-            if slots[t] == -1:
+            if slots[t] is None:
                 slots[t] = idx
                 break
-    selected_jobs: np.ndarray = slots[slots != -1]
-    return selected_jobs
+    return [idx for idx in slots if idx is not None]
 
 
 def fractional_knapsack(
-    weights: np.ndarray, prices: np.ndarray, capacity: int, /
+    weights: Sequence[float], prices: Sequence[float], capacity: float, /
 ) -> tuple[float, float]:
     """
     Solve the Fractional Knapsack problem greedily.
@@ -103,11 +110,11 @@ def fractional_knapsack(
 
     Parameters
     ----------
-    weights : np.ndarray
+    weights : Sequence[float]
         Weights of items.
-    prices : np.ndarray
+    prices : Sequence[float]
         Prices (values) of items.
-    capacity : int
+    capacity : float
         Maximum weight capacity.
 
     Returns
@@ -119,16 +126,17 @@ def fractional_knapsack(
     Raises
     ------
     ValueError
-        If ``weights`` and ``prices`` have different shapes.
+        If ``weights`` and ``prices`` have different lengths.
     """
-    if weights.shape != prices.shape:
-        raise ValueError("Shapes does not match")
-    if weights.shape[0] == 0:
-        return (0, 0)
-    total_price = 0
-    total_weight = 0
-    unit_prices = prices / weights
-    sorted_idx = np.argsort(unit_prices)[::-1]
+    if len(weights) != len(prices):
+        raise ValueError("weights and prices must have the same length")
+    n = len(weights)
+    if n == 0:
+        return (0.0, 0.0)
+    total_price = 0.0
+    total_weight = 0.0
+    unit_prices = [prices[i] / weights[i] for i in range(n)]
+    sorted_idx = sorted(range(n), key=lambda i: unit_prices[i], reverse=True)
     for idx in sorted_idx:
         if capacity <= 0:
             break
@@ -140,29 +148,42 @@ def fractional_knapsack(
 
 
 class Node:
-    """Internal node for Huffman coding tree."""
+    """Internal node for the Huffman coding tree.
+
+    Not intended for direct use outside :func:`huffman_coding`.
+    """
 
     def __init__(
-        self, char: str | None, freq: int, left: Self | None = None, right: Self | None = None
-    ):
+        self,
+        char: str | None,
+        freq: int,
+        left: Self | None = None,
+        right: Self | None = None,
+    ) -> None:
+        """Initialize a node with a character (or None for internal nodes) and frequency."""
         self.char = char
         self.freq = freq
         self.left = left
         self.right = right
 
     def __lt__(self, other: Self) -> bool:
+        """Compare nodes by frequency for priority queue sorting (<)."""
         return self.freq < other.freq
 
     def __le__(self, other: Self) -> bool:
+        """Compare nodes by frequency (<=)."""
         return self.freq <= other.freq
 
     def __gt__(self, other: Self) -> bool:
+        """Compare nodes by frequency (>)."""
         return self.freq > other.freq
 
     def __ge__(self, other: Self) -> bool:
+        """Compare nodes by frequency (>=)."""
         return self.freq >= other.freq
 
     def __add__(self, other: Self) -> "Node":
+        """Combine two nodes into a parent node with their combined frequency."""
         return Node(char=None, freq=self.freq + other.freq, left=self, right=other)
 
 
@@ -213,8 +234,6 @@ def huffman_coding(text: str, /) -> tuple[str, dict[str, str]]:
     while not stack.is_empty():
         current_node, current_path = stack.pop()
 
-        if current_node is None:
-            continue
         if current_node.char is not None:
             codes[current_node.char] = current_path
             continue
