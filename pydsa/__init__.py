@@ -129,6 +129,7 @@ Sherzod Juraev
 
 See Also
 --------
+- Documentation: https://pydsa-educational.readthedocs.io
 - GitHub: https://github.com/sherzod-juraev/pydsa
 - Tests: See tests/ directory for usage examples
 """

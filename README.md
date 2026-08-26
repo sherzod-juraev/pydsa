@@ -2,6 +2,7 @@
 
 [![Tests](https://github.com/sherzod-juraev/pydsa/actions/workflows/tests.yml/badge.svg)](https://github.com/sherzod-juraev/pydsa/actions/workflows/tests.yml)
 [![Docs](https://github.com/sherzod-juraev/pydsa/actions/workflows/docs-build.yml/badge.svg)](https://github.com/sherzod-juraev/pydsa/actions/workflows/docs-build.yml)
+[![Documentation Status](https://readthedocs.org/projects/pydsa-educational/badge/?version=latest)](https://pydsa-educational.readthedocs.io/en/latest/?badge=latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.12 | 3.13](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg)](https://www.python.org/downloads/)
 [![Ruff](https://img.shields.io/badge/Ruff-enabled-brightgreen)](https://docs.astral.sh/ruff/)

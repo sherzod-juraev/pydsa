@@ -52,6 +52,8 @@ all = [
 
 [project.urls]
 Homepage = "https://github.com/sherzod-juraev/pydsa"
+Documentation = "https://pydsa-educational.readthedocs.io"
+Repository = "https://github.com/sherzod-juraev/pydsa"
 
 [tool.setuptools.dynamic]
 version = {attr = "pydsa.__version__"}
