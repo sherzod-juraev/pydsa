@@ -25,6 +25,7 @@ class BSTree[T: Comparable]:
     implemented iteratively using custom Stack and Queue ADTs.
 
     Time Complexity Summary
+
     .. csv-table:: BST Operations Complexity
        :header: "Operation", "Time (avg)", "Time (worst)", "Space"
        :widths: 20, 12, 12, 10
@@ -225,6 +226,7 @@ class BSTree[T: Comparable]:
         """Remove a value from the tree if it exists. O(h).
 
         Handles three cases:
+
         1. Node is a leaf — simply removed.
         2. Node has one child — child replaces it.
         3. Node has two children — replaced by its inorder successor

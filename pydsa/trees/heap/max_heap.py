@@ -16,6 +16,8 @@ class MaxHeap[T: Comparable]:
     greater than or equal to its children. The maximum element is
     always at the root (index 0), accessible in O(1) time.
 
+    Time Complexity Summary
+
     .. csv-table:: Array Index Relations (0-based)
        :header: "Relation", "Formula"
        :widths: 20, 25
@@ -25,6 +27,7 @@ class MaxHeap[T: Comparable]:
        "right child", "2 * i + 2"
 
     Time Complexity Summary
+
     .. csv-table:: Time & Space Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 15, 10

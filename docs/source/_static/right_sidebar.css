@@ -1,0 +1,43 @@
+.bd-sidebar-secondary .page-toc a.reference.internal {
+    display: block;
+    padding: 0.25rem 0.6rem;
+    margin: 0.05rem 0;
+    border-radius: 6px;
+    font-family: var(--pst-font-family-monospace);
+    font-size: 0.8rem;
+    color: var(--pst-color-text-base);
+    background: none !important;
+    border: none !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.bd-sidebar-secondary .page-toc a.reference.internal:hover {
+    background-color: var(--pst-color-primary-bg) !important;
+    color: var(--pst-color-primary) !important;
+}
+
+.bd-sidebar-secondary .page-toc a.reference.internal.active {
+    background-color: var(--pst-color-primary-bg) !important;
+    color: var(--pst-color-primary) !important;
+    font-weight: 600;
+    border: none !important;
+}
+
+.bd-sidebar-secondary .page-toc > ul > li > a.reference.internal {
+    font-family: var(--pst-font-family-base);
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-transform: none;
+}
+
+.bd-sidebar-secondary .page-toc ul ul {
+    border-left: 1px solid var(--pst-color-border);
+    margin-left: 0.5rem;
+    padding-left: 0.4rem;
+}
+
+.bd-sidebar-secondary .page-toc ul ul a.reference.internal {
+    padding-left: 0.5rem;
+}

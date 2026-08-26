@@ -21,6 +21,7 @@ class DoublyList[T]:
     removals at both ends and optimized O(n/2) indexed access.
 
     Time Complexity Summary
+
     .. csv-table:: Doubly Linked List Operations Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 10, 10

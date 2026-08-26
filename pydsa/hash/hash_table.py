@@ -22,7 +22,9 @@ class HashTable[K, V]:
     rehashes into double the capacity to maintain O(1) average
     performance.
 
-    .. csv-table:: Time Complexity
+    Time Complexity Summary
+
+    .. csv-table:: Hash Table Operations Complexity
        :header: "Operation", "Average", "Worst Case"
        :widths: 25, 15, 15
 

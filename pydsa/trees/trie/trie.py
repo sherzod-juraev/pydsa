@@ -20,6 +20,7 @@ class Trie:
     and enabling fast prefix-based queries.
 
     Time Complexity Summary
+
     .. csv-table:: Time & Space Complexity
        :header: "Operation", "Time", "Space"
        :widths: 25, 15, 15

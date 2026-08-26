@@ -23,6 +23,7 @@ class BinaryTree[T]:
     O(n) time, O(w) space) traversal.
 
     Time Complexity Summary
+
     .. csv-table:: Binary Tree Operations Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 10, 10

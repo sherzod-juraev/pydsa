@@ -20,6 +20,7 @@ class Queue[T]:
     maintained to avoid traversing the list on each enqueue.
 
     Time Complexity Summary
+
     .. csv-table:: Queue Operations Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 10, 10

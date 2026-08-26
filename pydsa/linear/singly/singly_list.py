@@ -20,6 +20,7 @@ class SinglyList[T]:
     O(1) insertions and removals at the head and tail.
 
     Time Complexity Summary
+
     .. csv-table:: Linked List Operations Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 10, 10

@@ -1,0 +1,16 @@
+:orphan:
+
+=============
+Oh, oh -- 404
+=============
+
+We could not find this page!
+
+.. image:: /_static/images/loudly-crying-face.png
+   :alt: Oh, oh -- 404
+   :align: center
+   :width: 25%
+   :class: w-30 mx-auto d-block pe-none
+
+.. hint::
+   You can always click the **pydsa** logo in the top-left corner to safely return to the home page!

@@ -35,9 +35,19 @@ docs = [
     "sphinx>=7.0.0",
     "pydata-sphinx-theme>=0.15.0",
     "sphinx-design>=0.5.0",
+    "sphinx-lint>=1.0.0",
+    "sphinx-copybutton>=0.5.0",
+    "sphinx-notfound-page>=1.1.0",
+    "rstcheck>=6.0.0",
+    "doc8>=1.0.0",
+]
+live = [
+    "pydsa[docs]",
+    "sphinx-autobuild>=2025.8.25",
 ]
 all = [
-    "pydsa[dev,docs]",
+    "pydsa[dev]",
+    "pydsa[live]",
 ]
 
 [project.urls]
@@ -117,3 +127,36 @@ ignore-property-decorators = false
 ignore-module = false
 ignore-nested-functions = false
 ignore-nested-classes = false
+
+[tool.rstcheck]
+ignore_directives = [
+    "button-link",
+    "button-ref",
+    "card",
+    "toctree",
+    "automodule",
+    "autoclass",
+    "autofunction",
+    "tab-item",
+    "tab-set",
+    "grid",
+    "grid-item-card",
+]
+ignore_roles = ["meth", "func", "class", "doc", "ref",]
+report_level = "warning"
+ignore_paths = [
+    "docs/build/*",
+]
+
+[tool.doc8]
+max-line-length = 100
+ignore-path = [
+    "docs/build",
+    "docs/source/_static",
+]
+
+[tool.sphinx-lint]
+max-line-length = 100
+exclude = [
+    "docs/build/*",
+]

@@ -19,6 +19,7 @@ class Stack[T]:
     head-removal, ensuring constant-time push, pop, and peek.
 
     Time Complexity Summary
+
     .. csv-table:: Stack Operations Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 10, 10

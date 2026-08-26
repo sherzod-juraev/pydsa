@@ -1,13 +1,19 @@
 # pydsa
 
 [![Tests](https://github.com/sherzod-juraev/pydsa/actions/workflows/tests.yml/badge.svg)](https://github.com/sherzod-juraev/pydsa/actions/workflows/tests.yml)
+[![Docs](https://github.com/sherzod-juraev/pydsa/actions/workflows/docs-build.yml/badge.svg)](https://github.com/sherzod-juraev/pydsa/actions/workflows/docs-build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.12 | 3.13](https://img.shields.io/badge/python-3.12%20%7C%203.13-blue.svg)](https://www.python.org/downloads/)
+[![Ruff](https://img.shields.io/badge/Ruff-enabled-brightgreen)](https://docs.astral.sh/ruff/)
 [![mypy: strict](https://img.shields.io/badge/mypy-strict-blue.svg)](https://mypy.readthedocs.io/)
+[![Interrogate](https://img.shields.io/badge/Interrogate-100%25-brightgreen)](https://interrogate.readthedocs.io/)
 
 Pure Python implementations of fundamental data structures and algorithms.
 
-`pydsa` is an educational package built from scratch, without relying on Python's built-in collection types for its core structures. It exists to study how these structures and algorithms work internally, and to practice typed, tested Python.
+`pydsa` is an educational package built from scratch, without relying
+on Python's built-in collection types for its core structures. It exists
+to study how these structures and algorithms work internally, and to
+practice typed, tested Python.
 
 ## About
 
@@ -24,11 +30,26 @@ Pure Python implementations of fundamental data structures and algorithms.
 
 The project favors direct, readable implementations over additional abstraction.
 
+## Design Philosophy
+
+1. **Type Safe**: Full generic type hints, zero mypy errors
+2. **Readable**: Clear implementations, not optimized for production speed
+3. **Comprehensive**: All classic algorithms and data structures
+4. **Well-Tested**: 506 passing tests with invariant preservation
+
 ## Design Principles
 
 ### Implementations from scratch
 
-Linked lists, stacks, queues, trees, heaps, a trie, a hash table, and a graph are implemented directly, without delegating storage or traversal to Python's built-in `list`, `dict`, or `set`.
+Linked lists, trees, and the `Stack`/`Queue` adapters built on them
+manage their own nodes and pointers, without delegating to Python's
+built-in `list`/`dict`.
+
+Heaps, `Graph`, `Trie`, and `HashTable` do use a Python `list` or
+`dict` internally — that's the standard building block for those
+structures (an array *is* how a heap is implemented; a mapping *is*
+how adjacency lists and trie children are represented), not a
+shortcut around the point of the library.
 
 ### Generic type safety
 
@@ -45,15 +66,22 @@ The codebase is checked with mypy in strict mode.
 
 ### Explicit algorithm implementations
 
-Sorting, searching, dynamic programming, and greedy algorithms are implemented as individual functions rather than wrapped in classes, keeping the relationship between code and algorithm direct.
+Sorting, searching, dynamic programming, and greedy algorithms are implemented
+as individual functions rather than wrapped in classes, keeping the relationship
+between code and algorithm direct.
 
 ### Lazy imports
 
-Every package and subpackage uses `__getattr__`/`__dir__` (PEP 562) to defer imports until a symbol is actually accessed. Importing `pydsa` — or any of its subpackages — does not eagerly load every data structure and algorithm in the library.
+Every package and subpackage uses `__getattr__`/`__dir__` (PEP 562) to defer
+imports until a symbol is actually accessed. Importing `pydsa` — or any of its
+subpackages — does not eagerly load every data structure and algorithm in
+the library.
 
 ### Testing
 
-The test suite covers normal operation, edge cases (empty and single-element structures, duplicate values), and structural invariants where applicable (tree balance, heap order, cycle absence).
+The test suite covers normal operation, edge cases (empty and single-element
+structures, duplicate values), and structural invariants where applicable
+(tree balance, heap order, cycle absence).
 
 ## Requirements
 
@@ -69,19 +97,27 @@ cd pydsa
 pip install -e .
 ```
 
-For development:
+### For development
 
 ```bash
 pip install -e ".[dev]"
 ```
 
-Development dependencies:
+### Building the Documentation
 
-* pytest
-* pytest-sugar
-* ruff
-* mypy
-* interrogate
+```bash
+pip install -e ".[docs]"
+cd docs
+make html
+```
+
+Or serve with live-reload while editing:
+
+```bash
+pip install -e ".[live]"
+cd docs
+sphinx-autobuild source build/html
+```
 
 ## Quick Start
 
@@ -259,16 +295,16 @@ All public classes and functions are exposed from the top-level `pydsa` package.
 
 ## What's Included
 
-| Module       | Components                                                                     | Purpose                                   |
-| ------------ | ------------------------------------------------------------------------------ | ------------------------------------------ |
-| `linear`     | `SinglyList[T]`, `DoublyList[T]`, `Stack[T]`, `Queue[T]`                       | Linear data structures                     |
-| `trees`      | `BinaryTree[T]`, `BSTree[T]`, `AVLTree[T]`, `MinHeap[T]`, `MaxHeap[T]`, `Trie` | Trees, search trees, heaps, and a trie     |
-| `hash`       | `HashTable[K, V]`                                                              | Hash table                                 |
-| `graph`      | `Graph`                                                                        | Graph representation and operations        |
-| `sorting`    | 9 algorithms                                                                   | Sorting                                    |
-| `searching`  | 4 algorithms                                                                   | Searching                                  |
-| `algorithms` | 10 algorithms                                                                  | Dynamic programming and greedy algorithms  |
-| `exc`        | `PydsaError`, `EmptyError`                                                     | Project-specific exceptions                |
+| Module        |                                    Components                                    |                   Purpose                    |
+|:--------------|:--------------------------------------------------------------------------------:|:--------------------------------------------:|
+| `linear`      |             `SinglyList[T]`, `DoublyList[T]`, `Stack[T]`, `Queue[T]`             |            Linear data structures            |
+| `trees`       |  `BinaryTree[T]`, `BSTree[T]`, `AVLTree[T]`, `MinHeap[T]`, `MaxHeap[T]`, `Trie`  |    Trees, search trees, heaps, and a trie    |
+| `hash`        |                                `HashTable[K, V]`                                 |                  Hash table                  |
+| `graph`       |                                     `Graph`                                      |     Graph representation and operations      |
+| `sorting`     |                                   9 algorithms                                   |                   Sorting                    |
+| `searching`   |                                   4 algorithms                                   |                  Searching                   |
+| `algorithms`  |                                  10 algorithms                                   |  Dynamic programming and greedy algorithms   |
+| `exc`         |                            `PydsaError`, `EmptyError`                            |         Project-specific exceptions          |
 
 ### Sorting
 
@@ -304,13 +340,13 @@ All public classes and functions are exposed from the top-level `pydsa` package.
 
 ## Code Quality
 
-| Tool           | Purpose                          |
-| -------------- | --------------------------------- |
-| ruff           | Linting and formatting            |
-| mypy           | Static type checking (strict)     |
-| interrogate    | Docstring coverage (100%)         |
-| pytest         | Testing                           |
-| GitHub Actions | Continuous integration            |
+| Tool            |               Purpose               |
+|:----------------|:-----------------------------------:|
+| ruff            |       Linting and formatting        |
+| mypy            |    Static type checking (strict)    |
+| interrogate     |      Docstring coverage (100%)      |
+| pytest          |               Testing               |
+| GitHub Actions  |       Continuous integration        |
 
 Run the checks locally:
 
@@ -319,10 +355,31 @@ ruff check .
 ruff format . --check
 mypy pydsa
 interrogate pydsa
-pytest tests -v
+pytest --doctest-modules pydsa -v
+pytest
 ```
 
 The CI workflow runs these checks against Python 3.12 and Python 3.13.
+
+## Documentation Quality
+
+| Tool            |                   Purpose                   |
+|:----------------|:-------------------------------------------:|
+| sphinx-lint     |         Documentation style checks          |
+| doc8            |              RST format checks              |
+| rstcheck        |            RST syntax validation            |
+| sphinx-build    |    Build with warnings treated as errors    |
+| linkcheck       |    External link validation (scheduled)     |
+
+Run the checks locally:
+
+```bash
+sphinx-lint docs/source
+doc8 docs/source
+rstcheck --recursive docs/source
+cd docs
+make html SPHINXOPTS="-W --keep-going"
+```
 
 ## Tests
 
@@ -339,10 +396,13 @@ tests/
 └── trees/
 ```
 
-The suite covers normal behavior, edge cases, and structural invariants — including regression tests for bugs found during development (e.g., adjacency-list mutation during iteration in `Graph.remove_vertex`, and an empty-path edge case in `BinaryTree.insert`).
+The suite covers normal behavior, edge cases, and structural invariants
+— including regression tests for bugs found during development
+(e.g., adjacency-list mutation during iteration in `Graph.remove_vertex`,
+and an empty-path edge case in `BinaryTree.insert`).
 
 ```bash
-pytest tests -v
+pytest
 ```
 
 Docstring examples are also verified as executable tests:
@@ -357,7 +417,11 @@ pytest --doctest-modules pydsa -v
 pydsa/
 ├── .github/
 │   └── workflows/
-│       └── tests.yml
+│       ├── tests.yml
+│       ├── docs-build.yml
+│       └── docs-linkcheck.yml
+│
+├── docs
 │
 ├── pydsa/
 │   ├── _types.py
@@ -379,6 +443,8 @@ pydsa/
 │   ├── sorting/
 │   └── trees/
 │
+├── .gitignore
+├── .readthedocs.yaml
 ├── pyproject.toml
 ├── README.md
 └── LICENSE
@@ -386,7 +452,12 @@ pydsa/
 
 ## Scope & Status
 
-`pydsa` is an educational project, not a production-ready replacement for Python's standard library or optimized DSA libraries. The implementations prioritize clarity over performance and do not carry the API stability, support, or long-term maintenance guarantees expected from production software. It is not under active development as a general-purpose library — the repository is meant for studying the implementations and their tests.
+`pydsa` is an educational project, not a production-ready replacement for
+Python's standard library or optimized DSA libraries. The implementations
+prioritize clarity over performance and do not carry the API stability,
+support, or long-term maintenance guarantees expected from production
+software. It is not under active development as a general-purpose library
+— the repository is meant for studying the implementations and their tests.
 
 ## License
 
@@ -396,4 +467,5 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 **Sherzod Juraev**
 
-`pydsa` is a personal educational project created to study data structures, algorithms, and software engineering practices through implementation.
+`pydsa` is a personal educational project created to study data structures,
+algorithms, and software engineering practices through implementation.

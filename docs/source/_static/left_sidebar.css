@@ -1,0 +1,76 @@
+.bd-sidebar-primary .reference.internal {
+    position: relative;
+    display: block;
+    padding: 0.4rem 0.9rem;
+    margin: 0.1rem 0.5rem;
+    border-radius: 8px;
+    text-decoration: none !important;
+    color: var(--pst-color-text-base);
+    border: none !important;
+    box-shadow: none !important;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.bd-sidebar-primary .reference.internal:hover {
+    background-color: var(--pst-color-primary-bg) !important;
+    color: var(--pst-color-primary) !important;
+}
+
+.bd-sidebar-primary .reference.internal:active {
+    transform: scale(0.97);
+}
+
+.bd-sidebar-primary li.current > a.reference.internal,
+.bd-sidebar-primary li.active > a.reference.internal {
+    background-color: var(--pst-color-primary-bg);
+    color: var(--pst-color-primary);
+    font-weight: 600;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.bd-sidebar-primary .reference.internal::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 15%;
+    bottom: 15%;
+    width: 2px;
+    border-radius: 1px;
+    background-color: var(--pst-color-primary);
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform 0.25s ease;
+}
+
+.bd-sidebar-primary .reference.internal:hover::before,
+.bd-sidebar-primary li.current > a.reference.internal::before,
+.bd-sidebar-primary li.active > a.reference.internal::before {
+    transform: scaleY(1);
+}
+
+.bd-sidebar-primary .toctree-l2 > a.reference.internal { padding-left: 1.5rem; font-size: 0.92rem; }
+.bd-sidebar-primary .toctree-l3 > a.reference.internal { padding-left: 2.1rem; font-size: 0.88rem; }
+
+.bd-sidebar-primary li.toctree-l1 > ul,
+.bd-sidebar-primary li.toctree-l2 > ul {
+    display: grid !important;
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    transition: grid-template-rows 0.3s ease;
+    margin: 0;
+}
+
+.bd-sidebar-primary li.toctree-l1 > ul > *,
+.bd-sidebar-primary li.toctree-l2 > ul > * {
+    min-height: 0;
+}
+
+.bd-sidebar-primary .toctree-checkbox:checked ~ ul {
+    grid-template-rows: 1fr;
+}
+
+.bd-sidebar-primary label i,
+.bd-sidebar-primary label svg {
+    transition: transform 0.3s ease;
+}

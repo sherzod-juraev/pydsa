@@ -1,0 +1,10 @@
+.bd-breadcrumbs a,
+nav.breadcrumb a {
+    text-decoration: none !important;
+    transition: color 0.15s ease;
+}
+
+.bd-breadcrumbs a:hover,
+nav.breadcrumb a:hover {
+    color: var(--pst-color-primary) !important;
+}

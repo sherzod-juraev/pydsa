@@ -27,6 +27,7 @@ class AVLTree[T: Comparable]:
     remove operations in both average and worst cases.
 
     Time Complexity Summary
+
     .. csv-table:: AVL Tree Operations Complexity
        :header: "Operation", "Time", "Space"
        :widths: 20, 10, 10

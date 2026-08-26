@@ -26,19 +26,26 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
+
       - name: Install dependencies (with Dev tools)
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
+
       - name: Ruff - lint
         run: ruff check .
+
       - name: Ruff - format check
         run: ruff format . --check
+
       - name: Mypy - type check
         run: mypy pydsa
+
       - name: Interrogate - docstring check
         run: interrogate pydsa -v
+
       - name: Pytest - verify docstring examples
         run: pytest --doctest-modules pydsa -v
+
       - name: Pytest - run test suite
-        run: pytest tests -v
+        run: pytest
