@@ -40,10 +40,6 @@ intersphinx_mapping = {
 copybutton_prompt_text = ">>> "
 copybutton_only_copy_prompt_lines = True
 notfound_urls_prefix = "/en/latest/"
-notfound_context = {
-    "title": "Page not found",
-    "body": "Oh, oh, shit"
-}
 
 templates_path = ["_templates",]
 exclude_patterns = []
