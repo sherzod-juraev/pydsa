@@ -22,7 +22,7 @@ how a new structure or a release is done.
 ```bash
 git clone https://github.com/sherzod-juraev/pydsa.git
 cd pydsa
-pip install nox
+pip install -e ".[nox]"
 nox
 ```
 
@@ -75,7 +75,7 @@ The project defines the following extras in [pyproject.toml](pyproject.toml).
 | `live`  |   Live documentation preview (Sphinx autobuild)   |
 | `all`   |                 Everything above                  |
 
-Nox itself is installed on its own, with `pip install nox`.
+Nox itself is installed on its own, with `pip install -e ".[nox]"`.
 
 ### Setup
 
@@ -89,7 +89,7 @@ Install what you need:
 - Nox (recommended, runs everything in isolated environments):
 
 ```bash
-pip install nox
+pip install -e ".[nox]"
 ```
 
 - Development dependencies, to run a tool directly in your own environment:

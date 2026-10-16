@@ -90,7 +90,7 @@ copybutton_only_copy_prompt_lines = True
 # ------------------------------- OpenGraph --------------------------------------- #
 # ================================================================================= #
 ogp_site_url = _CANONICAL_URL
-ogp_image = "_static/branding/og-image.png"
+ogp_image = "_static/images/og-image.png"
 ogp_description_length = 200
 ogp_type = "website"
 ogp_custom_meta_tags = [
@@ -122,7 +122,6 @@ html_theme = "pydata_sphinx_theme"
 html_title = "pydsa"
 html_context = {
     "default_mode": "light",
-    "og_image": f"{_CANONICAL_URL}_static/images/og-image.png",
 }
 html_favicon = "_static/images/favicon.svg"
 html_domain_indices = False
