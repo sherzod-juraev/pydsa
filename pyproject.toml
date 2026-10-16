@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68.0"]
+requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -11,19 +11,20 @@ authors = [
     {name = "Sherzod Juraev", email = "juraevsherzod9943@gmail.com"}
 ]
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 keywords = ["data-structures", "algorithms", "education", "python", "dsa"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Education",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Education",
     "Topic :: Software Development :: Libraries",
 ]
 
 [project.optional-dependencies]
+nox = ["nox>=2026.2.9",]
 dev = [
     "pytest>=9.0",
     "pytest-sugar>=1.0",
@@ -32,14 +33,17 @@ dev = [
     "interrogate>=1.7.0",
 ]
 docs = [
-    "sphinx>=7.0.0",
+    "autodocsumm>=0.2.14",
+    "doc8>=1.0.0",
     "pydata-sphinx-theme>=0.15.0",
+    "rstcheck>=6.0.0",
+    "sphinx>=7.0.0",
     "sphinx-design>=0.5.0",
     "sphinx-lint>=1.0.0",
     "sphinx-copybutton>=0.5.0",
     "sphinx-notfound-page>=1.1.0",
-    "rstcheck>=6.0.0",
-    "doc8>=1.0.0",
+    "sphinxext-opengraph>=0.13.0",
+    "sphinx-sitemap>=2.6.0"
 ]
 live = [
     "pydsa[docs]",
@@ -48,6 +52,7 @@ live = [
 all = [
     "pydsa[dev]",
     "pydsa[live]",
+    "pydsa[nox]",
 ]
 
 [project.urls]
@@ -64,7 +69,7 @@ include = ["pydsa", "pydsa.*"]
 exclude = ["tests", "tests.*", "docs", "docs.*"]
 
 [tool.setuptools.package-data]
-pydsa = ["**/*.pyi"]
+pydsa = ["**/*.pyi", "py.typed"]
 
 [tool.pytest.ini_options]
 minversion = "9.0"
@@ -78,13 +83,21 @@ filterwarnings = [
 ]
 
 [tool.ruff]
-line-length = 100
 target-version = "py312"
-include = ["pydsa/**/*.py"]
-exclude = [
-    "pydsa/__pycache__",
-    "pydsa/**/__pycache__",
+line-length = 100
+include = [
+    "pydsa/**/*.py",
+    "tests/**/*.py",
+    "noxfile.py",
 ]
+exclude = [
+    "pydsa/__pycache__", "pydsa/**/__pycache__",
+    "tests/__pycache__", "tests/**/__pycache__",
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = 88
 
 [tool.ruff.lint]
 select = [
@@ -103,15 +116,22 @@ select = [
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "D",
+    "N802",
+    "SIM",
+]
 
 [tool.mypy]
 python_version = "3.12"
 strict = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
 
 [tool.interrogate]
 fail-under = 100

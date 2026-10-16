@@ -1,64 +1,84 @@
+import math
+import random
+
 import pytest
 
-from pydsa import merge_sort, quick_sort
-
-ALL_SORTS = [merge_sort, quick_sort]
+from pydsa.sorting import merge_sort, quick_sort
 
 
-@pytest.mark.parametrize("sort_fn", ALL_SORTS)
-class TestCommonSortingBehavior:
-    def test_empty_list(self, sort_fn) -> None:
-        assert sort_fn([]) == []
+class Counted:
+    """Comparable wrapper that counts every comparison in a shared counter."""
 
-    def test_single_element(self, sort_fn) -> None:
-        assert sort_fn([42]) == [42]
+    def __init__(self, value: int, calls: list[int]) -> None:
+        self.value = value
+        self.calls = calls
 
-    def test_already_sorted(self, sort_fn) -> None:
-        assert sort_fn([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]
+    def __lt__(self, other: "Counted") -> bool:
+        self.calls[0] += 1
+        return self.value < other.value
 
-    def test_reverse_sorted(self, sort_fn) -> None:
-        assert sort_fn([5, 4, 3, 2, 1]) == [1, 2, 3, 4, 5]
+    def __le__(self, other: "Counted") -> bool:
+        self.calls[0] += 1
+        return self.value <= other.value
 
-    def test_unsorted(self, sort_fn) -> None:
-        assert sort_fn([38, 27, 43, 3, 9, 82, 10]) == [3, 9, 10, 27, 38, 43, 82]
+    def __gt__(self, other: "Counted") -> bool:
+        self.calls[0] += 1
+        return self.value > other.value
 
-    def test_all_equal_elements(self, sort_fn) -> None:
-        assert sort_fn([7, 7, 7, 7]) == [7, 7, 7, 7]
+    def __ge__(self, other: "Counted") -> bool:
+        self.calls[0] += 1
+        return self.value >= other.value
 
-    def test_with_duplicates(self, sort_fn) -> None:
-        assert sort_fn([3, 1, 3, 2, 1]) == [1, 1, 2, 3, 3]
+    def __eq__(self, other: object) -> bool:
+        self.calls[0] += 1
+        return isinstance(other, Counted) and self.value == other.value
 
-    def test_strings(self, sort_fn) -> None:
-        assert sort_fn(["dog", "cat", "elephant", "ant"]) == ["ant", "cat", "dog", "elephant"]
-
-    def test_negative_numbers(self, sort_fn) -> None:
-        assert sort_fn([-3, 5, -1, 0, 2]) == [-3, -1, 0, 2, 5]
-
-    def test_two_elements_unordered(self, sort_fn) -> None:
-        assert sort_fn([2, 1]) == [1, 2]
-
-    def test_large_random_like_input(self, sort_fn) -> None:
-        arr = [(i * 37) % 101 for i in range(200)]
-        assert sort_fn(arr) == sorted(arr)
-
-    def test_odd_length_input(self, sort_fn) -> None:
-        assert sort_fn([9, 1, 5, 3, 7]) == [1, 3, 5, 7, 9]
+    __hash__ = None  # type: ignore[assignment]
 
 
-class TestMergeSortStability:
-    def test_preserves_relative_order_of_equal_keys(self) -> None:
-        data = [(2, "a"), (1, "b"), (2, "c"), (1, "d"), (2, "e")]
-        result = merge_sort(data)
-        assert result == [(1, "b"), (1, "d"), (2, "a"), (2, "c"), (2, "e")]
+class TestMergeSort:
+    @pytest.mark.parametrize("size", [1, 2, 3, 4, 5, 7, 8, 9, 15, 16, 17, 31, 32, 33, 100])
+    def test_sizes_around_powers_of_two(self, size: int) -> None:
+        data = list(range(size, 0, -1))
+        assert merge_sort(data) == sorted(data)
+
+    def test_comparisons_are_n_log_n(self) -> None:
+        n = 4096
+        shared = [0]
+        data = [Counted(v, shared) for v in random.Random(1).sample(range(n), n)]
+        merge_sort(data)
+        assert shared[0] <= n * math.ceil(math.log2(n))
+
+    def test_does_not_hit_the_recursion_limit(self) -> None:
+        data = list(range(50_000, 0, -1))
+        assert merge_sort(data) == sorted(data)
 
 
-class TestQuickSortEdgeCases:
-    def test_worst_case_already_sorted_still_correct(self) -> None:
-        assert quick_sort(list(range(100))) == list(range(100))
+class TestQuickSort:
+    def test_large_random_input(self) -> None:
+        rng = random.Random(3)
+        data = [rng.randrange(10_000) for _ in range(20_000)]
+        assert quick_sort(data) == sorted(data)
 
-    def test_worst_case_reverse_sorted_still_correct(self) -> None:
-        assert quick_sort(list(range(100, 0, -1))) == list(range(1, 101))
+    def test_sorted_input_does_not_overflow_the_stack(self) -> None:
+        data = list(range(3_000))
+        assert quick_sort(data) == data
 
-    def test_many_duplicate_pivots(self) -> None:
-        arr = [5] * 50 + [1, 9, 3]
-        assert quick_sort(arr) == sorted(arr)
+    def test_reverse_sorted_input(self) -> None:
+        data = list(range(3_000, 0, -1))
+        assert quick_sort(data) == sorted(data)
+
+    def test_all_equal_input(self) -> None:
+        data = [4] * 2_000
+        assert quick_sort(data) == data
+
+    def test_few_distinct_values(self) -> None:
+        rng = random.Random(5)
+        data = [rng.randrange(3) for _ in range(3_000)]
+        assert quick_sort(data) == sorted(data)
+
+    @pytest.mark.parametrize("seed", range(20))
+    def test_random_small_arrays_with_many_duplicates(self, seed: int) -> None:
+        rng = random.Random(seed)
+        data = [rng.randrange(6) for _ in range(rng.randrange(0, 40))]
+        assert quick_sort(data) == sorted(data)

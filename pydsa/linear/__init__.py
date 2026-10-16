@@ -1,8 +1,8 @@
-"""Linear data structures package.
+"""Linear data structures.
 
-Exposes the linear data structures implemented in this package:
-:class:`SinglyList` and :class:`DoublyList` (linked lists), and
-:class:`Stack` and :class:`Queue` (adapters built on top of them).
+Exposes :class:`SinglyList` and :class:`DoublyList` (linked lists) and
+:class:`Stack` and :class:`Queue` (restricted views over a singly linked list).
+Everything is imported lazily, on first access.
 """
 
 import importlib
@@ -16,12 +16,6 @@ __all__ = [
     "Stack",
 ]
 
-# Submodules available for lazy import
-_SUBMODULES = {
-    "doubly",
-    "singly",
-}
-
 # Mapping: symbol → (module, name)
 _LAZY_IMPORTS = {
     "DoublyList": ("doubly", "DoublyList"),
@@ -32,35 +26,28 @@ _LAZY_IMPORTS = {
 
 
 def __dir__() -> list[str]:
-    """Return list of public attributes and submodules."""
-    return sorted(list(__all__) + list(_SUBMODULES))
+    """Return the sorted names of the public attributes."""
+    return sorted(__all__)
 
 
 def __getattr__(name: str) -> Any:
-    """Lazy-load submodules and symbols on demand.
+    """Lazy-load public symbols on demand.
 
     Parameters
     ----------
     name : str
-        The name of the attribute, submodule, or data structure being accessed.
+        The attribute name being accessed.
 
     Returns
     -------
     Any
-        The requested module or class dynamically imported from the
-        respective submodule.
+        The requested class.
 
     Raises
     ------
     AttributeError
-        If the requested attribute does not exist in the public API or
-        submodules.
+        If the attribute does not exist.
     """
-    # Check for submodule access
-    if name in _SUBMODULES:
-        return importlib.import_module(f".{name}", __name__)
-
-    # Check for lazy symbol import
     if name in _LAZY_IMPORTS:
         module_name, symbol_name = _LAZY_IMPORTS[name]
         module = importlib.import_module(f".{module_name}", __name__)

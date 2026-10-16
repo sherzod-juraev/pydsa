@@ -1,0 +1,39 @@
+name: Link check
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linkcheck:
+    name: nox -s linkcheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install Nox
+        run: python -m pip install --upgrade pip nox
+
+      - name: Check the links of the documentation
+        run: nox -s linkcheck
+
+      - name: Upload the report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linkcheck-report
+          path: docs/build/linkcheck/output.txt
+          if-no-files-found: ignore

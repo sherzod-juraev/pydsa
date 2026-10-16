@@ -1,5 +1,9 @@
+.. meta::
+   :description: pydsa is a pure Python, zero-dependency, fully typed library of data structures
+      and algorithms built from scratch for studying how they work.
+
 pydsa
-======
+=====
 
 Pure Python implementations of fundamental data structures and
 algorithms — built from scratch, fully typed, and tested.
@@ -7,36 +11,54 @@ algorithms — built from scratch, fully typed, and tested.
 .. toctree::
    :hidden:
 
-   modules/dsa/index
-   modules/installation/index
-   modules/design_notes/index
+   getting_started/installation
+   getting_started/quickstart
+   api/index
+   design/index
+   changelog
 
-.. grid:: 1 2 3 3
+.. grid:: 1 2 2 4
    :gutter: 3
    :class-container: sd-mb-4
 
-   .. grid-item-card:: 📚 Data Structures & Algorithms
-      :link: modules/dsa/index
-      :link-type: doc
-      :text-align: center
-      :shadow: md
-
-      Every structure and algorithm, documented with full type
-      signatures and runnable examples.
-
    .. grid-item-card:: ⚙️ Installation
-      :link: modules/installation/index
+      :link: getting_started/installation
       :link-type: doc
       :text-align: center
       :shadow: md
 
       Get started in under a minute — no external dependencies.
 
-   .. grid-item-card:: 🧭 Design Notes
-      :link: modules/design_notes/index
+   .. grid-item-card:: 🚀 Quickstart
+      :link: getting_started/quickstart
       :link-type: doc
       :text-align: center
       :shadow: md
 
-      Why things are built the way they are, and what changed
-      along the way.
+      One short, runnable example for every part of the library.
+
+   .. grid-item-card:: 📚 API Reference
+      :link: api/index
+      :link-type: doc
+      :text-align: center
+      :shadow: md
+
+      Every structure and algorithm, documented with full type
+      signatures and complexity.
+
+   .. grid-item-card:: 🧭 Design Notes
+      :link: design/index
+      :link-type: doc
+      :text-align: center
+      :shadow: md
+
+      Why things are built the way they are.
+
+Everything is imported from a submodule, and each submodule is loaded
+only when it is first used:
+
+.. code-block:: python
+
+   from pydsa.linear import Stack
+   from pydsa.trees import AVLTree
+   from pydsa.sorting import merge_sort

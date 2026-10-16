@@ -5,7 +5,7 @@ Provides heap sort built on top of :class:`~pydsa.trees.MinHeap`.
 
 from collections.abc import Sequence
 
-from .._types import Comparable
+from ..core import Comparable
 from ..trees import MinHeap
 
 

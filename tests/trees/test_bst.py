@@ -1,148 +1,153 @@
+import random
+
 import pytest
 
-from pydsa import EmptyError, BSTree
+from pydsa.trees import BSTree
+from pydsa.trees.base import _BinaryNode
 
 
-def build_bst() -> BSTree[int]:
-    bst = BSTree[int]()
-    for v in [5, 3, 8, 1, 4, 7, 9]:
-        bst.insert(v)
-    return bst
+def make(values) -> BSTree[int]:
+    tree: BSTree[int] = BSTree()
+    for value in values:
+        tree.insert(value)
+    return tree
 
 
-class TestBasics:
-    def test_new_tree_is_empty(self) -> None:
-        bst = BSTree[int]()
-        assert bst.is_empty()
-        assert len(bst) == 0
-
-    def test_root_raises_when_empty(self) -> None:
-        with pytest.raises(EmptyError):
-            BSTree[int]().root()
-
-    def test_insert_ignores_duplicates(self) -> None:
-        bst = BSTree[int]()
-        bst.insert(5)
-        bst.insert(3)
-        bst.insert(5)  # duplicate
-        assert len(bst) == 2
-
-    def test_contains(self) -> None:
-        bst = build_bst()
-        assert 5 in bst
-        assert 99 not in bst
+def check_invariants(tree: BSTree[int]) -> None:
+    """Every value lies strictly between the bounds set by its ancestors."""
+    count = 0
+    stack: list[tuple[_BinaryNode[int] | None, int | None, int | None]] = [(tree._root, None, None)]
+    while stack:
+        node, low, high = stack.pop()
+        if node is None:
+            continue
+        count += 1
+        assert low is None or node.value > low
+        assert high is None or node.value < high
+        stack.append((node.left, low, node.value))
+        stack.append((node.right, node.value, high))
+    assert count == len(tree)
 
 
-class TestSearch:
-    def test_search_found(self) -> None:
-        bst = build_bst()
-        assert bst.search(5) is True
-
-    def test_search_not_found(self) -> None:
-        bst = build_bst()
-        assert bst.search(99) is False
-
-    def test_search_empty_tree(self) -> None:
-        assert BSTree[int]().search(1) is False
+#          5
+#       3     8
+#      1 4   7 9
+CLASSIC = [5, 3, 8, 1, 4, 7, 9]
 
 
-class TestMinMax:
-    def test_min_value(self) -> None:
-        assert build_bst().min_value() == 1
-
-    def test_max_value(self) -> None:
-        assert build_bst().max_value() == 9
-
-    def test_min_value_raises_on_empty(self) -> None:
-        with pytest.raises(EmptyError):
-            BSTree[int]().min_value()
-
-    def test_max_value_raises_on_empty(self) -> None:
-        with pytest.raises(EmptyError):
-            BSTree[int]().max_value()
-
-
-class TestRemove:
-    def test_remove_leaf(self) -> None:
-        bst = build_bst()
-        bst.remove(1)
-        assert 1 not in bst
-        assert len(bst) == 6
-
-    def test_remove_node_with_one_child(self) -> None:
-        bst = BSTree[int]()
-        for v in [5, 3, 1]:  # 3 has only a left child
-            bst.insert(v)
-        bst.remove(3)
-        assert 3 not in bst
-        assert list(bst.inorder()) == [1, 5]
-
-    def test_remove_node_with_two_children(self) -> None:
-        bst = build_bst()
-        bst.remove(3)  # has children 1 and 4
-        assert 3 not in bst
-        assert list(bst.inorder()) == [1, 4, 5, 7, 8, 9]
-
-    def test_remove_root(self) -> None:
-        bst = build_bst()
-        bst.remove(5)
-        assert 5 not in bst
-        assert list(bst.inorder()) == [1, 3, 4, 7, 8, 9]
-
-    def test_remove_missing_value_is_noop(self) -> None:
-        bst = build_bst()
-        bst.remove(999)
-        assert len(bst) == 7
-
-    def test_remove_on_empty_tree_is_noop(self) -> None:
-        bst = BSTree[int]()
-        bst.remove(1)  # should not raise
-        assert len(bst) == 0
-
-    def test_remove_all_nodes(self) -> None:
-        bst = build_bst()
-        for v in [5, 3, 8, 1, 4, 7, 9]:
-            bst.remove(v)
-        assert bst.is_empty()
-
-
-class TestTraversals:
+class TestShape:
     def test_preorder(self) -> None:
-        assert list(build_bst().preorder()) == [5, 3, 1, 4, 8, 7, 9]
+        assert list(make(CLASSIC).preorder()) == [5, 3, 1, 4, 8, 7, 9]
 
-    def test_inorder_is_sorted(self) -> None:
-        assert list(build_bst().inorder()) == [1, 3, 4, 5, 7, 8, 9]
+    def test_inorder(self) -> None:
+        assert list(make(CLASSIC).inorder()) == [1, 3, 4, 5, 7, 8, 9]
 
     def test_postorder(self) -> None:
-        assert list(build_bst().postorder()) == [1, 4, 3, 7, 9, 8, 5]
+        assert list(make(CLASSIC).postorder()) == [1, 4, 3, 7, 9, 8, 5]
 
     def test_levelorder(self) -> None:
-        assert list(build_bst().levelorder()) == [5, 3, 8, 1, 4, 7, 9]
+        assert list(make(CLASSIC).levelorder()) == [5, 3, 8, 1, 4, 7, 9]
 
-    def test_traversals_on_empty_tree(self) -> None:
-        bst = BSTree[int]()
-        assert list(bst.preorder()) == []
-        assert list(bst.inorder()) == []
+    def test_measures(self) -> None:
+        tree = make(CLASSIC)
+        assert (tree.height(), tree.leaves(), tree.root()) == (3, 4, 5)
+
+    def test_the_root_is_always_the_first_value_inserted(self) -> None:
+        assert make([2, 1, 3]).root() == 2
+        assert make([1, 2, 3]).root() == 1
+        assert make([3, 2, 1]).root() == 3
+
+    def test_sorted_input_degenerates_into_a_chain(self) -> None:
+        tree = make(range(1, 8))
+        assert tree.height() == 7
+        assert tree.leaves() == 1
+        assert list(tree.preorder()) == list(range(1, 8))
+
+    def test_greater_values_go_right_and_smaller_go_left(self) -> None:
+        assert list(make([5, 3]).preorder()) == [5, 3]
+        assert list(make([5, 3]).levelorder()) == [5, 3]
+        tree = make([5, 8])
+        assert list(tree.postorder()) == [8, 5]
+
+    def test_the_tree_is_not_rebalanced(self) -> None:
+        assert make([1, 2, 3]).height() == 3
 
 
-class TestHeight:
-    def test_height(self) -> None:
-        assert build_bst().height() == 3
+class TestRemoveStructure:
+    def test_leaf(self) -> None:
+        tree = make(CLASSIC)
+        tree.remove(1)
+        assert list(tree.preorder()) == [5, 3, 4, 8, 7, 9]
 
-    def test_height_empty(self) -> None:
-        assert BSTree[int]().height() == 0
+    def test_node_with_only_a_left_child(self) -> None:
+        tree = make([5, 3, 8, 1])
+        tree.remove(3)
+        assert list(tree.preorder()) == [5, 1, 8]
 
-    def test_degenerate_tree_height_equals_count(self) -> None:
-        # inserting sorted data degenerates the BST into a linked list
-        bst = BSTree[int]()
-        for v in [1, 2, 3, 4, 5]:
-            bst.insert(v)
-        assert bst.height() == 5
+    def test_node_with_only_a_right_child(self) -> None:
+        tree = make([5, 3, 8, 4])
+        tree.remove(3)
+        assert list(tree.preorder()) == [5, 4, 8]
+
+    def test_two_children_successor_is_the_right_child(self) -> None:
+        tree = make([5, 3, 8, 7, 9])
+        tree.remove(8)
+        assert list(tree.preorder()) == [5, 3, 9, 7]
+
+    def test_two_children_successor_is_deeper(self) -> None:
+        tree = make(CLASSIC)
+        tree.remove(5)
+        assert list(tree.preorder()) == [7, 3, 1, 4, 8, 9]
+
+    def test_successor_with_a_right_child_keeps_it(self) -> None:
+        tree = make([5, 3, 10, 7, 8])
+        tree.remove(5)
+        assert list(tree.preorder()) == [7, 3, 10, 8]
+
+    def test_successor_two_levels_down_on_the_left_spine(self) -> None:
+        tree = make([10, 5, 20, 15, 30, 12, 17, 11])
+        tree.remove(10)
+        assert list(tree.inorder()) == [5, 11, 12, 15, 17, 20, 30]
+        assert list(tree.preorder()) == [11, 5, 20, 15, 12, 17, 30]
+
+    def test_root_with_only_a_left_child(self) -> None:
+        tree = make([5, 3, 1])
+        tree.remove(5)
+        assert tree.root() == 3
+        assert list(tree.preorder()) == [3, 1]
+
+    def test_root_with_only_a_right_child(self) -> None:
+        tree = make([5, 8, 9])
+        tree.remove(5)
+        assert tree.root() == 8
+        assert list(tree.preorder()) == [8, 9]
+
+    def test_removing_the_last_node_leaves_no_root(self) -> None:
+        tree = make([5])
+        tree.remove(5)
+        assert tree._root is None
+
+    def test_removing_a_missing_value_between_nodes(self) -> None:
+        tree = make(CLASSIC)
+        tree.remove(6)
+        assert list(tree.preorder()) == [5, 3, 1, 4, 8, 7, 9]
+
+    def test_removed_value_can_be_inserted_in_a_new_place(self) -> None:
+        tree = make(CLASSIC)
+        tree.remove(8)
+        tree.insert(8)
+        assert list(tree.inorder()) == [1, 3, 4, 5, 7, 8, 9]
 
 
-class TestClear:
-    def test_clear(self) -> None:
-        bst = build_bst()
-        bst.clear()
-        assert bst.is_empty()
-        assert len(bst) == 0
+class TestInvariants:
+    @pytest.mark.parametrize("seed", range(60))
+    def test_order_and_size_hold_after_every_operation(self, seed: int) -> None:
+        rng = random.Random(seed)
+        tree: BSTree[int] = BSTree()
+        for _ in range(rng.randrange(0, 150)):
+            value = rng.randrange(40)
+            if rng.random() < 0.6:
+                tree.insert(value)
+            else:
+                tree.remove(value)
+            check_invariants(tree)

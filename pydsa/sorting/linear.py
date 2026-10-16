@@ -6,6 +6,8 @@ sort by value distribution rather than pairwise comparison.
 
 from collections.abc import Sequence
 
+from ..exc import InvalidValueError
+
 
 def counting_sort(arr: Sequence[int], /) -> list[int]:
     """Sort by counting frequency of each distinct value.
@@ -29,7 +31,7 @@ def counting_sort(arr: Sequence[int], /) -> list[int]:
 
     Raises
     ------
-    ValueError
+    InvalidValueError
         If any element is negative.
 
     Notes
@@ -47,12 +49,12 @@ def counting_sort(arr: Sequence[int], /) -> list[int]:
     >>> counting_sort([100, 50, 75, 25, 100])
     [25, 50, 75, 100, 100]
     """
+    if any(num < 0 for num in arr):
+        raise InvalidValueError("counting_sort requires non-negative integers")
+
     n = len(arr)
     if n <= 1:
         return list(arr)
-
-    if any(num < 0 for num in arr):
-        raise ValueError("counting_sort requires non-negative integers")
 
     max_value = max(arr)
     count = [0] * (max_value + 1)
@@ -93,7 +95,7 @@ def radix_sort(arr: Sequence[int], /) -> list[int]:
 
     Raises
     ------
-    ValueError
+    InvalidValueError
         If any element is negative.
 
     Notes
@@ -111,12 +113,11 @@ def radix_sort(arr: Sequence[int], /) -> list[int]:
     >>> radix_sort([121, 432, 564, 23, 1])
     [1, 23, 121, 432, 564]
     """
+    if any(num < 0 for num in arr):
+        raise InvalidValueError("radix_sort requires non-negative integers")
     n = len(arr)
     if n <= 1:
         return list(arr)
-
-    if any(num < 0 for num in arr):
-        raise ValueError("radix_sort requires non-negative integers")
 
     max_value = max(arr)
     exp = 1

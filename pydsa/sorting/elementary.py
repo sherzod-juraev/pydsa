@@ -5,7 +5,7 @@ Provides bubble sort, selection sort, and insertion sort.
 
 from collections.abc import Sequence
 
-from .._types import Comparable
+from ..core import Comparable
 
 
 def bubble_sort[T: Comparable](arr: Sequence[T], /) -> list[T]:

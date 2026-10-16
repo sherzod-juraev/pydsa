@@ -5,7 +5,7 @@ Provides iterative (non-recursive) merge sort and quick sort.
 
 from collections.abc import Sequence
 
-from .._types import Comparable
+from ..core import Comparable
 from ..linear import Stack
 
 
@@ -164,7 +164,7 @@ def quick_sort[T: Comparable](arr: Sequence[T], /) -> list[T]:
     stack: Stack[tuple[int, int]] = Stack()
     stack.push((0, n - 1))
 
-    while not stack.is_empty():
+    while stack:
         low, high = stack.pop()
         if low < high:
             pivot_idx = _lomuto_partition(result, low, high)

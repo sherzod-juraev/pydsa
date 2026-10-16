@@ -1,16 +1,32 @@
 :orphan:
 
-=============
-Oh, oh -- 404
-=============
+=====================================
+Oops! This page is not in the tree
+=====================================
 
-We could not find this page!
+.. raw:: html
 
-.. image:: /_static/images/loudly-crying-face.png
-   :alt: Oh, oh -- 404
-   :align: center
-   :width: 25%
-   :class: w-30 mx-auto d-block pe-none
+    <div style="text-align: center;">
+    <svg viewBox="0 0 470 240" xmlns="http://www.w3.org/2000/svg" width="35%" role="img" aria-label="404">
+        <text x="0" y="190" font-family="'DejaVu Sans Mono', Consolas, 'Courier New', monospace" font-weight="700" font-size="200" fill="currentColor">4</text>
+        <g stroke="currentColor" stroke-width="16" stroke-linecap="round" fill="none">
+            <path d="M 235 62 L 187 168 M 235 62 L 283 168" />
+        </g>
+        <g fill="currentColor">
+            <circle cx="235" cy="50" r="30" />
+            <circle cx="183" cy="172" r="24" />
+            <circle cx="287" cy="172" r="24" />
+        </g>
+        <text x="350" y="190" font-family="'DejaVu Sans Mono', Consolas, 'Courier New', monospace" font-weight="700" font-size="200" fill="currentColor">4</text>
+    </svg>
+    </div>
 
-.. hint::
-   You can always click the **pydsa** logo in the top-left corner to safely return to the home page!
+**We could not find the page you were looking for.**
+
+Like a search in a binary tree, the lookup reached an empty child and stopped. The page
+might have moved, been renamed, or the URL may contain a small typo. Either way, there
+is an easy way back.
+
+.. tip::
+   **Quick tip:** you can always click the **pydsa** logo in the top-left corner of the
+   screen to jump straight back to the home page.

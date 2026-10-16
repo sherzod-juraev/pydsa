@@ -1,8 +1,10 @@
-"""Sorting algorithms package.
+"""Sorting algorithms.
 
-Exposes elementary sorts (bubble, selection, insertion), divide-and-conquer
-sorts (merge, quick), heap sort, and non-comparison sorts (counting,
-radix, bucket).
+Exposes the elementary sorts (:func:`bubble_sort`, :func:`selection_sort`,
+:func:`insertion_sort`), the O(n log n) sorts (:func:`merge_sort`,
+:func:`quick_sort`, :func:`heap_sort`) and the non-comparison sorts
+(:func:`counting_sort`, :func:`radix_sort`, :func:`bucket_sort`). Everything
+is imported lazily, on first access.
 """
 
 import importlib
@@ -14,7 +16,7 @@ __all__ = [
     "selection_sort",
     "insertion_sort",
     "merge_sort",
-    "heap.py",
+    "heap_sort",
     "quick_sort",
     "counting_sort",
     "radix_sort",
@@ -36,28 +38,27 @@ _LAZY_IMPORTS = {
 
 
 def __dir__() -> list[str]:
-    """Return list of public attributes and submodules."""
+    """Return the sorted names of the public attributes."""
     return sorted(__all__)
 
 
 def __getattr__(name: str) -> Any:
-    """Lazy-load sorting algorithms on demand.
+    """Lazy-load public symbols on demand.
 
     Parameters
     ----------
     name : str
-        The name of the sorting algorithm being accessed.
+    The attribute name being accessed.
 
     Returns
     -------
     Any
-        The requested sorting function dynamically imported from the
-        respective submodule.
+    The requested function.
 
     Raises
     ------
     AttributeError
-        If the requested sorting algorithm does not exist in the public API.
+    If the attribute does not exist.
     """
     if name in _LAZY_IMPORTS:
         module_name, symbol_name = _LAZY_IMPORTS[name]
