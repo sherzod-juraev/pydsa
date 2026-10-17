@@ -10,7 +10,7 @@ leaves its input unchanged.
    :gutter: 3
    :padding: 0
 
-   .. grid-item-card:: 🔁 Elementary
+   .. grid-item-card:: Elementary
       :link: elementary
       :link-type: doc
       :text-align: center
@@ -19,7 +19,7 @@ leaves its input unchanged.
       Bubble, selection, and insertion sort. O(n²) time — simple to read, not efficient at
       scale.
 
-   .. grid-item-card:: ⚔️ Divide & Conquer
+   .. grid-item-card:: Divide & Conquer
       :link: divide_conquer
       :link-type: doc
       :text-align: center
@@ -28,7 +28,7 @@ leaves its input unchanged.
       Merge sort (O(n log n), stable, O(n) extra space) and quick sort (O(n log n) average,
       O(n²) worst case).
 
-   .. grid-item-card:: 🌳 Heap Sort
+   .. grid-item-card:: Heap Sort
       :link: heap
       :link-type: doc
       :text-align: center
@@ -36,7 +36,7 @@ leaves its input unchanged.
 
       O(n log n) sort built on :class:`~pydsa.trees.MinHeap`.
 
-   .. grid-item-card:: 🔢 Linear (Non-Comparison)
+   .. grid-item-card:: Linear (Non-Comparison)
       :link: linear
       :link-type: doc
       :text-align: center

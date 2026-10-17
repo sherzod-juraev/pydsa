@@ -48,17 +48,17 @@ def __getattr__(name: str) -> Any:
     Parameters
     ----------
     name : str
-    The attribute name being accessed.
+        The attribute name being accessed.
 
     Returns
     -------
     Any
-    The requested function.
+        The requested function.
 
     Raises
     ------
     AttributeError
-    If the attribute does not exist.
+        If the attribute does not exist.
     """
     if name in _LAZY_IMPORTS:
         module_name, symbol_name = _LAZY_IMPORTS[name]

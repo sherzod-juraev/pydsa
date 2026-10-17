@@ -57,7 +57,7 @@ all = [
 
 [project.urls]
 Homepage = "https://github.com/sherzod-juraev/pydsa"
-Documentation = "https://pydsa-educational.readthedocs.io"
+Documentation = "https://pydsa-edu.readthedocs.io"
 Repository = "https://github.com/sherzod-juraev/pydsa"
 
 [tool.setuptools.dynamic]

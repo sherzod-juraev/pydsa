@@ -8,7 +8,7 @@ of their algorithms, and ``Stack`` and ``Queue`` expose only their own operation
    :gutter: 3
    :padding: 0
 
-   .. grid-item-card:: ➡️ SinglyList
+   .. grid-item-card:: SinglyList
       :link: singly_list
       :link-type: doc
       :text-align: center
@@ -16,7 +16,7 @@ of their algorithms, and ``Stack`` and ``Queue`` expose only their own operation
 
       Nodes linked in one direction. O(1) insertion and removal at the front.
 
-   .. grid-item-card:: ↔️ DoublyList
+   .. grid-item-card:: DoublyList
       :link: doubly_list
       :link-type: doc
       :text-align: center
@@ -24,7 +24,7 @@ of their algorithms, and ``Stack`` and ``Queue`` expose only their own operation
 
       Nodes linked in both directions. O(1) at both ends.
 
-   .. grid-item-card:: 📚 Stack
+   .. grid-item-card:: Stack
       :link: stack
       :link-type: doc
       :text-align: center
@@ -32,7 +32,7 @@ of their algorithms, and ``Stack`` and ``Queue`` expose only their own operation
 
       Last in, first out. ``push``, ``pop`` and ``peek`` in O(1).
 
-   .. grid-item-card:: 🚶 Queue
+   .. grid-item-card:: Queue
       :link: queue
       :link-type: doc
       :text-align: center

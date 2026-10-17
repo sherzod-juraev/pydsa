@@ -8,7 +8,7 @@ submodule, with the signature, complexity and an example for each of its members
    :gutter: 3
    :padding: 0
 
-   .. grid-item-card:: 📏 Linear
+   .. grid-item-card:: Linear
       :link: linear/index
       :link-type: doc
       :text-align: center
@@ -16,7 +16,7 @@ submodule, with the signature, complexity and an example for each of its members
 
       ``SinglyList``, ``DoublyList``, ``Stack`` and ``Queue``.
 
-   .. grid-item-card:: 🌳 Trees
+   .. grid-item-card:: Trees
       :link: trees/index
       :link-type: doc
       :text-align: center
@@ -24,7 +24,7 @@ submodule, with the signature, complexity and an example for each of its members
 
       Binary trees, BST, AVL, heaps and the trie.
 
-   .. grid-item-card:: 🗝️ Hash
+   .. grid-item-card:: Hash
       :link: hash
       :link-type: doc
       :text-align: center
@@ -32,7 +32,7 @@ submodule, with the signature, complexity and an example for each of its members
 
       ``HashTable`` with separate chaining and automatic rehashing.
 
-   .. grid-item-card:: 🕸️ Graph
+   .. grid-item-card:: Graph
       :link: graph
       :link-type: doc
       :text-align: center
@@ -40,7 +40,7 @@ submodule, with the signature, complexity and an example for each of its members
 
       Adjacency-list graph with BFS, DFS and connectivity checks.
 
-   .. grid-item-card:: 🔁 Sorting
+   .. grid-item-card:: Sorting
       :link: sorting/index
       :link-type: doc
       :text-align: center
@@ -48,7 +48,7 @@ submodule, with the signature, complexity and an example for each of its members
 
       Nine sorting algorithms, grouped by strategy.
 
-   .. grid-item-card:: 🔍 Searching
+   .. grid-item-card:: Searching
       :link: searching
       :link-type: doc
       :text-align: center
@@ -56,7 +56,7 @@ submodule, with the signature, complexity and an example for each of its members
 
       Linear, binary, jump and exponential search.
 
-   .. grid-item-card:: 🧱 Core
+   .. grid-item-card:: Core
       :link: core
       :link-type: doc
       :text-align: center
@@ -64,7 +64,7 @@ submodule, with the signature, complexity and an example for each of its members
 
       ``BaseStructure`` and the ``Comparable`` protocol.
 
-   .. grid-item-card:: 🚨 Exceptions
+   .. grid-item-card:: Exceptions
       :link: exc
       :link-type: doc
       :text-align: center
