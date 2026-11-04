@@ -8,37 +8,69 @@ of their algorithms, and ``Stack`` and ``Queue`` expose only their own operation
    :gutter: 3
    :padding: 0
 
-   .. grid-item-card:: SinglyList
-      :link: singly_list
-      :link-type: doc
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      SinglyList
+      ^^^^^^^^^^
       Nodes linked in one direction. O(1) insertion and removal at the front.
 
-   .. grid-item-card:: DoublyList
-      :link: doubly_list
-      :link-type: doc
+      +++
+      .. button-ref:: singly_list
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View SinglyList
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      DoublyList
+      ^^^^^^^^^^
       Nodes linked in both directions. O(1) at both ends.
 
-   .. grid-item-card:: Stack
-      :link: stack
-      :link-type: doc
+      +++
+      .. button-ref:: doubly_list
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View DoublyList
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Stack
+      ^^^^^
       Last in, first out. ``push``, ``pop`` and ``peek`` in O(1).
 
-   .. grid-item-card:: Queue
-      :link: queue
-      :link-type: doc
+      +++
+      .. button-ref:: stack
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View Stack
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Queue
+      ^^^^^
       First in, first out. ``enqueue``, ``dequeue`` and ``peek`` in O(1).
+
+      +++
+      .. button-ref:: queue
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View Queue
 
 .. toctree::
    :maxdepth: 1

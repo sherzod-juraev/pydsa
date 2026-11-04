@@ -8,45 +8,85 @@ traversals, and the heaps share their sift logic, see :doc:`../../design/shared_
    :gutter: 3
    :padding: 0
 
-   .. grid-item-card:: BinaryTree
-      :link: binary_tree
-      :link-type: doc
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      BinaryTree
+      ^^^^^^^^^^
       A plain binary tree. A value is placed by its path of ``L`` and ``R`` steps.
 
-   .. grid-item-card:: BSTree
-      :link: bst
-      :link-type: doc
+      +++
+      .. button-ref:: binary_tree
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View BinaryTree
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      BSTree
+      ^^^^^^
       Binary search tree. O(h) search, insert and remove, with no rebalancing.
 
-   .. grid-item-card:: AVLTree
-      :link: avl_tree
-      :link-type: doc
+      +++
+      .. button-ref:: bst
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View BSTree
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      AVLTree
+      ^^^^^^^
       Self-balancing search tree. O(log n) search, insert and remove.
 
-   .. grid-item-card:: MinHeap / MaxHeap
-      :link: heap
-      :link-type: doc
+      +++
+      .. button-ref:: avl_tree
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View AVLTree
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      MinHeap / MaxHeap
+      ^^^^^^^^^^^^^^^^^
       Binary heaps. O(1) peek and O(log n) insert and extract.
 
-   .. grid-item-card:: Trie
-      :link: trie
-      :link-type: doc
+      +++
+      .. button-ref:: heap
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View the heaps
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Trie
+      ^^^^
       Prefix tree for words. Cost depends on the word length, not on the word count.
+
+      +++
+      .. button-ref:: trie
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View Trie
 
 .. toctree::
    :maxdepth: 1
