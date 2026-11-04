@@ -25,6 +25,7 @@
     background: none !important;
     border: none !important;
     color: var(--pst-color-primary) !important;
+    font-weight: 700;
     text-decoration: none !important;
 }
 
@@ -43,7 +44,7 @@
 
 .bd-sidebar-secondary .page-toc > ul > li > a.reference.internal {
     font-family: var(--pst-font-family-base);
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.88rem;
     text-transform: none;
 }
