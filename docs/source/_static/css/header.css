@@ -39,6 +39,7 @@
 .bd-navbar-elements .nav-link.active,
 .bd-navbar-elements .nav-link[aria-current="page"] {
     color: var(--pst-color-primary) !important;
+    font-weight: 600;
     text-decoration: none !important;
 }
 
@@ -62,11 +63,14 @@
     background-clip: text;
 }
 
-.bd-search:hover,
-.bd-search:focus-within {
-    outline: none !important;
+.bd-search:hover {
     border-color: var(--pst-color-primary) !important;
-    box-shadow: 0 0 0 3px var(--pst-color-primary-bg) !important;
+}
+
+.bd-search:focus-within {
+    outline: 2px solid var(--pst-color-primary) !important;
+    outline-offset: 2px;
+    border-color: var(--pst-color-primary) !important;
 }
 
 .bd-search input:focus {
@@ -74,24 +78,17 @@
     box-shadow: none !important;
 }
 
-.btn:focus,
 .btn:focus-visible,
-.search-button-field:focus,
 .search-button-field:focus-visible,
-button.search-button__button:focus,
 button.search-button__button:focus-visible {
-    outline: none !important;
-    box-shadow: 0 0 0 0.1875rem var(--pst-color-primary-bg) !important;
+    outline: 2px solid var(--pst-color-primary) !important;
+    outline-offset: 2px;
+    box-shadow: none !important;
 }
 
-
-.btn {
-    --bs-btn-focus-box-shadow: 0 0 0 0.1875rem var(--pst-color-primary-bg) !important;
-}
-
-.btn:hover,
-.btn:focus,
-.btn:focus-visible {
-    box-shadow: 0 0 0 0.1875rem var(--pst-color-primary-bg) !important;
-    border-color: var(--pst-color-primary) !important;
+@media (hover: hover) {
+    .btn:hover,
+    .search-button-field:hover {
+        border-color: var(--pst-color-primary) !important;
+    }
 }

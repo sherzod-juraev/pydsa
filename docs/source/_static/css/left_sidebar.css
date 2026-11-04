@@ -22,6 +22,7 @@
 .bd-sidebar-primary li.current:not(:has(li.current)) > a.reference.internal,
 .bd-sidebar-primary li.active:not(:has(li.current)) > a.reference.internal {
     color: var(--pst-color-primary) !important;
+    font-weight: 600;
     text-decoration: none !important;
 }
 
@@ -30,8 +31,15 @@
     outline-offset: 1px;
 }
 
-.bd-sidebar-primary .toctree-l2 > a.reference.internal { padding-left: 1.5rem; font-size: 0.92rem; }
-.bd-sidebar-primary .toctree-l3 > a.reference.internal { padding-left: 2.1rem; font-size: 0.88rem; }
+.bd-sidebar-primary .toctree-l2 > a.reference.internal {
+    padding-left: 1.5rem;
+    font-size: 0.92rem;
+}
+
+.bd-sidebar-primary .toctree-l3 > a.reference.internal {
+    padding-left: 2.1rem;
+    font-size: 0.88rem;
+}
 
 .bd-sidebar-primary li.toctree-l1 > ul,
 .bd-sidebar-primary li.toctree-l2 > ul {
