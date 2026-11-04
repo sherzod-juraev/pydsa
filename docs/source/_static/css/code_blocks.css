@@ -1,0 +1,85 @@
+div.highlight {
+    position: relative;
+    border-radius: 10px;
+    border: 1px solid var(--pst-color-border);
+    border-left: 3px solid var(--pst-color-primary);
+    overflow: hidden;
+    margin: 1.1rem 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+div.highlight pre {
+    margin: 0 !important;
+    padding: 1rem 1.1rem !important;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    background: transparent !important;
+}
+
+.copybtn {
+    opacity: 0.45;
+    border-radius: 6px !important;
+    transition: opacity 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+}
+
+div.highlight:hover .copybtn,
+.copybtn:focus-visible {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .copybtn {
+        opacity: 1;
+    }
+}
+
+@media (hover: hover) {
+    .copybtn:hover {
+        background-color: var(--pst-color-primary-bg) !important;
+        transform: scale(1.05);
+    }
+}
+
+.copybtn:focus-visible {
+    outline: 2px solid var(--pst-color-primary) !important;
+    outline-offset: 1px;
+}
+
+.copybtn:active {
+    transform: scale(0.92);
+}
+
+.copybtn.success {
+    opacity: 1;
+    color: var(--pst-color-success, #1a7f37) !important;
+}
+
+/* Inline code in the page body only (not in the sidebars, whose links would get a chip).
+   A neutral chip, so plain code is not mistaken for a link; code inside a link
+   keeps the link color. */
+.bd-article p code.literal,
+.bd-article li code.literal,
+.bd-article td code.literal {
+    background-color: var(--pst-color-surface);
+    color: var(--pst-color-text-base);
+    border: 1px solid var(--pst-color-border);
+    border-radius: 4px;
+    padding: 0.15rem 0.4rem;
+    font-size: 0.85em;
+}
+
+.bd-article :is(p, li, td) a code.literal {
+    color: var(--pst-color-link);
+}
+
+div.highlight-bash pre span.gp,
+div.highlight-console pre span.gp {
+    color: var(--pst-color-text-muted, #999);
+    user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .copybtn {
+        transition: none;
+    }
+}

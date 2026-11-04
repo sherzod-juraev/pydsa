@@ -1,9 +1,13 @@
 """Configuration file for the Sphinx documentation builder."""
 
 import os
+import sys
 from datetime import datetime
+from pathlib import Path
 
 import pydsa
+
+sys.path.append(str(Path(__file__).parent / "_ext"))
 
 # ================================================================================= #
 # ----------------------------- Project Configurations ---------------------------- #
@@ -42,6 +46,7 @@ extensions = [
     "sphinx_sitemap",
     "sphinxext.opengraph",
     "autodocsumm",
+    "hide_empty_sidebar",
 ]
 
 # ================================================================================= #
@@ -151,12 +156,13 @@ html_theme_options = {
 # ================================================================================= #
 html_static_path = ["_static"]
 html_css_files = [
-    "header.css",
-    "left_sidebar.css",
-    "right_sidebar.css",
-    "cards.css",
-    "code_blocks.css",
-    "installation.css",
-    "breadcrumb.css",
-    "footer_nav.css",
+    "css/header.css",
+    "css/left_sidebar.css",
+    "css/right_sidebar.css",
+    "css/cards.css",
+    "css/code_blocks.css",
+    "css/tabs.css",
+    "css/breadcrumb.css",
+    "css/footer_nav.css",
+    "css/fonts.css",
 ]

@@ -10,40 +10,72 @@ leaves its input unchanged.
    :gutter: 3
    :padding: 0
 
-   .. grid-item-card:: Elementary
-      :link: elementary
-      :link-type: doc
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Elementary
+      ^^^^^^^^^^
       Bubble, selection, and insertion sort. O(n²) time — simple to read, not efficient at
       scale.
 
-   .. grid-item-card:: Divide & Conquer
-      :link: divide_conquer
-      :link-type: doc
+      +++
+      .. button-ref:: elementary
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View elementary sorts
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Divide & Conquer
+      ^^^^^^^^^^^^^^^^
       Merge sort (O(n log n), stable, O(n) extra space) and quick sort (O(n log n) average,
       O(n²) worst case).
 
-   .. grid-item-card:: Heap Sort
-      :link: heap
-      :link-type: doc
+      +++
+      .. button-ref:: divide_conquer
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View divide & conquer
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Heap Sort
+      ^^^^^^^^^
       O(n log n) sort built on :class:`~pydsa.trees.MinHeap`.
 
-   .. grid-item-card:: Linear (Non-Comparison)
-      :link: linear
-      :link-type: doc
+      +++
+      .. button-ref:: heap
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View heap sort
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Linear (Non-Comparison)
+      ^^^^^^^^^^^^^^^^^^^^^^^
       Counting, radix, and bucket sort. O(n + k) time under their respective assumptions on
       the input — no element comparisons.
+
+      +++
+      .. button-ref:: linear
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View non-comparison sorts
 
 .. toctree::
    :maxdepth: 1

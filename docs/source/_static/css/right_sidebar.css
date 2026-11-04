@@ -2,27 +2,43 @@
     display: block;
     padding: 0.25rem 0.6rem;
     margin: 0.05rem 0;
+    border: none !important;
     border-radius: 6px;
     font-family: var(--pst-font-family-monospace);
     font-size: 0.8rem;
     color: var(--pst-color-text-base);
     background: none !important;
-    border: none !important;
     text-decoration: none !important;
     box-shadow: none !important;
-    transition: color 0.15s ease, background-color 0.15s ease;
+    transition: color 0.15s ease;
 }
 
-.bd-sidebar-secondary .page-toc a.reference.internal:hover {
-    background-color: var(--pst-color-primary-bg) !important;
-    color: var(--pst-color-primary) !important;
+@media (hover: hover) {
+    .bd-sidebar-secondary .page-toc a.reference.internal:hover {
+        color: var(--pst-color-primary) !important;
+        text-decoration: underline !important;
+        text-underline-offset: 3px;
+    }
 }
 
 .bd-sidebar-secondary .page-toc a.reference.internal.active {
-    background-color: var(--pst-color-primary-bg) !important;
-    color: var(--pst-color-primary) !important;
-    font-weight: 600;
+    background: none !important;
     border: none !important;
+    color: var(--pst-color-primary) !important;
+    text-decoration: none !important;
+}
+
+.bd-sidebar-secondary .page-toc a.reference.internal:focus-visible {
+    outline: 2px solid var(--pst-color-primary) !important;
+    outline-offset: 1px;
+}
+
+.bd-sidebar-secondary .page-toc a.reference.internal code {
+    background: none !important;
+    border: none !important;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
 }
 
 .bd-sidebar-secondary .page-toc > ul > li > a.reference.internal {
@@ -40,4 +56,10 @@
 
 .bd-sidebar-secondary .page-toc ul ul a.reference.internal {
     padding-left: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bd-sidebar-secondary .page-toc a.reference.internal {
+        transition: none;
+    }
 }

@@ -36,6 +36,8 @@ pydsa/
 ├── .github/workflows/          # CI workflows
 ├── assets/branding/            # Logos
 ├── docs/source/                # Sphinx documentation
+│   ├── _ext/                   # Local Sphinx extensions
+│   ├── _static/                # CSS (css/), fonts (fonts/) and images
 │   ├── getting_started/        # Installation, quickstart
 │   ├── api/                    # API reference, one folder or page per submodule
 │   └── design/                 # Design notes
@@ -49,6 +51,8 @@ pydsa/
 │   ├── searching.py            # Searching algorithms
 │   └── hash.py                 # HashTable
 ├── tests/                      # Test suite, mirrors pydsa/
+├── .editorconfig               # Editor settings
+├── .gitattributes              # Line endings: LF, CRLF for .bat
 ├── .readthedocs.yaml           # Read the Docs config
 ├── CONTRIBUTING.md             # This file
 ├── LICENSE                     # MIT License
@@ -154,8 +158,10 @@ Every workflow calls Nox, so a failure in the CI is reproduced locally with the 
 | `docs.yml`      | push, pull request          | `docs`                                         |
 | `linkcheck.yml` | weekly schedule, manual run | `linkcheck`                                    |
 
-"Push" means a push to `main` or `dev`, and a pull request means one that targets `main`.
-Read the Docs builds the documentation for the published site separately.
+"Push" means a push to `main`, and a pull request means one that targets `main`. A work
+branch gets its CI through its pull request, so open it early (see
+[Branches and pull requests](#branches-and-pull-requests)). Read the Docs builds the
+documentation for the published site separately.
 
 ## Live documentation
 
@@ -185,6 +191,8 @@ Then open http://127.0.0.1:8000 in your browser and stop the server with `Ctrl+C
 - Elements that must be ordered are bounded by `Comparable`.
 - Everything is checked by mypy in strict mode, ruff (line length 100) and interrogate
   (100% docstring coverage, private members included).
+- Line endings and indentation come from `.editorconfig` and `.gitattributes`: LF everywhere,
+  CRLF only for `.bat` files.
 
 ### Docstrings
 
@@ -205,15 +213,37 @@ Then open http://127.0.0.1:8000 in your browser and stop the server with `Ctrl+C
 - A test file covers the behavior of its own layer and does not repeat what lower layers
   already guarantee.
 
+### Documentation site
+
+- Pages are reStructuredText under `docs/source/`. The `docs` session lints them and builds
+  the site with warnings treated as errors.
+- The index page of a group uses `sphinx-design` cards of one shape: a title, a one-line
+  description and a `button-ref` button to the page.
+- Styling lives in `docs/source/_static/css/`, one file per component, listed in
+  `html_css_files` in `docs/source/conf.py`. Colors come from the theme's `--pst-color-*`
+  variables, so the light and the dark theme both work.
+- Fonts (Inter and JetBrains Mono) are self-hosted in `docs/source/_static/fonts/`, together
+  with their licenses.
+- Local Sphinx extensions live in `docs/source/_ext/` and are enabled in `conf.py`.
+
+### Branches and pull requests
+
+- `main` is the only long-lived branch. It always passes every check.
+- Every change lives on a short-lived branch cut from `main`. The branch name starts with the
+  Conventional Commits type: `feat/...`, `fix/...`, `docs/...`, `test/...`, `build/...`,
+  `refactor/...`, `chore/...`.
+- Open a pull request into `main` early, a draft is fine: the CI runs on pull requests.
+- Merge only when every check is green, then delete the branch.
+
 ### Commits and versions
 
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`,
   `docs`, `test`, `build`, `refactor` and `chore`, with a body that explains what changed and
   why.
-- Work happens on `dev`. `main` receives a merge only when all checks pass.
 - `__version__` in `pydsa/__init__.py` is the single source of truth, `pyproject.toml` and the
   docs read it. It changes only when the public API changes: a breaking change is a MAJOR bump,
-  a new structure or function is a MINOR bump, and housekeeping commits do not change it.
+  a new structure or function is a MINOR bump, and housekeeping commits (documentation,
+  tooling, CI) do not change it.
 - Every release gets an entry in `docs/source/changelog.rst`.
 
 ## Adding a structure or an algorithm
@@ -224,15 +254,18 @@ Then open http://127.0.0.1:8000 in your browser and stop the server with `Ctrl+C
    `__init__.py` and `__init__.pyi`.
 3. Write the docstrings following the conventions above.
 4. Write the tests in `tests/`, including the lazy-loading `__init__` test.
-5. Add the documentation: a page under `docs/source/api/`, a card on the index of its group, a
-   row in the README table, and an example in the quickstart if it is a new kind of structure.
+5. Add the documentation: a page under `docs/source/api/`, a card on the index of its group
+   (same shape as its neighbors), a row in the README table, and an example in the quickstart
+   if it is a new kind of structure.
 6. Run `nox` until every session passes.
 
 ## Releasing
 
-1. Run `nox` on `dev`, and make sure the CI is green.
-2. Bump `__version__` in `pydsa/__init__.py` if the public API changed, and add the entry to
-   `docs/source/changelog.rst`.
-3. Merge `dev` into `main` and push.
-4. Create the tag `vX.Y.Z` on `main` and a GitHub release titled `vX.Y.Z`.
-5. Check that the Read the Docs build is green.
+A change that touches only documentation, tooling or the CI is not a release: no version bump,
+no changelog entry and no tag. Merging it into `main` is enough.
+
+1. On a short-lived branch, run `nox`. Bump `__version__` in `pydsa/__init__.py` if the public
+   API changed, and add the entry to `docs/source/changelog.rst`.
+2. Open a pull request into `main`, wait until the CI is green, then merge it.
+3. Create the tag `vX.Y.Z` on `main` and a GitHub release titled `vX.Y.Z`.
+4. Check that the Read the Docs build is green.

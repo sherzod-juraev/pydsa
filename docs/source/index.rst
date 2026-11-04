@@ -21,38 +21,70 @@ algorithms — built from scratch, fully typed, and tested.
    :gutter: 3
    :class-container: sd-mb-4
 
-   .. grid-item-card:: Installation
-      :link: getting_started/installation
-      :link-type: doc
+   .. grid-item-card::
       :text-align: center
-      :shadow: md
+      :shadow: sm
 
+      Installation
+      ^^^^^^^^^^^^
       Get started in under a minute — no external dependencies.
 
-   .. grid-item-card:: Quickstart
-      :link: getting_started/quickstart
-      :link-type: doc
-      :text-align: center
-      :shadow: md
+      +++
+      .. button-ref:: getting_started/installation
+         :ref-type: doc
+         :color: primary
+         :expand:
 
+         Get started
+
+   .. grid-item-card::
+      :text-align: center
+      :shadow: sm
+
+      Quickstart
+      ^^^^^^^^^^
       One short, runnable example for every part of the library.
 
-   .. grid-item-card:: API Reference
-      :link: api/index
-      :link-type: doc
-      :text-align: center
-      :shadow: md
+      +++
+      .. button-ref:: getting_started/quickstart
+         :ref-type: doc
+         :color: primary
+         :expand:
 
+         Try the quickstart
+
+   .. grid-item-card::
+      :text-align: center
+      :shadow: sm
+
+      API Reference
+      ^^^^^^^^^^^^^
       Every structure and algorithm, documented with full type
       signatures and complexity.
 
-   .. grid-item-card:: Design Notes
-      :link: design/index
-      :link-type: doc
-      :text-align: center
-      :shadow: md
+      +++
+      .. button-ref:: api/index
+         :ref-type: doc
+         :color: primary
+         :expand:
 
+         Browse the API
+
+   .. grid-item-card::
+      :text-align: center
+      :shadow: sm
+
+      Design Notes
+      ^^^^^^^^^^^^
       Why things are built the way they are.
+
+      +++
+      .. button-ref:: design/index
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         Read the notes
 
 Everything is imported from a submodule, and each submodule is loaded
 only when it is first used:

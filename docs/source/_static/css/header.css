@@ -10,53 +10,47 @@
 }
 
 .bd-navbar-elements .nav-link {
-    position: relative;
     padding: 0.5rem 0.9rem;
     border-radius: 8px;
     color: var(--pst-color-text-base);
+    background: none !important;
     border: none !important;
     box-shadow: none !important;
     background-image: none !important;
     text-decoration: none !important;
-    transition: color 0.2s ease, background-color 0.2s ease;
+    transition: color 0.2s ease;
 }
 
-.bd-navbar-elements .nav-link:hover,
+.bd-navbar-elements .nav-link::before,
+.bd-navbar-elements .nav-link::after {
+    content: none !important;
+    border: none !important;
+}
+
+@media (hover: hover) {
+    .bd-navbar-elements .nav-link:hover {
+        color: var(--pst-color-primary) !important;
+        text-decoration: underline !important;
+        text-underline-offset: 6px;
+    }
+}
+
 .bd-navbar-elements .nav-link.current,
 .bd-navbar-elements .nav-link.active,
 .bd-navbar-elements .nav-link[aria-current="page"] {
-    background-color: var(--pst-color-primary-bg) !important;
     color: var(--pst-color-primary) !important;
-    border: none !important;
-    box-shadow: none !important;
-    background-image: none !important;
+    text-decoration: none !important;
 }
 
-.bd-navbar-elements .nav-link::after {
-    content: "";
-    position: absolute;
-    left: 0.9rem;
-    right: 0.9rem;
-    bottom: 2px;
-    height: 2px;
-    border-radius: 1px;
-    background-color: var(--pst-color-primary);
-    transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 0.25s ease;
-    z-index: 2;
+.bd-navbar-elements .nav-link:focus-visible {
+    outline: 2px solid var(--pst-color-primary) !important;
+    outline-offset: 2px;
 }
 
-.bd-navbar-elements .nav-link:hover::after,
-.bd-navbar-elements .nav-link.current::after,
-.bd-navbar-elements .nav-link.active::after,
-.bd-navbar-elements .nav-link[aria-current="page"]::after {
-    transform: scaleX(1) !important;
-    background-color: var(--pst-color-primary) !important;
-}
-
-.bd-navbar-elements .nav-link:active {
-    transform: scale(0.97);
+@media (prefers-reduced-motion: reduce) {
+    .bd-navbar-elements .nav-link {
+        transition: none;
+    }
 }
 
 .navbar-brand {

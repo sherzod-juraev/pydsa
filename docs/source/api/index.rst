@@ -8,69 +8,133 @@ submodule, with the signature, complexity and an example for each of its members
    :gutter: 3
    :padding: 0
 
-   .. grid-item-card:: Linear
-      :link: linear/index
-      :link-type: doc
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Linear
+      ^^^^^^
       ``SinglyList``, ``DoublyList``, ``Stack`` and ``Queue``.
 
-   .. grid-item-card:: Trees
-      :link: trees/index
-      :link-type: doc
+      +++
+      .. button-ref:: linear/index
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         Browse linear structures
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Trees
+      ^^^^^
       Binary trees, BST, AVL, heaps and the trie.
 
-   .. grid-item-card:: Hash
-      :link: hash
-      :link-type: doc
+      +++
+      .. button-ref:: trees/index
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         Browse trees
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Hash
+      ^^^^
       ``HashTable`` with separate chaining and automatic rehashing.
 
-   .. grid-item-card:: Graph
-      :link: graph
-      :link-type: doc
+      +++
+      .. button-ref:: hash
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View the hash table
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Graph
+      ^^^^^
       Adjacency-list graph with BFS, DFS and connectivity checks.
 
-   .. grid-item-card:: Sorting
-      :link: sorting/index
-      :link-type: doc
+      +++
+      .. button-ref:: graph
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View the graph
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Sorting
+      ^^^^^^^
       Nine sorting algorithms, grouped by strategy.
 
-   .. grid-item-card:: Searching
-      :link: searching
-      :link-type: doc
+      +++
+      .. button-ref:: sorting/index
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         Browse sorting
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Searching
+      ^^^^^^^^^
       Linear, binary, jump and exponential search.
 
-   .. grid-item-card:: Core
-      :link: core
-      :link-type: doc
+      +++
+      .. button-ref:: searching
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         Browse searching
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Core
+      ^^^^
       ``BaseStructure`` and the ``Comparable`` protocol.
 
-   .. grid-item-card:: Exceptions
-      :link: exc
-      :link-type: doc
+      +++
+      .. button-ref:: core
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View the core
+
+   .. grid-item-card::
       :text-align: center
       :shadow: sm
 
+      Exceptions
+      ^^^^^^^^^^
       The full ``PydsaError`` hierarchy.
+
+      +++
+      .. button-ref:: exc
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         View the exceptions
 
 .. toctree::
    :hidden:

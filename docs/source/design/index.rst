@@ -8,33 +8,69 @@ share behavior, and what happens when something goes wrong.
    :gutter: 3
    :padding: 0
 
-   .. grid-item-card:: Shared Bases
-      :link: shared_bases
-      :link-type: doc
+   .. grid-item-card::
+      :text-align: center
       :shadow: sm
 
+      Shared Bases
+      ^^^^^^^^^^^^
       How ``BaseStructure`` and the family bases keep each algorithm in one place.
 
-   .. grid-item-card:: Exceptions
-      :link: exceptions
-      :link-type: doc
+      +++
+      .. button-ref:: shared_bases
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         Read about shared bases
+
+   .. grid-item-card::
+      :text-align: center
       :shadow: sm
 
+      Exceptions
+      ^^^^^^^^^^
       Why there is one hierarchy, and why each error also is a built-in one.
 
-   .. grid-item-card:: Lazy Imports
-      :link: lazy_imports
-      :link-type: doc
+      +++
+      .. button-ref:: exceptions
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         Read about exceptions
+
+   .. grid-item-card::
+      :text-align: center
       :shadow: sm
 
+      Lazy Imports
+      ^^^^^^^^^^^^
       Why ``import pydsa`` loads nothing, and how type checkers still see every name.
 
-   .. grid-item-card:: Principles
-      :link: principles
-      :link-type: doc
+      +++
+      .. button-ref:: lazy_imports
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         Read about lazy imports
+
+   .. grid-item-card::
+      :text-align: center
       :shadow: sm
 
+      Principles
+      ^^^^^^^^^^
       Built from scratch, zero dependencies, clarity over performance.
+
+      +++
+      .. button-ref:: principles
+         :ref-type: doc
+         :color: primary
+         :expand:
+
+         Read the principles
 
 .. toctree::
    :maxdepth: 1
