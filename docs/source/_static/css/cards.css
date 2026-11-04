@@ -42,16 +42,6 @@
     line-height: 1.55;
 }
 
-.sd-card code,
-.sd-card .literal {
-    background-color: var(--pst-color-primary-bg);
-    color: var(--pst-color-link-higher-contrast, var(--pst-color-primary));
-    border: none;
-    border-radius: 4px;
-    padding: 0.1rem 0.35rem;
-    font-size: 0.85em;
-}
-
 a.sd-card,
 .sd-card a.sd-stretched-link {
     text-decoration: none !important;
