@@ -1,0 +1,86 @@
+@media (min-width: 1200px) {
+    .prev-next-footer {
+        padding-left: 2rem;
+    }
+}
+
+.prev-next-area {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.prev-next-area a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.1rem;
+    border-radius: 12px;
+    border: 1px solid var(--pst-color-border);
+    text-decoration: none !important;
+    color: var(--pst-color-text-base);
+    transition: border-color 0.2s ease;
+}
+
+/* On the first page there is no "Previous" link, and a lone flex item would sit
+   on the left. The auto margin keeps "Next" on the right in every case. */
+.prev-next-area a.right-next {
+    margin-left: auto;
+}
+
+.prev-next-area .prev-next-title {
+    font-weight: 600;
+    text-decoration: none !important;
+}
+
+@media (hover: hover) {
+    .prev-next-area a:hover {
+        border-color: var(--pst-color-primary);
+    }
+
+    .prev-next-area a:hover .prev-next-title {
+        color: var(--pst-color-link) !important;
+        text-decoration: underline !important;
+        text-underline-offset: 4px;
+    }
+
+    .prev-next-area a.left-prev:hover svg,
+    .prev-next-area a.left-prev:hover i {
+        transform: translateX(-3px);
+    }
+
+    .prev-next-area a.right-next:hover svg,
+    .prev-next-area a.right-next:hover i {
+        transform: translateX(3px);
+    }
+}
+
+.prev-next-area a:focus-visible {
+    outline: 2px solid var(--pst-color-primary);
+    outline-offset: 2px;
+}
+
+.prev-next-area .prev-next-info {
+    display: flex;
+    align-items: center;
+}
+
+.prev-next-area .prev-next-subtitle {
+    margin: 0 !important;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.prev-next-area a svg,
+.prev-next-area a i {
+    transition: transform 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .prev-next-area a,
+    .prev-next-area a svg,
+    .prev-next-area a i {
+        transition: none;
+    }
+}

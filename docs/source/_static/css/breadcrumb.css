@@ -1,0 +1,28 @@
+.bd-breadcrumbs a,
+nav.breadcrumb a {
+    text-decoration: none !important;
+    border-radius: 4px;
+    transition: color 0.15s ease;
+}
+
+@media (hover: hover) {
+    .bd-breadcrumbs a:hover,
+    nav.breadcrumb a:hover {
+        color: var(--pst-color-primary) !important;
+        text-decoration: underline !important;
+        text-underline-offset: 3px;
+    }
+}
+
+.bd-breadcrumbs a:focus-visible,
+nav.breadcrumb a:focus-visible {
+    outline: 2px solid var(--pst-color-primary);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bd-breadcrumbs a,
+    nav.breadcrumb a {
+        transition: none;
+    }
+}

@@ -1,0 +1,34 @@
+.sd-tab-set > label {
+    border-radius: 8px 8px 0 0;
+    font-weight: 500;
+    text-decoration: none !important;
+    transition: color 0.2s ease;
+}
+
+/* sphinx-design also tints the border on hover; the underline is the only hover cue here. */
+@media (hover: hover) {
+    .sd-tab-set > input:not(:checked) + label:hover {
+        color: var(--pst-color-primary) !important;
+        border-color: transparent !important;
+        text-decoration: underline !important;
+        text-underline-offset: 4px;
+    }
+}
+
+.sd-tab-set > input:checked + label {
+    color: var(--pst-color-primary) !important;
+    border-color: var(--pst-color-primary) !important;
+    font-weight: 600;
+    text-decoration: none !important;
+}
+
+.sd-tab-set > input:focus-visible + label {
+    outline: 2px solid var(--pst-color-primary) !important;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sd-tab-set > label {
+        transition: none;
+    }
+}
