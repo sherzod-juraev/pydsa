@@ -17,6 +17,13 @@
 [![Interrogate](https://img.shields.io/badge/Interrogate-100%25-brightgreen)](https://interrogate.readthedocs.io/)
 [![Nox](https://img.shields.io/badge/nox-sessions-blue)](https://nox.thea.codes/)
 
+> [!NOTE]
+> **This project is finished.** pydsa was built to study how classic data structures and
+> algorithms work inside, and that goal has been reached. It is no longer developed: issues,
+> pull requests and security reports are not reviewed or answered, and no fixes or new
+> releases will come. The code stays available under the MIT License, and you are welcome to
+> fork it.
+
 Classic data structures and algorithms in pure Python, built from scratch, fully typed, with no
 runtime dependencies. The project exists to study how they work inside, not to replace what
 Python already provides.

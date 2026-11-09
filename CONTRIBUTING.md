@@ -1,8 +1,8 @@
 # Contributing
 
 > [!NOTE]
-> This is a personal, educational project. I am not
-> actively seeking contributors at this time.
+> This project is finished and no longer developed. Issues, pull requests and security reports
+> are not reviewed or answered.
 
 However, this project is open-source under the
 [MIT License](LICENSE), and you are **welcome to**:
